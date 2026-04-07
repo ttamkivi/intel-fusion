@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
+<meta name="referrer" content="no-referrer">
+<meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()">
+<title>Intel Fusion Tool v2.0</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; padding: 10px; background: #1a1a1a; color: #e0e0e0; }
+.container { max-width: 1400px; margin: 0 auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+h1 { color: #4a9eff; font-size: 24px; }
+.version { color: #888; font-size: 12px; }
+.stats { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+.stat-box { background: #2a2a2a; padding: 8px 12px; border-radius: 4px; border: 1px solid #3a3a3a; }
+.stat-label { font-size: 11px; color: #888; }
+.stat-value { font-size: 18px; font-weight: bold; color: #4a9eff; }
+.stat-timestamp { font-size: 10px; color: #666; margin-top: 3px; }
+.input-section { background: #2a2a2a; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3a3a3a; }
+textarea { width: 100%; height: 120px; padding: 10px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; font-family: monospace; resize: vertical; }
+.button-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+.btn-primary { background: #4a9eff; color: white; }
+.btn-primary:hover { background: #3a8eef; }
+.btn-secondary { background: #2a2a2a; color: #e0e0e0; border: 1px solid #3a3a3a; }
+.btn-secondary:hover { background: #3a3a3a; }
+.btn-danger { background: #ef4444; color: white; }
+.btn-danger:hover { background: #dc2626; }
+.btn-success { background: #22c55e; color: white; }
+.btn-success:hover { background: #16a34a; }
+.table-container { background: #2a2a2a; border-radius: 6px; overflow-x: auto; border: 1px solid #3a3a3a; max-height: 500px; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead { background: #1a1a1a; position: sticky; top: 0; z-index: 10; }
+th { padding: 10px; text-align: left; font-size: 12px; border-bottom: 2px solid #3a3a3a; color: #4a9eff; }
+td { padding: 8px; border-bottom: 1px solid #3a3a3a; font-size: 13px; }
+tr:hover { background: #333; cursor: pointer; }
+tr:focus { outline: 2px solid #4a9eff; }
+.priority-high { color: #ef4444; font-weight: bold; }
+.priority-routine { color: #888; }
+.activity-movement { color: #22c55e; }
+.activity-engagement { color: #ef4444; }
+.activity-position { color: #fbbf24; }
+.activity-observation { color: #888; }
+.activity-staging { color: #60a5fa; }
+.filter-section { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+select { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; }
+input[type="text"] { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background: #2a2a2a; padding: 20px; border-radius: 8px; max-width: 90%; max-height: 80%; overflow-y: auto; border: 1px solid #3a3a3a; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.modal-close { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+.detail-row { margin-bottom: 10px; }
+.detail-label { color: #888; font-size: 12px; }
+.detail-value { color: #e0e0e0; font-size: 14px; margin-top: 2px; word-break: break-word; }
+.detail-value.monospace { font-family: monospace; background: #1a1a1a; padding: 10px; border-radius: 4px; white-space: pre-wrap; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: #2a2a2a; color: #e0e0e0; padding: 12px 16px; border-radius: 4px; border: 1px solid #3a3a3a; z-index: 2000; max-width: 300px; }
+.toast.success { border-left: 3px solid #22c55e; }
+.toast.error { border-left: 3px solid #ef4444; }
+@media (max-width: 768px) {
+.hidden-mobile { display: none; }
+th, td { padding: 6px; font-size: 11px; }
+.header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div>
+<h1>⚡ Intel Fusion Tool</h1>
+<div class="version">v2.0 - Production Hardened</div>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat-box">
+<div class="stat-label">Total Records</div>
+<div class="stat-value" id="totalRecords">0</div>
+<div class="stat-timestamp" id="lastUpdated"></div>
+</div>
+<div class="stat-box">
+<div class="stat-label">High Priority</div>
+<div class="stat-value" id="highPriority">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Movements</div>
+<div class="stat-value" id="movements">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Engagements</div>
+<div class="stat-value" id="engagements">0</div>
+</div>
+</div>
+
+<div class="input-section">
+<textarea id="messageInput" placeholder="Paste chat messages here...&#10;&#10;Examples:&#10;- SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 85243 89003...&#10;- UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003&#10;- scouts report enemy position at MD 86500 88700 or 58.123, 26.456..."></textarea>
+<div class="button-group">
+<button class="btn-primary" onclick="App.processMessages()">⚡ Process & Add</button>
+<button class="btn-secondary" onclick="App.toggleAutoMode()">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
+<button class="btn-success" onclick="App.exportToExcel()">📥 Export to Excel</button>
+<button class="btn-secondary" onclick="App.copyToClipboard()">📋 Copy TSV</button>
+<button class="btn-danger" onclick="App.clearAll()">🗑️ Clear All</button>
+</div>
+</div>
+
+<div class="filter-section">
+<select id="priorityFilter" onchange="App.applyFilters()">
+<option value="">All Priorities</option>
+<option value="HIGH">High Priority</option>
+<option value="ROUTINE">Routine</option>
+</select>
+<select id="activityFilter" onchange="App.applyFilters()">
+<option value="">All Activities</option>
+<option value="MOVEMENT">Movement</option>
+<option value="ENGAGEMENT">Engagement</option>
+<option value="POSITION">Position</option>
+<option value="OBSERVATION">Observation</option>
+<option value="STAGING">Staging</option>
+</select>
+<input type="text" id="searchBox" placeholder="Search..." style="flex: 1; min-width: 200px;" oninput="App.applyFilters()" aria-label="Search records">
+</div>
+
+<div class="table-container">
+<table id="recordsTable">
+<thead>
+<tr>
+<th>DTG</th>
+<th>Coordinate</th>
+<th class="hidden-mobile">Reporter</th>
+<th>Activity</th>
+<th class="hidden-mobile">Equipment</th>
+<th class="hidden-mobile">Strength</th>
+<th>Priority</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-label="Record details">
+<div class="modal-content">
+<div class="modal-header">
+<h2 style="color: #4a9eff;">Message Details</h2>
+<button class="modal-close" onclick="App.closeModal()" aria-label="Close">✕</button>
+</div>
+<div id="detailContent"></div>
+</div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+const VERSION = 'v2.0';
+const MONTH_ABBR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const POSTMESSAGE_ORIGIN_PATTERN = /^(https?:\/\/|file:\/\/)/;
+
+function escapeHTML(str) {
+if (typeof str !== 'string') return '';
+const div = document.createElement('div');
+div.textContent = str;
+return div.innerHTML;
+}
+
+function preventFormulaInjection(str) {
+if (typeof str !== 'string') return str;
+if (/^[=+\-@\t\r]/.test(str)) {
+return "'" + str;
+}
+return str;
+}
+
+function simpleHash(text) {
+if (typeof text !== 'string') return '0';
+let hash = 5381;
+for (let i = 0; i < text.length; i++) {
+hash = ((hash << 5) + hash) ^ text.charCodeAt(i);
+}
+return Math.abs(hash).toString(36);
+}
+
+function generateUUID() {
+if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+return crypto.randomUUID();
+}
+return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+const r = Math.random() * 16 | 0;
+const v = c === 'x' ? r : (r & 0x3 | 0x8);
+return v.toString(16);
+});
+}
+
+function extractMGRS(text) {
+try {
+const mgrsPattern = /(\d{1,2}[A-Z]\s*[A-Z]{2}\s*\d{5}\s*\d{5})/gi;
+const match = text.match(mgrsPattern);
+if (match) return match[0].replace(/\s+/g, ' ');
+
+const shortPattern = /MD\s*(\d{5}\s*\d{5})/gi;
+const shortMatch = text.match(shortPattern);
+if (shortMatch) return '35V ' + shortMatch[0];
+} catch (e) {
+console.error('MGRS extraction error:', e);
+}
+return null;
+}
+
+function extractDecimalCoords(text) {
+try {
+const decimalPattern = /(\d{1,3}\.\d{1,6})\s*,\s*(\d{1,3}\.\d{1,6})/gi;
+const match = text.match(decimalPattern);
+if (match) return match[0];
+} catch (e) {
+console.error('Decimal coords extraction error:', e);
+}
+return null;
+}
+
+function extractDTG(text) {
+try {
+const dtgPattern = /(\d{6,8}[A-Z]{1}[A-Z]{3}\d{2,4})/gi;
+const match = text.match(dtgPattern);
+if (match) return match[0];
+
+const now = new Date();
+const day = String(now.getDate()).padStart(2, '0');
+const hour = String(now.getHours()).padStart(2, '0');
+const min = String(now.getMinutes()).padStart(2, '0');
+const month = MONTH_ABBR[now.getMonth()];
+const year = String(now.getFullYear());
+return `${day}${hour}${min}${month}${year}`;
+} catch (e) {
+console.error('DTG extraction error:', e);
+return 'INVALID';
+}
+}
+
+function extractActivity(text) {
+try {
+const upper = text.toUpperCase();
+if (upper.match(/MOVEMENT|MOVING|ADVANCE|WITHDRAW|MARCH|SHIFT|RELOCAT/)) return 'MOVEMENT';
+if (upper.match(/ENGAGEMENT|CONTACT|FIRE|FIRING|ATTACK|STRIKE|IMPACT/)) return 'ENGAGEMENT';
+if (upper.match(/POSITION|DEFENSIVE|FORTIF|DUG.?IN|EMPLAC|ENTRENCH/)) return 'POSITION';
+if (upper.match(/STAGING|ASSEMBLY|CONCENTRAT|MUSTER|GATHER/)) return 'STAGING';
+if (upper.match(/OBSERV|SPOT|DETECT|SIGHT|REPORT|VISUAL/)) return 'OBSERVATION';
+return 'OBSERVATION';
+} catch (e) {
+console.error('Activity extraction error:', e);
+return 'OBSERVATION';
+}
+}
+
+function extractEquipment(text) {
+try {
+const equipmentDB = {
+tanks: ['T-72', 'T-80', 'T-90', 'T-62', 'T-64', 'TANK'],
+apcs: ['BMP-1', 'BMP-2', 'BMP-3', 'BTR-80', 'BTR-82', 'BMP', 'BTR', 'APC'],
+artillery: ['2S19', '2S3', '2S1', '2S9', 'NONA', 'HOWITZER', 'ARTILLERY', 'MLRS', 'BM-21'],
+recon: ['BRDM', 'RECON', 'UAV', 'DRONE'],
+airdefense: ['SA-15', 'SA-11', 'SA-8', 'MANPADS', 'AAA', 'ZSU']
+};
+
+const found = [];
+const upper = text.toUpperCase();
+for (const [category, items] of Object.entries(equipmentDB)) {
+for (const item of items) {
+if (upper.includes(item)) {
+found.push(item);
+break;
+}
+}
+}
+return found.length > 0 ? found.join(', ') : 'UNKNOWN';
+} catch (e) {
+console.error('Equipment extraction error:', e);
+return 'UNKNOWN';
+}
+}
+
+function extractStrength(text) {
+try {
+const numberMatch = text.match(/(\d+)\s*[xX×]/);
+if (numberMatch) return numberMatch[1] + 'x';
+
+const sizeMatch = text.toUpperCase().match(/(SQUAD|PLATOON|COMPANY|BATTALION|BTG|BRIGADE|SECTION)/);
+if (sizeMatch) return sizeMatch[1];
+
+return 'UNKNOWN';
+} catch (e) {
+console.error('Strength extraction error:', e);
+return 'UNKNOWN';
+}
+}
+
+function extractReporter(text) {
+try {
+const reporterMatch = text.match(/([A-Z]{2,}\d+|[A-Z]{3,}\s+\d+|FO\d+|UAV\d+|RECON\d+|SCOUT\d+|OP\d+)/i);
+if (reporterMatch) return reporterMatch[0].toUpperCase();
+
+const upper = text.toUpperCase();
+if (upper.includes('SALUTE')) return 'SALUTE RPT';
+if (upper.includes('UAV')) return 'UAV';
+if (upper.includes('SCOUT')) return 'SCOUT';
+if (upper.includes('RECON')) return 'RECON';
+
+return 'UNKNOWN';
+} catch (e) {
+console.error('Reporter extraction error:', e);
+return 'UNKNOWN';
+}
+}
+
+function determinePriority(text) {
+try {
+const upper = text.toUpperCase();
+if (upper.match(/URGENT|PRIORITY|FLASH|IMMEDIATE|CRITICAL|EMERGENCY/)) return 'HIGH';
+return 'ROUTINE';
+} catch (e) {
+console.error('Priority extraction error:', e);
+return 'ROUTINE';
+}
+}
+
+function parseMessage(rawText) {
+try {
+if (typeof rawText !== 'string') return null;
+
+const textTrimmed = rawText.trim();
+if (textTrimmed.length < 30) return null;
+
+const coordinate = extractMGRS(textTrimmed) || extractDecimalCoords(textTrimmed);
+if (!coordinate) return null;
+
+const hash = simpleHash(textTrimmed + (coordinate || ''));
+if (App.processedHashes.has(hash)) return null;
+
+App.processedHashes.add(hash);
+
+return {
+id: generateUUID(),
+dtg: extractDTG(textTrimmed),
+coordinate: coordinate,
+reporter: extractReporter(textTrimmed),
+unit: 'UNKNOWN',
+activity: extractActivity(textTrimmed),
+equipment: extractEquipment(textTrimmed),
+strength: extractStrength(textTrimmed),
+priority: determinePriority(textTrimmed),
+fullMessage: textTrimmed,
+timestamp: new Date().toISOString()
+};
+} catch (e) {
+console.error('Message parsing error:', e);
+return null;
+}
+}
+
+const App = {
+database: [],
+filteredData: [],
+autoModeEnabled: false,
+processedHashes: new Set(),
+
+processMessages: function() {
+const input = document.getElementById('messageInput');
+if (!input || !input.value.trim()) {
+this.showToast('Please paste some messages first', 'error');
+return;
+}
+
+const messages = input.value.split('\n\n').filter(m => m.trim().length > 20);
+let added = 0;
+
+messages.forEach(msg => {
+const parsed = parseMessage(msg);
+if (parsed) {
+this.database.push(parsed);
+added++;
+}
+});
+
+if (added > 0) {
+input.value = '';
+this.updateDisplay();
+this.showToast(`Added ${added} new records`, 'success');
+} else {
+this.showToast('No valid intelligence found or all duplicates', 'error');
+}
+},
+
+updateDisplay: function() {
+this.updateStats();
+this.applyFilters();
+},
+
+updateStats: function() {
+const total = this.database.length;
+const high = this.database.filter(r => r.priority === 'HIGH').length;
+const move = this.database.filter(r => r.activity === 'MOVEMENT').length;
+const eng = this.database.filter(r => r.activity === 'ENGAGEMENT').length;
+
+document.getElementById('totalRecords').textContent = total;
+document.getElementById('highPriority').textContent = high;
+document.getElementById('movements').textContent = move;
+document.getElementById('engagements').textContent = eng;
+
+const now = new Date();
+const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+document.getElementById('lastUpdated').textContent = `Updated: ${timeStr}`;
+},
+
+applyFilters: function() {
+const priorityFilter = document.getElementById('priorityFilter').value;
+const activityFilter = document.getElementById('activityFilter').value;
+const searchTerm = (document.getElementById('searchBox').value || '').toLowerCase();
+
+this.filteredData = this.database.filter(record => {
+if (priorityFilter && record.priority !== priorityFilter) return false;
+if (activityFilter && record.activity !== activityFilter) return false;
+if (searchTerm) {
+const searchable = `${record.coordinate} ${record.reporter} ${record.activity} ${record.equipment} ${record.fullMessage}`.toLowerCase();
+if (!searchable.includes(searchTerm)) return false;
+}
+return true;
+});
+
+this.renderTable();
+},
+
+renderTable: function() {
+const tbody = document.getElementById('tableBody');
+if (!tbody) return;
+
+tbody.innerHTML = '';
+
+const reversed = this.filteredData.slice().reverse();
+reversed.forEach((record, idx) => {
+try {
+const row = tbody.insertRow();
+row.setAttribute('tabindex', '0');
+row.setAttribute('role', 'button');
+row.setAttribute('aria-label', `Record ${idx + 1}: ${record.activity} at ${record.coordinate}`);
+
+row.onclick = () => this.showDetails(record);
+row.onkeydown = (e) => {
+if (e.key === 'Enter') this.showDetails(record);
+};
+
+const dtgCell = row.insertCell();
+dtgCell.textContent = record.dtg.substring(0, 10);
+
+const coordCell = row.insertCell();
+coordCell.textContent = record.coordinate;
+
+const reporterCell = row.insertCell();
+reporterCell.textContent = record.reporter;
+reporterCell.className = 'hidden-mobile';
+
+const activityCell = row.insertCell();
+activityCell.textContent = record.activity;
+activityCell.className = `activity-${record.activity.toLowerCase()}`;
+
+const equipCell = row.insertCell();
+equipCell.textContent = record.equipment;
+equipCell.className = 'hidden-mobile';
+
+const strengthCell = row.insertCell();
+strengthCell.textContent = record.strength;
+strengthCell.className = 'hidden-mobile';
+
+const priorityCell = row.insertCell();
+priorityCell.textContent = record.priority;
+priorityCell.className = `priority-${record.priority.toLowerCase()}`;
+
+const actionCell = row.insertCell();
+const deleteBtn = document.createElement('button');
+deleteBtn.textContent = '✕';
+deleteBtn.className = 'btn-danger';
+deleteBtn.style.padding = '4px 8px';
+deleteBtn.style.fontSize = '12px';
+deleteBtn.setAttribute('aria-label', 'Delete record');
+deleteBtn.onclick = (e) => {
+e.stopPropagation();
+this.deleteRecord(record.id);
+};
+actionCell.appendChild(deleteBtn);
+} catch (e) {
+console.error('Row rendering error:', e);
+}
+});
+},
+
+showDetails: function(record) {
+try {
+const modal = document.getElementById('detailModal');
+const content = document.getElementById('detailContent');
+
+if (!modal || !content) return;
+
+const html = `
+<div class="detail-row">
+<div class="detail-label">Date-Time Group</div>
+<div class="detail-value">${escapeHTML(record.dtg)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Coordinate</div>
+<div class="detail-value">${escapeHTML(record.coordinate)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Reporter</div>
+<div class="detail-value">${escapeHTML(record.reporter)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Activity</div>
+<div class="detail-value">${escapeHTML(record.activity)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Equipment</div>
+<div class="detail-value">${escapeHTML(record.equipment)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Strength</div>
+<div class="detail-value">${escapeHTML(record.strength)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Priority</div>
+<div class="detail-value">${escapeHTML(record.priority)}</div>
+</div>
+<div class="detail-row">
+<div class="detail-label">Full Message</div>
+<div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div>
+</div>
+`;
+
+content.innerHTML = html;
+modal.classList.add('active');
+} catch (e) {
+console.error('Detail modal error:', e);
+}
+},
+
+closeModal: function() {
+const modal = document.getElementById('detailModal');
+if (modal) {
+modal.classList.remove('active');
+}
+},
+
+deleteRecord: function(id) {
+if (!id) return;
+if (confirm('Delete this record?')) {
+this.database = this.database.filter(r => r.id !== id);
+this.updateDisplay();
+}
+},
+
+clearAll: function() {
+if (confirm('Clear all records? This cannot be undone.')) {
+this.database = [];
+this.processedHashes.clear();
+this.updateDisplay();
+}
+},
+
+exportToExcel: function() {
+if (this.database.length === 0) {
+this.showToast('No data to export', 'error');
+return;
+}
+
+try {
+const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
+const rows = this.database.map(r => [
+preventFormulaInjection(r.dtg),
+preventFormulaInjection(r.coordinate),
+preventFormulaInjection(r.reporter),
+preventFormulaInjection(r.unit),
+preventFormulaInjection(r.activity),
+preventFormulaInjection(r.equipment),
+preventFormulaInjection(r.strength),
+preventFormulaInjection(r.priority),
+preventFormulaInjection(r.fullMessage)
+]);
+
+const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
+const blob = new Blob([tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+const dateStr = new Date().toISOString().split('T')[0];
+a.download = `intel_fusion_${dateStr}_${this.database.length}records.tsv`;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+this.showToast('Exported to Excel', 'success');
+} catch (e) {
+console.error('Export error:', e);
+this.showToast('Export failed', 'error');
+}
+},
+
+copyToClipboard: function() {
+if (this.database.length === 0) {
+this.showToast('No data to copy', 'error');
+return;
+}
+
+try {
+const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
+const rows = this.database.map(r => [
+r.dtg, r.coordinate, r.reporter, r.unit, r.activity, r.equipment, r.strength, r.priority, r.fullMessage
+]);
+
+const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
+navigator.clipboard.writeText(tsv).then(() => {
+this.showToast('Copied to clipboard', 'success');
+}).catch(() => {
+this.showToast('Copy failed', 'error');
+});
+} catch (e) {
+console.error('Clipboard error:', e);
+this.showToast('Copy failed', 'error');
+}
+},
+
+toggleAutoMode: function() {
+this.autoModeEnabled = !this.autoModeEnabled;
+const btn = document.getElementById('autoModeText');
+if (btn) {
+btn.textContent = this.autoModeEnabled ? 'Auto Mode ON' : 'Enable Auto Mode';
+}
+if (this.autoModeEnabled) {
+this.showToast('Auto Mode enabled. Use bookmarklet to extract messages.', 'success');
+}
+},
+
+handlePostMessage: function(event) {
+try {
+if (!event.data || typeof event.data !== 'object') return;
+if (event.data.type !== 'INTEL_BATCH') return;
+if (!this.autoModeEnabled) return;
+if (!Array.isArray(event.data.messages)) return;
+
+const messages = event.data.messages;
+let added = 0;
+
+messages.forEach(msg => {
+if (typeof msg === 'string') {
+const parsed = parseMessage(msg);
+if (parsed) {
+this.database.push(parsed);
+added++;
+}
+}
+});
+
+if (added > 0) {
+this.updateDisplay();
+this.showToast(`Auto-added ${added} messages`, 'success');
+}
+} catch (e) {
+console.error('PostMessage handling error:', e);
+}
+},
+
+showToast: function(message, type) {
+const toast = document.createElement('div');
+toast.className = `toast ${type}`;
+toast.textContent = message;
+document.body.appendChild(toast);
+setTimeout(() => {
+toast.remove();
+}, 3000);
+}
+};
+
+window.addEventListener('message', (e) => App.handlePostMessage(e), false);
+
+document.getElementById('detailModal').addEventListener('keydown', (e) => {
+if (e.key === 'Escape') App.closeModal();
+}, false);
+
+document.getElementById('recordsTable').addEventListener('keydown', (e) => {
+if (e.key === 'Escape') {
+document.getElementById('searchBox').focus();
+}
+}, false);
+
+App.updateDisplay();
+
+window.App = App;
+
+})();
+</script>
+</body>
+</html>

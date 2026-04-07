@@ -1,0 +1,123 @@
+INTEL FUSION - BOOKMARKLET SETUP
+=================================
+
+WHAT IT DOES:
+Automatically extracts messages from chat pages and sends them to Intel Fusion.
+
+INSTALLATION (3 STEPS):
+-----------------------
+
+STEP 1: Copy the bookmarklet code below
+
+STEP 2: Create new bookmark
+- Right-click bookmarks bar
+- Select "Add new bookmark"
+- Name: "Extract to Intel Fusion"
+- Paste code into URL field
+
+STEP 3: Use it
+- Open Intel Fusion in one tab
+- Click "Enable Auto Mode" 
+- Open chat page in another tab
+- Click the bookmarklet
+- Messages auto-extract to Intel Fusion
+
+================================
+BOOKMARKLET CODE
+================================
+
+Copy everything between the START and END lines:
+
+--- START COPY HERE ---
+javascript:(function(){const messages=[];document.querySelectorAll('div[class*="message"],div[class*="chat"],p,li').forEach(el=>{const text=el.innerText?.trim();if(text&&text.length>20&&!text.match(/^(ok|copy|roger|wilco|out)$/i)){messages.push(text)}});if(messages.length>0){const uniqueMessages=[...new Set(messages)];try{window.opener?.postMessage({type:'INTEL_BATCH',messages:uniqueMessages},'*');alert(`Extracted ${uniqueMessages.length} messages`)}catch(e){prompt('Copy these messages:',uniqueMessages.join('\n\n---\n\n'))}}else{alert('No messages found')}})();
+--- END COPY HERE ---
+
+================================
+USAGE INSTRUCTIONS
+================================
+
+BASIC WORKFLOW:
+
+1. Open Intel Fusion (intel_fusion.html)
+2. Click "Enable Auto Mode" button
+3. Open your chat/messaging page
+4. Click the "Extract to Intel Fusion" bookmarklet
+5. Messages automatically appear in Intel Fusion
+6. Click "Process & Add" if not auto-processing
+
+AUTO MODE:
+- Intel Fusion receives messages automatically
+- You can click bookmarklet repeatedly (gets only new messages)
+- Duplicate detection prevents re-processing
+
+MANUAL MODE:
+- Messages display in text box
+- Click "Process & Add" manually
+- More control over what gets processed
+
+================================
+ALTERNATIVE: COPY-PASTE METHOD
+================================
+
+If bookmarklet doesn't work:
+
+1. Select messages in chat
+2. Copy (Ctrl+C / Cmd+C)
+3. Paste into Intel Fusion text box
+4. Click "Process & Add"
+
+================================
+TROUBLESHOOTING
+================================
+
+BOOKMARKLET NOT WORKING?
+- Make sure both tabs are open (Intel Fusion + chat)
+- Enable Auto Mode in Intel Fusion first
+- Check browser allows pop-ups
+- Try copy-paste method instead
+
+NO MESSAGES EXTRACTED?
+- Page structure may be incompatible
+- Try selecting and copying manually
+- Tool works best with standard chat interfaces
+
+GETTING DUPLICATE MESSAGES?
+- Intel Fusion auto-filters duplicates
+- Same coordinate + similar text = duplicate
+- Only new unique messages are added
+
+================================
+ADVANCED BOOKMARKLET (optional)
+================================
+
+For auto-clicking and extracting every 30 seconds:
+
+--- START ADVANCED CODE ---
+javascript:(function(){let count=0;const interval=setInterval(()=>{const messages=[];document.querySelectorAll('div[class*="message"],div[class*="chat"],p').forEach(el=>{const text=el.innerText?.trim();if(text&&text.length>20){messages.push(text)}});if(messages.length>0){window.opener?.postMessage({type:'INTEL_BATCH',messages:[...new Set(messages)]},'*')};count++;if(count>20){clearInterval(interval);alert('Auto-extract stopped')}},30000)})();
+--- END ADVANCED CODE ---
+
+This runs automatically every 30 seconds for 10 minutes.
+Click again to restart.
+
+================================
+SECURITY NOTES
+================================
+
+- Bookmarklets run in YOUR browser only
+- No data sent to external servers
+- All processing happens locally
+- Safe for classified networks
+- Delete bookmark when done if needed
+
+================================
+MOBILE USAGE
+================================
+
+Mobile browsers may not support bookmarklets.
+Use copy-paste method instead:
+
+1. Long-press message
+2. Select all messages
+3. Copy
+4. Switch to Intel Fusion tab
+5. Paste and process

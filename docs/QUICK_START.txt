@@ -1,0 +1,260 @@
+INTEL FUSION - QUICK START GUIDE
+=================================
+
+WHAT IT IS:
+Automatically converts chat messages into structured intelligence database.
+
+WHAT YOU GET:
+✅ intel_fusion.html - The tool (open in browser)
+✅ test_messages.txt - 30 sample messages to test
+✅ bookmarklet_setup.txt - Browser automation setup
+✅ This guide
+
+================================
+1-MINUTE SETUP
+================================
+
+1. Open "intel_fusion.html" in your browser (Chrome/Edge)
+2. Copy messages from "test_messages.txt"
+3. Paste into the text box
+4. Click "Process & Add"
+5. Done! View your intelligence database
+
+================================
+BASIC USAGE
+================================
+
+METHOD 1: COPY-PASTE (Easiest)
+1. Copy chat messages
+2. Paste into Intel Fusion
+3. Click "Process & Add"
+4. View extracted intelligence in table
+
+METHOD 2: BOOKMARKLET (Auto-extract)
+1. Follow setup in "bookmarklet_setup.txt"
+2. Enable "Auto Mode" in Intel Fusion
+3. Click bookmarklet on chat page
+4. Messages auto-extract
+
+================================
+WHAT IT EXTRACTS
+================================
+
+FROM THIS:
+"UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003"
+
+TO THIS:
+┌─────────────┬──────────────────┬──────────┬──────────┐
+│ DTG         │ Coordinate       │ Activity │ Equipment│
+├─────────────┼──────────────────┼──────────┼──────────┤
+│ 191505DJAN26│ 35V MD 85243 ... │ MOVEMENT │ TANK     │
+└─────────────┴──────────────────┴──────────┴──────────┘
+
+Extracts:
+✓ Coordinates (MGRS format)
+✓ Date-time groups
+✓ Equipment types
+✓ Activity (movement, engagement, position)
+✓ Unit strength
+✓ Priority level
+
+================================
+KEY FEATURES
+================================
+
+FILTERS:
+- Priority (High / Routine)
+- Activity type
+- Search box (search everything)
+
+ACTIONS:
+- Click row → See full message details
+- Delete button → Remove incorrect entries
+- Export → Download Excel-compatible file
+- Clear All → Start fresh
+
+STATISTICS:
+- Total records
+- High priority count
+- Movements detected
+- Engagements tracked
+
+================================
+EXPORT DATA
+================================
+
+1. Click "Export to Excel"
+2. Opens as .tsv file
+3. Compatible with:
+   - Microsoft Excel
+   - Google Sheets
+   - SharePoint upload
+   - Any spreadsheet tool
+
+File includes all fields:
+- DTG, Coordinates, Reporter
+- Unit, Activity, Equipment
+- Strength, Priority, Full Message
+
+================================
+TESTING THE TOOL
+================================
+
+Use provided test messages:
+
+1. Open test_messages.txt
+2. Copy BATCH 1 (messages 1-3)
+3. Paste into Intel Fusion
+4. Click "Process & Add"
+5. See 3 records appear
+
+Try different batches:
+- BATCH 2: Casual observations
+- BATCH 3: Urgent reports
+- BATCH 4: Mixed formats
+- BATCH 5: Equipment-focused
+
+All 30 messages = comprehensive test
+
+================================
+WORKS WITH
+================================
+
+MESSAGE FORMATS:
+✅ NATO APP-11 SALUTE reports
+✅ Casual chat messages
+✅ Partial/mixed formats
+✅ Typos and informal language
+
+EQUIPMENT RECOGNIZED:
+✅ Tanks (T-72, T-80, T-90)
+✅ APCs (BMP, BTR)
+✅ Artillery (2S19, MLRS)
+✅ Recon (UAV, BRDM)
+✅ 60+ types total
+
+================================
+DEPLOYMENT
+================================
+
+WHERE TO USE:
+- Personal laptop (open HTML file)
+- Team SharePoint (upload file, share link)
+- Unit network (copy to shared drive)
+- Disconnected/air-gapped systems
+
+REQUIREMENTS:
+- Modern browser (Chrome 90+, Edge 90+)
+- JavaScript enabled
+- No installation needed
+- No internet required (after first load)
+
+CLASSIFIED USE:
+- Tool itself is UNCLASSIFIED
+- Can process classified chat (data stays local)
+- Mark exports appropriately
+- Follow your unit's data handling procedures
+
+================================
+TIPS & TRICKS
+================================
+
+GETTING BETTER RESULTS:
+- Include coordinates when possible
+- Mention equipment types
+- Add time information
+- Use SALUTE format when you can
+
+AVOIDING DUPLICATES:
+- Tool auto-detects duplicates
+- Based on content similarity
+- Safe to paste same chat multiple times
+- Only new messages added
+
+MOBILE USE:
+- Works on phones/tablets
+- Table hides some columns (tap row for full details)
+- Copy-paste works best
+- Bookmarklet may not work
+
+================================
+TROUBLESHOOTING
+================================
+
+NO DATA EXTRACTED?
+→ Messages might be too short (min 20 characters)
+→ Check for coordinates or intel keywords
+→ Try longer, more detailed messages
+
+TOO MANY DUPLICATES?
+→ This is normal and good (prevents re-processing)
+→ Tool is working correctly
+
+EXPORT NOT WORKING?
+→ Check browser allows downloads
+→ File saves as .tsv (open with Excel)
+→ Try different browser if issues
+
+BOOKMARKLET FAILS?
+→ Use copy-paste instead
+→ Some chat pages aren't compatible
+→ Manual method always works
+
+================================
+SUPPORT & FEEDBACK
+================================
+
+This tool was developed for:
+- Battalion/Brigade S2 sections
+- Division G2 intelligence cells
+- Tactical intelligence processing
+
+Contact your S2/G2 section for:
+- Unit-specific setup
+- Integration with existing systems
+- Training sessions
+- Feature requests
+
+================================
+GETTING STARTED RIGHT NOW
+================================
+
+1. Open intel_fusion.html
+2. Open test_messages.txt
+3. Copy first 3 messages
+4. Paste, click "Process & Add"
+5. You're using Intel Fusion!
+
+Then:
+- Test with real chat logs
+- Set up bookmarklet
+- Train your team
+- Process real intel
+
+================================
+QUICK REFERENCE
+================================
+
+BUTTONS:
+⚡ Process & Add - Extract intelligence
+🔄 Auto Mode - Enable bookmarklet mode
+📥 Export - Download Excel file
+🗑️ Clear All - Reset database
+
+COLORS:
+🔴 Red = High priority / Engagement
+🟢 Green = Movement
+🟡 Yellow = Position
+⚪ Gray = Routine
+
+FILE SIZE:
+- Tool: 150KB
+- Export per 100 records: ~100KB
+- Handles 1000+ records easily
+
+================================
+END QUICK START GUIDE
+================================
+
+Ready to process intelligence faster?
+Open intel_fusion.html and start!
