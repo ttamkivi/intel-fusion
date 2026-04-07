@@ -97,15 +97,56 @@ th, td { padding: 6px; font-size: 11px; }
 </div>
 </div>
 
+<details style="margin-bottom: 15px;">
+<summary style="cursor: pointer; color: #4a9eff; font-size: 14px; padding: 8px 12px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px;" id="guideToggle">ℹ️ What is Intel Fusion? (Quick Guide)</summary>
+<div style="background: #2a2a2a; padding: 15px; border-radius: 0 0 6px 6px; border: 1px solid #3a3a3a; border-top: none; font-size: 13px; line-height: 1.7; color: #ccc;">
+
+<p style="margin-bottom: 10px;"><strong style="color: #4a9eff;">Intel Fusion</strong> converts raw battlefield chat messages into a structured, searchable intelligence database. It runs entirely in your browser — no internet, no installation, no data leaves your machine.</p>
+
+<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">How to use:</strong></p>
+<div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
+<strong>1.</strong> Paste chat messages into the text box (or click <em>Load Test Data</em> to try it)<br>
+<strong>2.</strong> Click <strong style="color: #4a9eff;">Process & Add</strong> — the parser extracts coordinates, equipment, activity, priority<br>
+<strong>3.</strong> Filter and search the results in the table below<br>
+<strong>4.</strong> Click any row to see full details (with equipment photos and Wikipedia links)<br>
+<strong>5.</strong> Export to Excel/TSV when ready
+</div>
+
+<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">What it parses:</strong></p>
+<div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
+<strong>Formats:</strong> NATO APP-11 SALUTE reports, casual chat messages, mixed/partial formats<br>
+<strong>Coordinates:</strong> MGRS (35V MD 85243 89003) and decimal (58.123, 26.456)<br>
+<strong>Equipment:</strong> 25+ types — tanks (T-72/80/90), APCs (BMP, BTR), artillery (2S19, BM-21), UAVs, air defense (SA-11, SA-15)<br>
+<strong>Activities:</strong> MOVEMENT, ENGAGEMENT, POSITION, OBSERVATION, STAGING<br>
+<strong>Priority:</strong> AUTO — detects URGENT/FLASH/CRITICAL keywords → HIGH, otherwise ROUTINE
+</div>
+
+<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">Buttons:</strong></p>
+<div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
+<strong style="color: #4a9eff;">⚡ Process & Add</strong> — parse messages and add to database<br>
+<strong>🔄 Auto Mode</strong> — receive messages automatically via bookmarklet from other browser tabs<br>
+<strong style="color: #22c55e;">📥 Export</strong> — download TSV file (opens in Excel, SharePoint, Google Sheets)<br>
+<strong>📋 Copy TSV</strong> — copy tab-separated data to clipboard<br>
+<strong style="color: #ef4444;">🗑️ Clear All</strong> — reset database (data is session-only, lost on page close anyway)
+</div>
+
+<p style="margin-bottom: 6px;"><strong style="color: #e0e0e0;">Security:</strong> Zero network calls (enforced by Content Security Policy). No cookies, no storage, no tracking. Safe for air-gapped and classified networks. Data exists only in browser memory until you export.</p>
+</div>
+</details>
+
 <div class="input-section">
 <textarea id="messageInput" placeholder="Paste chat messages here...&#10;&#10;Examples:&#10;- SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 85243 89003...&#10;- UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003&#10;- scouts report enemy position at MD 86500 88700 or 58.123, 26.456..."></textarea>
 <div class="button-group">
 <button class="btn-primary" onclick="App.processMessages()">⚡ Process & Add</button>
 <button class="btn-secondary" onclick="App.toggleAutoMode()">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
+<span style="border-left: 1px solid #3a3a3a; margin: 0 4px;"></span>
 <button class="btn-success" onclick="App.exportToExcel()">📥 Export to Excel</button>
 <button class="btn-secondary" onclick="App.copyToClipboard()">📋 Copy TSV</button>
-<button class="btn-secondary" onclick="App.loadSampleData()">🧪 Load Test Data</button>
+<span style="border-left: 1px solid #3a3a3a; margin: 0 4px;"></span>
 <button class="btn-danger" onclick="App.clearAll()">🗑️ Clear All</button>
+</div>
+<div style="margin-top: 8px;">
+<button class="btn-secondary" onclick="App.loadSampleData()" style="padding: 6px 12px; font-size: 12px; color: #888; border-color: #333;">🧪 Load Test Data</button>
 </div>
 </div>
 
