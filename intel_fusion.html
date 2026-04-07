@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://upload.wikimedia.org; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
 <meta name="referrer" content="no-referrer">
 <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()">
 <title>Intel Fusion Tool v2.0</title>
@@ -71,9 +71,10 @@ th, td { padding: 6px; font-size: 11px; }
 <div class="container">
 <div class="header">
 <div>
-<h1>⚡ Intel Fusion Tool</h1>
+<h1 id="appTitle">⚡ Intel Fusion Tool</h1>
 <div class="version">v2.0 - Production Hardened</div>
 </div>
+<button class="btn-secondary" onclick="App.toggleLang()" style="padding: 6px 12px; font-size: 12px;" id="langBtn">🇪🇪 Eesti</button>
 </div>
 
 <div class="stats">
@@ -103,6 +104,7 @@ th, td { padding: 6px; font-size: 11px; }
 <button class="btn-secondary" onclick="App.toggleAutoMode()">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
 <button class="btn-success" onclick="App.exportToExcel()">📥 Export to Excel</button>
 <button class="btn-secondary" onclick="App.copyToClipboard()">📋 Copy TSV</button>
+<button class="btn-secondary" onclick="App.loadSampleData()">🧪 Load Test Data</button>
 <button class="btn-danger" onclick="App.clearAll()">🗑️ Clear All</button>
 </div>
 </div>
@@ -141,12 +143,49 @@ th, td { padding: 6px; font-size: 11px; }
 <tbody id="tableBody"></tbody>
 </table>
 </div>
+
+<details style="margin-top: 15px;">
+<summary style="cursor: pointer; color: #4a9eff; font-size: 14px; padding: 8px 0;">📚 Reference Materials & Doctrine</summary>
+<div style="background: #2a2a2a; padding: 15px; border-radius: 6px; margin-top: 8px; border: 1px solid #3a3a3a; font-size: 13px; line-height: 1.8;">
+<div style="margin-bottom: 10px; color: #888; font-size: 11px;">UNCLASSIFIED open-source references for intelligence processing</div>
+
+<div style="margin-bottom: 8px;"><strong style="color: #4a9eff;">SALUTE Reporting</strong></div>
+<a href="http://davidbrentthompson.com/Military/ScrapBook-Collections-Miscellaneous/Guidelines%20Instructions%20%20Procedures%20and%20Related/The%20SALUTE%20Report.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">The SALUTE Report — Format Guide (PDF)</a>
+<a href="https://www.scribd.com/doc/12749877/report-intel-using-salute" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Report Intel Using SALUTE (Scribd)</a>
+
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">US Army Intelligence Doctrine</strong></div>
+<a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN39259-FM_2-0-000-WEB-2.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 2-0: Intelligence (Army Pubs, 2023)</a>
+<a href="https://www.bits.de/NRANEU/others/amd-us-archive/fm34-2(94).pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 34-2: Collection Management & Requirements</a>
+<a href="https://2009-2017.state.gov/documents/organization/150085.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 2-22.3: HUMINT Collector Operations</a>
+
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">NATO Standards</strong></div>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP21.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.1: Allied Joint Doctrine for Intelligence</a>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP27.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.7: NATO Reconnaissance & Surveillance</a>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AIntP14.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AIntP-14: NATO Intelligence Standards</a>
+
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">MGRS Coordinates</strong></div>
+<a href="https://maptools.com/tutorials/mgrs/quick_guide" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Quick Guide to Using MGRS Coordinates</a>
+<a href="https://earth-info.nga.mil/index.php?dir=coordsys&action=coordsys" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">NGA Coordinate Systems (Official)</a>
+
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">Russian Military ORBAT & Equipment</strong></div>
+<a href="https://rdl.train.army.mil/catalog-ws/view/100.ATSC/80679288-2471-4B93-B921-CA4B04BF74FF-1625682681274/gta20_10_001.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">TRADOC: Russian Military Quick Reference (GTA 20-10-001)</a>
+<a href="https://irp.fas.org/doddir/army/id-russia.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Equipment ID Cards: Russia (FAS/IRP)</a>
+<a href="https://storymaps.arcgis.com/stories/6d9825cbafcd4cbf91cb6ce80d9e3f0f" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ISW Russian Ground Forces Interactive ORBAT Map</a>
+<a href="https://www.battleorder.org/russia" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Battle Order: Russian Unit Organization</a>
+
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">NATO eFP & Baltic Operations</strong></div>
+<a href="https://www.nato.int/cps/en/natohq/topics_136388.htm" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">NATO Forward Presence Overview (NATO.int)</a>
+<a href="https://shape.nato.int/efp" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">SHAPE: Forward Land Forces</a>
+
+<div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #3a3a3a; color: #666; font-size: 11px;">Full brain with 9 PDF reference documents + system prompt available at <a href="https://github.com/ttamkivi/intel-fusion/tree/main/brain" target="_blank" rel="noopener" style="color: #888;">github.com/ttamkivi/intel-fusion/brain</a></div>
+</div>
+</details>
 </div>
 
 <div class="modal" id="detailModal" role="dialog" aria-label="Record details">
 <div class="modal-content">
 <div class="modal-header">
-<h2 style="color: #4a9eff;">Message Details</h2>
+<h2 style="color: #4a9eff;" id="modalTitle">Message Details</h2>
 <button class="modal-close" onclick="App.closeModal()" aria-label="Close">✕</button>
 </div>
 <div id="detailContent"></div>
@@ -158,6 +197,148 @@ th, td { padding: 6px; font-size: 11px; }
 'use strict';
 
 const VERSION = 'v2.0';
+let currentLang = 'en';
+
+const LANG = {
+	en: {
+		title: '⚡ Intel Fusion Tool',
+		totalRecords: 'Total Records',
+		highPriority: 'High Priority',
+		movements: 'Movements',
+		engagements: 'Engagements',
+		placeholder: 'Paste chat messages here...\n\nExamples:\n- SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 85243 89003...\n- UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003\n- scouts report enemy position at MD 86500 88700 or 58.123, 26.456...',
+		processBtn: '⚡ Process & Add',
+		autoMode: 'Enable Auto Mode',
+		autoModeOn: 'Auto Mode ON',
+		exportBtn: '📥 Export to Excel',
+		copyBtn: '📋 Copy TSV',
+		testBtn: '🧪 Load Test Data',
+		clearBtn: '🗑️ Clear All',
+		allPriorities: 'All Priorities',
+		allActivities: 'All Activities',
+		search: 'Search...',
+		dtg: 'DTG',
+		coordinate: 'Coordinate',
+		reporter: 'Reporter',
+		activity: 'Activity',
+		equipment: 'Equipment',
+		strength: 'Strength',
+		priority: 'Priority',
+		action: 'Action',
+		details: 'Message Details',
+		fullMessage: 'Full Message',
+		langBtn: '🇪🇪 Eesti',
+		pasteFirst: 'Please paste some messages first',
+		added: 'new records',
+		noDupes: 'No valid intelligence found or all duplicates',
+		noData: 'No data to export',
+		exported: 'Exported to Excel',
+		copied: 'Copied to clipboard',
+		copyFail: 'Copy failed',
+		exportFail: 'Export failed',
+		autoEnabled: 'Auto Mode enabled. Use bookmarklet to extract messages.',
+		testLoaded: '10 sample messages loaded — click Process & Add',
+		clearConfirm: 'Clear all records? This cannot be undone.',
+		deleteConfirm: 'Delete this record?',
+		autoAdded: 'Auto-added',
+		messages: 'messages',
+		resources: '📚 Reference Materials & Doctrine'
+	},
+	et: {
+		title: '⚡ Luure Fusion',
+		totalRecords: 'Kirjeid kokku',
+		highPriority: 'Kõrge prioriteet',
+		movements: 'Liikumised',
+		engagements: 'Kokkupuuted',
+		placeholder: 'Kleebi sõnumid siia...\n\nNäited:\n- SALUTE: Suurus - 1x BTG, Tegevus - LIIKUMINE, Asukoht - 35V MD 85243 89003...\n- UAV2 tuvastas 3 tanki liikumas põhja suunas, ruut 35V MD 85243 89003\n- luurajad raporteerivad vaenlase positsiooni MD 86500 88700...',
+		processBtn: '⚡ Töötle ja lisa',
+		autoMode: 'Lülita automaatrežiim',
+		autoModeOn: 'Automaat SEES',
+		exportBtn: '📥 Ekspordi Excelisse',
+		copyBtn: '📋 Kopeeri TSV',
+		testBtn: '🧪 Laadi testkirjed',
+		clearBtn: '🗑️ Tühjenda kõik',
+		allPriorities: 'Kõik prioriteedid',
+		allActivities: 'Kõik tegevused',
+		search: 'Otsi...',
+		dtg: 'KAR',
+		coordinate: 'Koordinaat',
+		reporter: 'Raporteerija',
+		activity: 'Tegevus',
+		equipment: 'Varustus',
+		strength: 'Tugevus',
+		priority: 'Prioriteet',
+		action: 'Toiming',
+		details: 'Sõnumi üksikasjad',
+		fullMessage: 'Täistekst',
+		langBtn: '🇬🇧 English',
+		pasteFirst: 'Palun kleebi esmalt sõnumid',
+		added: 'uut kirjet',
+		noDupes: 'Kehtivat luureinfot ei leitud või kõik duplikaadid',
+		noData: 'Pole andmeid eksportimiseks',
+		exported: 'Eksporditud Excelisse',
+		copied: 'Kopeeritud lõikelauale',
+		copyFail: 'Kopeerimine ebaõnnestus',
+		exportFail: 'Eksportimine ebaõnnestus',
+		autoEnabled: 'Automaatrežiim sees. Kasuta järjehoidjat sõnumite tõmbamiseks.',
+		testLoaded: '10 testsõnumit laetud — vajuta Töötle ja lisa',
+		clearConfirm: 'Tühjenda kõik kirjed? Seda ei saa tagasi võtta.',
+		deleteConfirm: 'Kustuta see kirje?',
+		autoAdded: 'Automaatselt lisatud',
+		messages: 'sõnumit',
+		resources: '📚 Viitematerjalid ja doktriinid'
+	}
+};
+
+function t(key) { return LANG[currentLang][key] || LANG['en'][key] || key; }
+
+const EQUIPMENT_LINKS = {
+	'T-72': { wiki: 'https://en.wikipedia.org/wiki/T-72', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/T-72B3_-_TankBiathlon2013-01.jpg/300px-T-72B3_-_TankBiathlon2013-01.jpg', tradoc: 'https://rdl.train.army.mil/catalog-ws/view/100.ATSC/80679288-2471-4B93-B921-CA4B04BF74FF-1625682681274/gta20_10_001.pdf' },
+	'T-80': { wiki: 'https://en.wikipedia.org/wiki/T-80', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/T-80U_-_Engineering_Technologies_2012_%281%29.jpg/300px-T-80U_-_Engineering_Technologies_2012_%281%29.jpg' },
+	'T-90': { wiki: 'https://en.wikipedia.org/wiki/T-90', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/4mayrehearsal_09.jpg/300px-4mayrehearsal_09.jpg' },
+	'T-62': { wiki: 'https://en.wikipedia.org/wiki/T-62' },
+	'T-64': { wiki: 'https://en.wikipedia.org/wiki/T-64' },
+	'TANK': { wiki: 'https://en.wikipedia.org/wiki/Russian_Ground_Forces#Equipment' },
+	'BMP-1': { wiki: 'https://en.wikipedia.org/wiki/BMP-1' },
+	'BMP-2': { wiki: 'https://en.wikipedia.org/wiki/BMP-2', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/BMP-2_in_Sevastopol.jpg/300px-BMP-2_in_Sevastopol.jpg' },
+	'BMP-3': { wiki: 'https://en.wikipedia.org/wiki/BMP-3' },
+	'BTR-80': { wiki: 'https://en.wikipedia.org/wiki/BTR-80' },
+	'BTR-82': { wiki: 'https://en.wikipedia.org/wiki/BTR-82A', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/BTR-82A_%281%29.jpg/300px-BTR-82A_%281%29.jpg' },
+	'BMP': { wiki: 'https://en.wikipedia.org/wiki/BMP_(vehicle)' },
+	'BTR': { wiki: 'https://en.wikipedia.org/wiki/BTR-80' },
+	'APC': { wiki: 'https://en.wikipedia.org/wiki/Armoured_personnel_carrier' },
+	'2S19': { wiki: 'https://en.wikipedia.org/wiki/2S19_Msta', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/2S19_Msta-S_-_Engineering_Technologies_2012_%281%29.jpg/300px-2S19_Msta-S_-_Engineering_Technologies_2012_%281%29.jpg' },
+	'2S3': { wiki: 'https://en.wikipedia.org/wiki/2S3_Akatsiya' },
+	'2S1': { wiki: 'https://en.wikipedia.org/wiki/2S1_Gvozdika' },
+	'MLRS': { wiki: 'https://en.wikipedia.org/wiki/Multiple_rocket_launcher' },
+	'BM-21': { wiki: 'https://en.wikipedia.org/wiki/BM-21_Grad', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BM-21_Grad_1.jpg/300px-BM-21_Grad_1.jpg' },
+	'BRDM': { wiki: 'https://en.wikipedia.org/wiki/BRDM-2' },
+	'UAV': { wiki: 'https://en.wikipedia.org/wiki/Unmanned_aerial_vehicle' },
+	'DRONE': { wiki: 'https://en.wikipedia.org/wiki/Unmanned_aerial_vehicle' },
+	'SA-11': { wiki: 'https://en.wikipedia.org/wiki/Buk_missile_system', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Buk-M1-2_9A310M1-2.jpg/300px-Buk-M1-2_9A310M1-2.jpg' },
+	'SA-15': { wiki: 'https://en.wikipedia.org/wiki/Tor_missile_system' },
+	'SA-8': { wiki: 'https://en.wikipedia.org/wiki/9K33_Osa' },
+	'MANPADS': { wiki: 'https://en.wikipedia.org/wiki/Man-portable_air-defense_system' },
+	'ZSU': { wiki: 'https://en.wikipedia.org/wiki/ZSU-23-4_Shilka' }
+};
+
+function buildEquipmentHTML(equipStr) {
+	if (!equipStr || equipStr === 'UNKNOWN') return escapeHTML(equipStr);
+	const items = equipStr.split(', ');
+	return items.map(item => {
+		const info = EQUIPMENT_LINKS[item];
+		if (!info) return escapeHTML(item);
+		let html = '';
+		if (info.img) {
+			html += '<img src="' + escapeHTML(info.img) + '" alt="' + escapeHTML(item) + '" style="max-width:280px; border-radius:4px; margin-bottom:8px; display:block; border:1px solid #3a3a3a;" onerror="this.style.display=\'none\'">';
+		}
+		html += '<a href="' + escapeHTML(info.wiki) + '" target="_blank" rel="noopener" style="color:#60a5fa; text-decoration:none; font-weight:bold;">' + escapeHTML(item) + ' ↗</a>';
+		if (info.tradoc) {
+			html += ' &nbsp;|&nbsp; <a href="' + escapeHTML(info.tradoc) + '" target="_blank" rel="noopener" style="color:#888; text-decoration:none; font-size:11px;">TRADOC ID Card</a>';
+		}
+		return html;
+	}).join('<br>');
+}
 const MONTH_ABBR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 const POSTMESSAGE_ORIGIN_PATTERN = /^(https?:\/\/|file:\/\/)/;
 
@@ -370,7 +551,7 @@ processedHashes: new Set(),
 processMessages: function() {
 const input = document.getElementById('messageInput');
 if (!input || !input.value.trim()) {
-this.showToast('Please paste some messages first', 'error');
+this.showToast(t('pasteFirst'), 'error');
 return;
 }
 
@@ -388,9 +569,9 @@ added++;
 if (added > 0) {
 input.value = '';
 this.updateDisplay();
-this.showToast(`Added ${added} new records`, 'success');
+this.showToast(`${added} ${t('added')}`, 'success');
 } else {
-this.showToast('No valid intelligence found or all duplicates', 'error');
+this.showToast(t('noDupes'), 'error');
 }
 },
 
@@ -503,37 +684,38 @@ const content = document.getElementById('detailContent');
 
 if (!modal || !content) return;
 
+document.getElementById('modalTitle').textContent = t('details');
 const html = `
 <div class="detail-row">
-<div class="detail-label">Date-Time Group</div>
+<div class="detail-label">${escapeHTML(t('dtg'))}</div>
 <div class="detail-value">${escapeHTML(record.dtg)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Coordinate</div>
+<div class="detail-label">${escapeHTML(t('coordinate'))}</div>
 <div class="detail-value">${escapeHTML(record.coordinate)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Reporter</div>
+<div class="detail-label">${escapeHTML(t('reporter'))}</div>
 <div class="detail-value">${escapeHTML(record.reporter)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Activity</div>
+<div class="detail-label">${escapeHTML(t('activity'))}</div>
 <div class="detail-value">${escapeHTML(record.activity)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Equipment</div>
-<div class="detail-value">${escapeHTML(record.equipment)}</div>
+<div class="detail-label">${escapeHTML(t('equipment'))}</div>
+<div class="detail-value">${buildEquipmentHTML(record.equipment)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Strength</div>
+<div class="detail-label">${escapeHTML(t('strength'))}</div>
 <div class="detail-value">${escapeHTML(record.strength)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Priority</div>
+<div class="detail-label">${escapeHTML(t('priority'))}</div>
 <div class="detail-value">${escapeHTML(record.priority)}</div>
 </div>
 <div class="detail-row">
-<div class="detail-label">Full Message</div>
+<div class="detail-label">${escapeHTML(t('fullMessage'))}</div>
 <div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div>
 </div>
 `;
@@ -554,14 +736,14 @@ modal.classList.remove('active');
 
 deleteRecord: function(id) {
 if (!id) return;
-if (confirm('Delete this record?')) {
+if (confirm(t('deleteConfirm'))) {
 this.database = this.database.filter(r => r.id !== id);
 this.updateDisplay();
 }
 },
 
 clearAll: function() {
-if (confirm('Clear all records? This cannot be undone.')) {
+if (confirm(t('clearConfirm'))) {
 this.database = [];
 this.processedHashes.clear();
 this.updateDisplay();
@@ -570,7 +752,7 @@ this.updateDisplay();
 
 exportToExcel: function() {
 if (this.database.length === 0) {
-this.showToast('No data to export', 'error');
+this.showToast(t('noData'), 'error');
 return;
 }
 
@@ -599,16 +781,16 @@ document.body.appendChild(a);
 a.click();
 document.body.removeChild(a);
 URL.revokeObjectURL(url);
-this.showToast('Exported to Excel', 'success');
+this.showToast(t('exported'), 'success');
 } catch (e) {
 console.error('Export error:', e);
-this.showToast('Export failed', 'error');
+this.showToast(t('exportFail'), 'error');
 }
 },
 
 copyToClipboard: function() {
 if (this.database.length === 0) {
-this.showToast('No data to copy', 'error');
+this.showToast(t('noData'), 'error');
 return;
 }
 
@@ -620,14 +802,77 @@ r.dtg, r.coordinate, r.reporter, r.unit, r.activity, r.equipment, r.strength, r.
 
 const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
 navigator.clipboard.writeText(tsv).then(() => {
-this.showToast('Copied to clipboard', 'success');
+this.showToast(t('copied'), 'success');
 }).catch(() => {
-this.showToast('Copy failed', 'error');
+this.showToast(t('copyFail'), 'error');
 });
 } catch (e) {
 console.error('Clipboard error:', e);
-this.showToast('Copy failed', 'error');
+this.showToast(t('copyFail'), 'error');
 }
+},
+
+toggleLang: function() {
+	currentLang = currentLang === 'en' ? 'et' : 'en';
+	this.applyLang();
+},
+
+applyLang: function() {
+	document.getElementById('appTitle').textContent = t('title');
+	document.getElementById('langBtn').textContent = t('langBtn');
+	document.getElementById('messageInput').placeholder = t('placeholder');
+
+	const statLabels = document.querySelectorAll('.stat-label');
+	if (statLabels.length >= 4) {
+		statLabels[0].textContent = t('totalRecords');
+		statLabels[1].textContent = t('highPriority');
+		statLabels[2].textContent = t('movements');
+		statLabels[3].textContent = t('engagements');
+	}
+
+	const buttons = document.querySelectorAll('.button-group button');
+	if (buttons.length >= 6) {
+		buttons[0].innerHTML = t('processBtn');
+		const autoSpan = document.getElementById('autoModeText');
+		if (autoSpan) autoSpan.textContent = this.autoModeEnabled ? t('autoModeOn') : t('autoMode');
+		buttons[2].innerHTML = t('exportBtn');
+		buttons[3].innerHTML = t('copyBtn');
+		buttons[4].innerHTML = t('testBtn');
+		buttons[5].innerHTML = t('clearBtn');
+	}
+
+	const prioritySel = document.getElementById('priorityFilter');
+	if (prioritySel) prioritySel.options[0].text = t('allPriorities');
+	const activitySel = document.getElementById('activityFilter');
+	if (activitySel) activitySel.options[0].text = t('allActivities');
+	document.getElementById('searchBox').placeholder = t('search');
+
+	const headers = document.querySelectorAll('thead th');
+	const hKeys = ['dtg','coordinate','reporter','activity','equipment','strength','priority','action'];
+	headers.forEach((th, i) => { if (hKeys[i]) th.textContent = t(hKeys[i]); });
+
+	const resourcesToggle = document.querySelector('details summary');
+	if (resourcesToggle) resourcesToggle.textContent = t('resources');
+},
+
+loadSampleData: function() {
+	const samples = [
+		'UAV2 spotted 3x T-72 tanks moving north along main road, grid 35V MD 85243 89003, urgent priority',
+		'SCOUT4 reports enemy BMP-2 platoon in defensive position at MD 86500 88700, dug in with artillery support from 2S19 battery',
+		'FO1 observed MLRS battery relocating west, approximate location 58.3812, 26.7234, 4x BM-21 vehicles in convoy formation',
+		'SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 84100 90200, Unit - 138th MRB, Time - 071430ZAPR2026, Equipment - T-80 tanks, BMP-3, estimated 40 vehicles',
+		'RECON3 flash report: enemy SA-11 air defense battery emplaced at grid 35V MD 83500 91000, 3x TELs with radar active, critical threat to air operations',
+		'OP7 observing enemy staging area at MD 87200 89500, company-sized element with BTR-82 APCs and logistics vehicles, appears to be preparing for forward movement',
+		'UAV5 detected artillery fire from position 58.4201, 26.5890, counterbattery assessment indicates 2S19 MSTA battery, 6x howitzers firing north, urgent',
+		'SCOUT1 reports enemy recon element probing defensive line at 35V MD 85800 88200, 2x BRDM-2 vehicles with dismounted infantry squad, routine observation',
+		'FO3 engagement report: enemy T-90 platoon engaged our forward positions at MD 84800 89600, 4x tanks with infantry support, heavy contact ongoing, immediate priority',
+		'UAV1 spotted enemy drone launch site at 58.3950, 26.6100, multiple UAV operators visible with 3x commercial drones, recommend neutralization'
+	];
+	const input = document.getElementById('messageInput');
+	if (input) {
+		input.value = samples.join('\n\n');
+		this.showToast(t('testLoaded'), 'success');
+	}
 },
 
 toggleAutoMode: function() {
@@ -637,7 +882,7 @@ if (btn) {
 btn.textContent = this.autoModeEnabled ? 'Auto Mode ON' : 'Enable Auto Mode';
 }
 if (this.autoModeEnabled) {
-this.showToast('Auto Mode enabled. Use bookmarklet to extract messages.', 'success');
+this.showToast(t('autoEnabled'), 'success');
 }
 },
 
@@ -663,7 +908,7 @@ added++;
 
 if (added > 0) {
 this.updateDisplay();
-this.showToast(`Auto-added ${added} messages`, 'success');
+this.showToast(`${t('autoAdded')} ${added} ${t('messages')}`, 'success');
 }
 } catch (e) {
 console.error('PostMessage handling error:', e);
