@@ -252,48 +252,19 @@ th, td { padding: 6px; font-size: 11px; }
 </div>
 </details>
 
-<!-- NATO INTELLIGENCE CYCLE: 4 steps -->
-<div class="action-bar">
-<div class="action-group">
-<div class="action-group-label"><span class="step-num">1</span> Collect</div>
-<div class="button-row">
-<button class="btn-success" onclick="App.loadJSONFile()" id="loadJSONBtn">📂 Load DB</button>
-<input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="App.handleJSONFileSelect()">
+<!-- ═══ GENERATE REPORT — PRIMARY OUTPUT (HERO SECTION) ═══ -->
+<div id="reportPanel" style="background: linear-gradient(135deg, #0f1a2e, #0f0f2a); border: 2px solid #4a9eff; border-radius: 10px; padding: 20px; margin-top: 14px; box-shadow: 0 0 20px rgba(74,158,255,0.15);">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+<div>
+<div style="font-size: 20px; font-weight: bold; color: #fff;">📄 Generate Intelligence Report</div>
+<div style="font-size: 12px; color: #4a9eff; margin-top: 2px;">Main output — formatted for briefing & big-screen presentation</div>
 </div>
+<div id="reportTDayBadge" style="font-size: 12px; color: #888;"></div>
 </div>
-<div class="action-group">
-<div class="action-group-label"><span class="step-num">2</span> Process</div>
-<div class="button-row">
-<button class="btn-success" onclick="App.saveToJSON()" id="saveJSONBtn">💾 Save DB</button>
-<button class="btn-danger-sm" onclick="App.clearAll()" id="clearBtn">🗑️ Clear</button>
-</div>
-</div>
-<div class="action-group">
-<div class="action-group-label"><span class="step-num">3</span> Analyse</div>
-<div class="button-row">
-<span style="font-size: 11px; color: #666;">Filter &amp; search below ↓</span>
-</div>
-</div>
-<div class="action-group">
-<div class="action-group-label"><span class="step-num">4</span> Disseminate</div>
-<div class="button-row">
-<button class="btn-success" onclick="App.exportToExcel()" id="exportXLSBtn" style="font-size: 11px; padding: 6px 10px;">📥 Excel</button>
-<button class="btn-success" onclick="App.exportToTSV()" id="exportTSVBtn" style="font-size: 11px; padding: 6px 10px;">📥 TSV</button>
-<button class="btn-secondary" onclick="App.copyToClipboard()" id="copyTSVBtn" style="font-size: 11px; padding: 6px 10px;">📋 Copy</button>
-</div>
-</div>
-</div>
-
-<!-- ═══ GENERATE REPORT — PRIMARY OUTPUT ═══ -->
-<div id="reportPanel" style="background: linear-gradient(135deg, #1a2332, #1a1a2e); border: 2px solid #4a9eff; border-radius: 8px; padding: 15px; margin-top: 12px;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-<div style="font-size: 16px; font-weight: bold; color: #4a9eff;">📄 Generate Intelligence Report</div>
-<div style="font-size: 11px; color: #888;">Main product — formatted for briefing & big-screen presentation</div>
-</div>
+<div style="display: flex; gap: 16px; flex-wrap: wrap;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 11px; color: #4a9eff; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Tactical Reports</span>
 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-<div style="display: flex; flex-direction: column; gap: 4px;">
-<span style="font-size: 10px; color: #666; text-transform: uppercase;">Tactical</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap;">
 <button class="report-btn" onclick="App.generateINTSUM()">INTSUM</button>
 <button class="report-btn" onclick="App.generateSPOTREP()">SPOTREP</button>
 <button class="report-btn" onclick="App.generateSITREP()">SITREP</button>
@@ -301,16 +272,16 @@ th, td { padding: 6px; font-size: 11px; }
 <button class="report-btn" onclick="App.generateSALUTE()">SALUTE</button>
 </div>
 </div>
-<div style="display: flex; flex-direction: column; gap: 4px;">
-<span style="font-size: 10px; color: #666; text-transform: uppercase;">Targeting & BDA</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 11px; color: #f87171; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Targeting & BDA</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
 <button class="report-btn report-btn-fire" onclick="App.generateBDA()">BDA</button>
 <button class="report-btn report-btn-fire" onclick="App.generateMISREP()">MISREP</button>
 </div>
 </div>
-<div style="display: flex; flex-direction: column; gap: 4px;">
-<span style="font-size: 10px; color: #666; text-transform: uppercase;">Higher HQ</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 11px; color: #4ade80; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Higher HQ</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
 <button class="report-btn report-btn-hq" onclick="App.generateDIB()">DIB</button>
 <button class="report-btn report-btn-hq" onclick="App.generateOPINTEL()">OPINTEL</button>
 <button class="report-btn report-btn-hq" onclick="App.generatePIRTracker()">PIR Tracker</button>
@@ -351,7 +322,7 @@ th, td { padding: 6px; font-size: 11px; }
 <button class="map-toggle-btn" onclick="App.toggleMapLabels()">Toggle Labels</button>
 <button class="map-toggle-btn" onclick="App.toggleMapGrid()">Toggle Grid</button>
 </div>
-<div style="font-size: 10px; color: #555; margin-top: 6px;">Coordinate reference: UTM Zone 35N / MGRS grid. Cross-reference with Maa-amet xGIS for precise positions. Map is simplified — not to scale.</div>
+<div style="font-size: 10px; color: #555; margin-top: 6px;">Coordinate reference: UTM Zone 35N / MGRS grid. Cross-reference with Maa-amet xGIS for precise positions. Simplified outline — use xGIS for measurement.</div>
 <div class="map-legend" id="mapLegend"></div>
 </div>
 <div class="table-container">
@@ -641,8 +612,8 @@ th, td { padding: 6px; font-size: 11px; }
 <div class="modal-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between;">
 <div style="display: flex; gap: 8px;">
 <button class="btn-primary" onclick="App.copyReportToClipboard()">📋 Copy Text</button>
-<button class="btn-success" onclick="App.downloadReportTXT()">📥 TXT</button>
-<button class="btn-success" onclick="App.downloadReportHTML()">📥 HTML</button>
+<button class="btn-secondary" onclick="App.downloadReportTXT()" style="padding: 6px 12px; font-size: 12px;">📥 TXT</button>
+<button class="btn-secondary" onclick="App.downloadReportHTML()" style="padding: 6px 12px; font-size: 12px;">📥 HTML</button>
 </div>
 <button onclick="App.presentReport()" style="background: #7c3aed; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">🖥️ Present on Big Screen</button>
 </div>
@@ -1140,7 +1111,13 @@ const App = {
 					if (e.key === 'Enter') this.showDetails(record);
 				};
 				row.insertCell().textContent = record.dtg.substring(0, 10);
-				row.insertCell().textContent = record.coordinate;
+				const coordCell = row.insertCell();
+				const coordLink = document.createElement('span');
+				coordLink.textContent = record.coordinate;
+				coordLink.style.cssText = 'color: #60a5fa; cursor: pointer; text-decoration: underline; text-decoration-style: dotted;';
+				coordLink.title = 'Show on map';
+				coordLink.onclick = (e) => { e.stopPropagation(); this.showOnMap(record.id); };
+				coordCell.appendChild(coordLink);
 				const reporterCell = row.insertCell();
 				reporterCell.textContent = record.reporter;
 				reporterCell.className = 'hidden-mobile';
@@ -1178,7 +1155,15 @@ const App = {
 		const content = document.getElementById('detailContent');
 		if (!modal || !content) return;
 		document.getElementById('modalTitle').textContent = t('details');
-		let html = `<div class="detail-row"><div class="detail-label">${escapeHTML(t('dtg'))}</div><div class="detail-value">${escapeHTML(record.dtg)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('coordinate'))}</div><div class="detail-value">${escapeHTML(record.coordinate)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('reporter'))}</div><div class="detail-value">${escapeHTML(record.reporter)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('activity'))}</div><div class="detail-value">${escapeHTML(record.activity)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('equipment'))}</div><div class="detail-value">${buildEquipmentHTML(record.equipment)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('strength'))}</div><div class="detail-value">${escapeHTML(record.strength)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('priority'))}</div><div class="detail-value">${escapeHTML(record.priority)}</div></div>`;
+		// Build coordinate links
+		const coordEsc = escapeHTML(record.coordinate);
+		const coordLinks = `<span style="font-family: monospace; font-weight: bold; color: #4a9eff;">${coordEsc}</span>` +
+			`<div style="margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap;">` +
+			`<button onclick="App.closeModal(); App.showOnMap('${record.id}')" style="background: #1e3a5f; color: #60a5fa; border: 1px solid #2d5a8e; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗺️ Show on Map</button>` +
+			`<a href="https://xgis.maaamet.ee/xgis2/page/app/maainfo" target="_blank" rel="noopener" style="background: #1a2e1a; color: #4ade80; border: 1px solid #166534; padding: 4px 10px; border-radius: 4px; font-size: 12px; text-decoration: none; display: inline-block;">🇪🇪 Maa-amet xGIS ↗</a>` +
+			`</div>`;
+
+		let html = `<div class="detail-row"><div class="detail-label">${escapeHTML(t('dtg'))}</div><div class="detail-value">${escapeHTML(record.dtg)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('coordinate'))}</div><div class="detail-value">${coordLinks}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('reporter'))}</div><div class="detail-value">${escapeHTML(record.reporter)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('activity'))}</div><div class="detail-value">${escapeHTML(record.activity)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('equipment'))}</div><div class="detail-value">${buildEquipmentHTML(record.equipment)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('strength'))}</div><div class="detail-value">${escapeHTML(record.strength)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('priority'))}</div><div class="detail-value">${escapeHTML(record.priority)}</div></div>`;
 		// Show structured NATO report if available
 		if (record.natoDetails) {
 			const d = record.natoDetails;
@@ -2861,6 +2846,48 @@ SUMMARY
 		}
 	},
 
+	// Open map, scroll to it, and flash-highlight a specific record's symbol
+	showOnMap: function(recordId) {
+		const panel = document.getElementById('mapPanel');
+		if (panel) {
+			panel.style.display = 'block';
+			this.renderMap();
+			panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			// Flash the symbol
+			setTimeout(function() {
+				const svg = document.getElementById('tacticalMap');
+				if (!svg) return;
+				const target = svg.querySelector('[data-id="' + recordId + '"]');
+				if (target) {
+					// Draw a highlight ring around the symbol
+					const bbox = target.getBBox();
+					const cx = bbox.x + bbox.width / 2;
+					const cy = bbox.y + bbox.height / 2;
+					const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+					ring.setAttribute('cx', cx);
+					ring.setAttribute('cy', cy);
+					ring.setAttribute('r', '20');
+					ring.setAttribute('fill', 'none');
+					ring.setAttribute('stroke', '#fff');
+					ring.setAttribute('stroke-width', '3');
+					ring.setAttribute('opacity', '1');
+					ring.setAttribute('class', 'map-highlight-ring');
+					svg.appendChild(ring);
+					// Animate: pulse 3 times then remove
+					let pulseCount = 0;
+					const pulseInterval = setInterval(function() {
+						ring.setAttribute('opacity', ring.getAttribute('opacity') === '1' ? '0.2' : '1');
+						pulseCount++;
+						if (pulseCount > 6) {
+							clearInterval(pulseInterval);
+							ring.remove();
+						}
+					}, 400);
+				}
+			}, 300);
+		}
+	},
+
 	toggleMapLabels: function() {
 		this.mapState.showLabels = !this.mapState.showLabels;
 		this.renderMap();
@@ -2884,28 +2911,38 @@ SUMMARY
 		return { zone, letter, gridSquare, easting, northing };
 	},
 
+	// Geographic projection: lon/lat to SVG coordinates
+	// Estonia spans roughly lon 21.5-28.2, lat 57.5-59.7
+	// SVG canvas: 800x500, with margins
+	geoToSVG: function(lon, lat) {
+		const x = 30 + (lon - 21.5) * 108;
+		const y = 480 - (lat - 57.3) * 184;
+		return { x: x, y: y };
+	},
+
 	coordinatesToSVG: function(mgrsStr) {
 		const parsed = this.parseMGRS(mgrsStr);
 		if (!parsed) return null;
-		// For Estonia, most activity is in 35V and 34V zones
-		// 35V covers mainland Estonia (MD grid)
-		// Map scaling (approximate for Estonia)
-		let x, y;
+		// Convert MGRS to approximate lat/lon for Estonia
+		let lat, lon;
 		if (parsed.zone === 35 && parsed.letter === 'V') {
-			// Easting 82000-90000 maps to SVG x 50-750
-			x = 50 + ((parsed.easting - 82000) / (90000 - 82000)) * 700;
-			// Northing 87000-92000 maps to SVG y 450-50 (inverted)
-			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+			// Zone 35V, grid square MD covers most of mainland Estonia
+			// Central meridian ~27°, false easting 500000
+			// Approximate: easting 82000-90000 -> lon 24.0-28.0, northing 87000-92000 -> lat 57.8-59.8
+			lon = 24.0 + (parsed.easting - 82000) * (4.0 / 8000);
+			lat = 57.8 + (parsed.northing - 87000) * (2.0 / 5000);
 		} else if (parsed.zone === 34 && parsed.letter === 'V') {
-			// Saaremaa area - offset to left
-			x = 20 + ((parsed.easting - 82000) / (90000 - 82000)) * 600;
-			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+			// Zone 34V covers western Estonia (Saaremaa, Hiiumaa)
+			// Central meridian ~21°
+			lon = 21.8 + (parsed.easting - 82000) * (3.0 / 8000);
+			lat = 57.8 + (parsed.northing - 87000) * (2.0 / 5000);
 		} else {
-			// Default mapping for other zones
-			x = 50 + ((parsed.easting - 82000) / (90000 - 82000)) * 700;
-			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+			// Fallback for other zones
+			lon = 24.0 + (parsed.easting - 82000) * (4.0 / 8000);
+			lat = 57.8 + (parsed.northing - 87000) * (2.0 / 5000);
 		}
-		return { x: Math.max(20, Math.min(780, x)), y: Math.max(20, Math.min(480, y)) };
+		const pt = this.geoToSVG(lon, lat);
+		return { x: Math.max(10, Math.min(790, pt.x)), y: Math.max(10, Math.min(490, pt.y)) };
 	},
 
 	getActivitySymbol: function(activity, priority) {
@@ -3002,64 +3039,229 @@ SUMMARY
 		const svg = document.getElementById('tacticalMap');
 		if (!svg) return;
 		svg.innerHTML = '';
+		const self = this;
 
 		const width = 800, height = 500;
 
-		// Background
+		// Background - dark sea
 		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 		bg.setAttribute('width', width);
 		bg.setAttribute('height', height);
-		bg.setAttribute('fill', '#111');
+		bg.setAttribute('fill', '#0a1628');
 		svg.appendChild(bg);
 
-		// Grid lines (if enabled)
+		// Helper to build SVG path from lon/lat points
+		function geoPath(points, close) {
+			let d = '';
+			points.forEach(function(p, i) {
+				const sv = self.geoToSVG(p[0], p[1]);
+				d += (i === 0 ? 'M ' : ' L ') + sv.x.toFixed(1) + ',' + sv.y.toFixed(1);
+			});
+			if (close) d += ' Z';
+			return d;
+		}
+
+		// Grid lines with coordinate labels (if enabled)
 		if (this.mapState.showGrid) {
-			for (let i = 0; i <= 8; i++) {
-				const x = (i / 8) * width;
-				const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-				line1.setAttribute('x1', x);
-				line1.setAttribute('y1', 0);
-				line1.setAttribute('x2', x);
-				line1.setAttribute('y2', height);
-				line1.setAttribute('class', 'map-grid-line');
-				svg.appendChild(line1);
+			// Longitude lines every 1°
+			for (var glon = 22; glon <= 28; glon++) {
+				var gp1 = this.geoToSVG(glon, 57.4);
+				var gp2 = this.geoToSVG(glon, 59.8);
+				var gl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+				gl.setAttribute('x1', gp1.x); gl.setAttribute('y1', gp1.y);
+				gl.setAttribute('x2', gp2.x); gl.setAttribute('y2', gp2.y);
+				gl.setAttribute('class', 'map-grid-line');
+				svg.appendChild(gl);
+				var gtx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				gtx.setAttribute('x', gp1.x); gtx.setAttribute('y', gp1.y + 14);
+				gtx.setAttribute('fill', '#334'); gtx.setAttribute('font-size', '9');
+				gtx.setAttribute('text-anchor', 'middle');
+				gtx.textContent = glon + '°E';
+				svg.appendChild(gtx);
 			}
-			for (let i = 0; i <= 5; i++) {
-				const y = (i / 5) * height;
-				const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-				line2.setAttribute('x1', 0);
-				line2.setAttribute('y1', y);
-				line2.setAttribute('x2', width);
-				line2.setAttribute('y2', y);
-				line2.setAttribute('class', 'map-grid-line');
-				svg.appendChild(line2);
+			// Latitude lines every 0.5°
+			for (var glat = 57.5; glat <= 59.5; glat += 0.5) {
+				var gp3 = this.geoToSVG(21.5, glat);
+				var gp4 = this.geoToSVG(28.3, glat);
+				var gl2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+				gl2.setAttribute('x1', gp3.x); gl2.setAttribute('y1', gp3.y);
+				gl2.setAttribute('x2', gp4.x); gl2.setAttribute('y2', gp4.y);
+				gl2.setAttribute('class', 'map-grid-line');
+				svg.appendChild(gl2);
+				var gty = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				gty.setAttribute('x', gp3.x + 2); gty.setAttribute('y', gp3.y - 3);
+				gty.setAttribute('fill', '#334'); gty.setAttribute('font-size', '9');
+				gty.textContent = glat.toFixed(1) + '°N';
+				svg.appendChild(gty);
 			}
 		}
 
-		// Simplified Estonia coastline (SVG path - approximate)
-		const coastline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		coastline.setAttribute('d', 'M 50,80 L 200,70 L 350,60 L 500,65 L 650,70 L 750,90 L 760,150 L 765,220 L 770,300 L 760,400 L 650,450 L 450,460 L 250,455 L 100,440 L 40,380 L 30,300 L 25,200 L 20,120 Z');
-		coastline.setAttribute('class', 'map-coastline');
-		svg.appendChild(coastline);
+		// ====== REAL ESTONIA COASTLINE ======
+		// Mainland Estonia (simplified but geographically accurate outline)
+		var mainland = [
+			[23.44, 58.99], [23.51, 59.08], [23.65, 59.15], [23.86, 59.22],
+			[24.03, 59.35], [24.22, 59.42], [24.38, 59.47], [24.56, 59.44],
+			[24.75, 59.44], [24.83, 59.50], [25.00, 59.53], [25.20, 59.56],
+			[25.40, 59.60], [25.60, 59.60], [25.80, 59.56], [26.05, 59.50],
+			[26.30, 59.47], [26.50, 59.48], [26.70, 59.52], [26.90, 59.48],
+			[27.10, 59.45], [27.35, 59.42], [27.55, 59.40], [27.73, 59.38],
+			[28.02, 59.38], [28.20, 59.36],
+			// NE corner - Narva area
+			[28.05, 59.30], [27.90, 59.18], [27.85, 59.05],
+			// East border (Lake Peipus west shore handled separately, land border)
+			[27.80, 58.90], [27.75, 58.80], [27.60, 58.60],
+			[27.55, 58.40], [27.50, 58.20], [27.52, 58.00],
+			// SE corner - Setomaa/Võru
+			[27.40, 57.80], [27.30, 57.70], [27.10, 57.60],
+			[26.90, 57.55], [26.70, 57.52],
+			// South border - Latvia border
+			[26.50, 57.52], [26.30, 57.54], [26.05, 57.55],
+			[25.80, 57.57], [25.60, 57.58], [25.40, 57.60],
+			[25.20, 57.60], [25.00, 57.58], [24.80, 57.57],
+			[24.60, 57.55], [24.40, 57.54], [24.20, 57.53],
+			[24.00, 57.54],
+			// SW coast - Pärnu area
+			[23.80, 57.60], [23.60, 57.72], [23.50, 57.82],
+			[23.50, 57.92], [23.60, 58.00],
+			// Pärnu Bay
+			[24.00, 58.15], [24.20, 58.25], [24.40, 58.35],
+			[24.52, 58.38], [24.60, 58.38],
+			// West coast - Matsalu area
+			[24.50, 58.50], [24.30, 58.55], [24.10, 58.62],
+			[23.90, 58.68], [23.70, 58.76], [23.55, 58.83],
+			[23.44, 58.92], [23.44, 58.99]
+		];
 
-		// Reference labels (if enabled)
+		var mainlandPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		mainlandPath.setAttribute('d', geoPath(mainland, true));
+		mainlandPath.setAttribute('fill', '#1a2a1a');
+		mainlandPath.setAttribute('stroke', '#3a5a3a');
+		mainlandPath.setAttribute('stroke-width', '1.5');
+		svg.appendChild(mainlandPath);
+
+		// Saaremaa island
+		var saaremaa = [
+			[21.90, 58.25], [22.05, 58.32], [22.25, 58.40],
+			[22.50, 58.44], [22.70, 58.42], [22.85, 58.38],
+			[23.05, 58.35], [23.20, 58.30], [23.30, 58.22],
+			[23.32, 58.12], [23.20, 58.05], [23.00, 57.98],
+			[22.75, 57.96], [22.50, 58.00], [22.30, 58.05],
+			[22.10, 58.10], [21.95, 58.15], [21.90, 58.25]
+		];
+
+		var saaremaaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		saaremaaPath.setAttribute('d', geoPath(saaremaa, true));
+		saaremaaPath.setAttribute('fill', '#1a2a1a');
+		saaremaaPath.setAttribute('stroke', '#3a5a3a');
+		saaremaaPath.setAttribute('stroke-width', '1.5');
+		svg.appendChild(saaremaaPath);
+
+		// Hiiumaa island
+		var hiiumaa = [
+			[22.15, 58.72], [22.30, 58.78], [22.50, 58.85],
+			[22.70, 58.92], [22.90, 58.93], [23.05, 58.88],
+			[23.08, 58.80], [22.95, 58.72], [22.75, 58.68],
+			[22.50, 58.65], [22.30, 58.65], [22.15, 58.72]
+		];
+
+		var hiiumaaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		hiiumaaPath.setAttribute('d', geoPath(hiiumaa, true));
+		hiiumaaPath.setAttribute('fill', '#1a2a1a');
+		hiiumaaPath.setAttribute('stroke', '#3a5a3a');
+		hiiumaaPath.setAttribute('stroke-width', '1.5');
+		svg.appendChild(hiiumaaPath);
+
+		// Muhu island (between Saaremaa and mainland)
+		var muhu = [
+			[23.15, 58.55], [23.30, 58.60], [23.50, 58.60],
+			[23.55, 58.55], [23.45, 58.50], [23.25, 58.48], [23.15, 58.55]
+		];
+		var muhuPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		muhuPath.setAttribute('d', geoPath(muhu, true));
+		muhuPath.setAttribute('fill', '#1a2a1a');
+		muhuPath.setAttribute('stroke', '#3a5a3a');
+		muhuPath.setAttribute('stroke-width', '1');
+		svg.appendChild(muhuPath);
+
+		// Lake Peipus (large lake on eastern border)
+		var peipus = [
+			[26.96, 59.20], [27.15, 59.10], [27.30, 58.95],
+			[27.50, 58.80], [27.55, 58.60], [27.50, 58.40],
+			[27.40, 58.30], [27.20, 58.25], [27.00, 58.20],
+			[26.80, 58.25], [26.65, 58.35], [26.55, 58.50],
+			[26.60, 58.70], [26.70, 58.85], [26.75, 58.95],
+			[26.80, 59.05], [26.90, 59.15], [26.96, 59.20]
+		];
+		var peipusPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		peipusPath.setAttribute('d', geoPath(peipus, true));
+		peipusPath.setAttribute('fill', '#0e1e38');
+		peipusPath.setAttribute('stroke', '#1e3a5f');
+		peipusPath.setAttribute('stroke-width', '1');
+		svg.appendChild(peipusPath);
+		// Peipus label
+		var peipusC = this.geoToSVG(27.05, 58.65);
+		var peipusLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		peipusLbl.setAttribute('x', peipusC.x); peipusLbl.setAttribute('y', peipusC.y);
+		peipusLbl.setAttribute('fill', '#1e3a5f'); peipusLbl.setAttribute('font-size', '9');
+		peipusLbl.setAttribute('text-anchor', 'middle'); peipusLbl.setAttribute('font-style', 'italic');
+		peipusLbl.textContent = 'L. Peipus';
+		svg.appendChild(peipusLbl);
+
+		// Reference city labels (if enabled) — real geographic positions
 		if (this.mapState.showLabels) {
-			const labels = [
-				{ x: 150, y: 100, text: 'Narva' },
-				{ x: 400, y: 200, text: 'Tapa' },
-				{ x: 550, y: 180, text: 'Jõhvi' },
-				{ x: 450, y: 120, text: 'Rakvere' },
-				{ x: 350, y: 250, text: 'Tallinn' },
-				{ x: 100, y: 350, text: 'Saaremaa' }
+			var cities = [
+				{ lon: 24.75, lat: 59.44, text: 'TALLINN', size: 11 },
+				{ lon: 28.05, lat: 59.38, text: 'Narva', size: 9 },
+				{ lon: 26.72, lat: 58.38, text: 'Tartu', size: 10 },
+				{ lon: 24.50, lat: 58.38, text: 'Pärnu', size: 9 },
+				{ lon: 25.60, lat: 59.35, text: 'Rakvere', size: 9 },
+				{ lon: 25.95, lat: 59.35, text: 'Tapa', size: 8 },
+				{ lon: 27.42, lat: 59.35, text: 'Jõhvi', size: 9 },
+				{ lon: 22.48, lat: 58.25, text: 'Kuressaare', size: 8 },
+				{ lon: 22.60, lat: 58.80, text: 'Kärdla', size: 8 },
+				{ lon: 25.59, lat: 58.88, text: 'Haapsalu', size: 8 },
+				{ lon: 26.50, lat: 57.87, text: 'Valga', size: 8 },
+				{ lon: 27.02, lat: 57.84, text: 'Võru', size: 8 },
+				{ lon: 25.97, lat: 58.53, text: 'Paide', size: 8 },
+				{ lon: 26.40, lat: 59.15, text: 'Jõgeva', size: 8 },
+				{ lon: 24.74, lat: 59.34, text: '★', size: 14 }
 			];
-			labels.forEach(label => {
-				const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-				text.setAttribute('x', label.x);
-				text.setAttribute('y', label.y);
-				text.setAttribute('class', 'map-svg-label');
-				text.setAttribute('opacity', '0.5');
-				text.textContent = label.text;
-				svg.appendChild(text);
+			cities.forEach(function(c) {
+				var cp = self.geoToSVG(c.lon, c.lat);
+				var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				txt.setAttribute('x', cp.x);
+				txt.setAttribute('y', cp.y);
+				txt.setAttribute('fill', c.text === 'TALLINN' ? '#6a9' : c.text === '★' ? '#6a9' : '#556');
+				txt.setAttribute('font-size', c.size);
+				txt.setAttribute('text-anchor', 'middle');
+				txt.setAttribute('font-weight', c.text === 'TALLINN' ? 'bold' : 'normal');
+				if (c.text !== '★') txt.setAttribute('opacity', '0.7');
+				txt.textContent = c.text;
+				svg.appendChild(txt);
+				// Small dot marker for cities (except star)
+				if (c.text !== '★' && c.text !== 'TALLINN') {
+					var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+					dot.setAttribute('cx', cp.x); dot.setAttribute('cy', cp.y - 5);
+					dot.setAttribute('r', '2'); dot.setAttribute('fill', '#445');
+					svg.appendChild(dot);
+				}
+			});
+
+			// Water body labels
+			var waterLabels = [
+				{ lon: 23.50, lat: 59.80, text: 'Gulf of Finland', size: 10 },
+				{ lon: 22.50, lat: 57.70, text: 'Gulf of Riga', size: 9 },
+				{ lon: 21.80, lat: 59.00, text: 'Baltic Sea', size: 10 }
+			];
+			waterLabels.forEach(function(w) {
+				var wp = self.geoToSVG(w.lon, w.lat);
+				var wt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				wt.setAttribute('x', wp.x); wt.setAttribute('y', wp.y);
+				wt.setAttribute('fill', '#1a3050'); wt.setAttribute('font-size', w.size);
+				wt.setAttribute('text-anchor', 'middle'); wt.setAttribute('font-style', 'italic');
+				wt.setAttribute('opacity', '0.6');
+				wt.textContent = w.text;
+				svg.appendChild(wt);
 			});
 		}
 
