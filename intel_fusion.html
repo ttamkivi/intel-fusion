@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://upload.wikimedia.org; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
 <meta name="referrer" content="no-referrer">
 <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()">
 <title>Intel Fusion Tool v2.1</title>
@@ -1004,7 +1004,8 @@ function generateXLS(records) {
 	let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Created>' + new Date().toISOString() + '</Created></DocumentProperties>\n<Styles>\n<Style ss:ID="Default"><Alignment ss:Vertical="Bottom"/><Borders/><Font/><Interior/><NumberFormat/><Protection/></Style>\n<Style ss:ID="Header"><Font ss:Bold="1" ss:Color="FFFFFF"/><Interior ss:Color="0070C0" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center" ss:Vertical="Center"/></Style>\n<Style ss:ID="HighPriority"><Font ss:Color="FF0000" ss:Bold="1"/><Interior ss:Color="FFCCCC" ss:Pattern="Solid"/></Style>\n</Styles>\n<Worksheet ss:Name="Intel">\n<Table ss:ExpandedColumnCount="9" ss:ExpandedRowCount="' + (records.length + 1) + '">\n<Column ss:Width="120"/><Column ss:Width="140"/><Column ss:Width="100"/><Column ss:Width="100"/><Column ss:Width="130"/><Column ss:Width="120"/><Column ss:Width="100"/><Column ss:Width="80"/><Column ss:Width="400"/>\n<Row>\n<Cell ss:StyleID="Header"><Data ss:Type="String">DTG</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Coordinate</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Reporter</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Unit</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Activity</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Equipment</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Strength</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Priority</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Message</Data></Cell>\n</Row>\n';
 	records.forEach(r => {
 		const style = r.priority === 'HIGH' ? 'HighPriority' : 'Default';
-		xml += '<Row>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.dtg) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.coordinate) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.reporter) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.unit) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.activity) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.equipment) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.strength) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.priority) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.fullMessage) + '</Data></Cell>\n</Row>\n';
+		var S = function(v) { return escapeHTML(preventFormulaInjection(v)); };
+		xml += '<Row>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.dtg) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.coordinate) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.reporter) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.unit) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.activity) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.equipment) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.strength) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.priority) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + S(r.fullMessage) + '</Data></Cell>\n</Row>\n';
 	});
 	xml += '</Table>\n<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><PrintOptions><FitToPage/></PrintOptions></WorksheetOptions>\n</Worksheet>\n</Workbook>';
 	return xml;
@@ -1159,7 +1160,7 @@ const App = {
 		const coordEsc = escapeHTML(record.coordinate);
 		const coordLinks = `<span style="font-family: monospace; font-weight: bold; color: #4a9eff;">${coordEsc}</span>` +
 			`<div style="margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap;">` +
-			`<button onclick="App.closeModal(); App.showOnMap('${record.id}')" style="background: #1e3a5f; color: #60a5fa; border: 1px solid #2d5a8e; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗺️ Show on Map</button>` +
+			`<button onclick="App.closeModal(); App.showOnMap('${escapeHTML(record.id)}')" style="background: #1e3a5f; color: #60a5fa; border: 1px solid #2d5a8e; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗺️ Show on Map</button>` +
 			`<a href="https://xgis.maaamet.ee/xgis2/page/app/maainfo" target="_blank" rel="noopener" style="background: #1a2e1a; color: #4ade80; border: 1px solid #166534; padding: 4px 10px; border-radius: 4px; font-size: 12px; text-decoration: none; display: inline-block;">🇪🇪 Maa-amet xGIS ↗</a>` +
 			`</div>`;
 
@@ -2294,15 +2295,32 @@ RECOMMENDATIONS
 	// ========================================================================
 	// ADMIN PANEL FUNCTIONS (FEATURE 1)
 	// ========================================================================
+	adminPINAttempts: 0,
+	adminPINLockUntil: 0,
+
 	validateAdminAccess: function() {
+		var now = Date.now();
+		if (now < this.adminPINLockUntil) {
+			var secs = Math.ceil((this.adminPINLockUntil - now) / 1000);
+			this.showToast('PIN locked — wait ' + secs + 's', 'error');
+			return;
+		}
 		const pin = document.getElementById('adminPin').value;
 		if (pin === this.adminPIN) {
 			this.adminLocked = false;
+			this.adminPINAttempts = 0;
 			document.getElementById('adminStatus').textContent = 'Unlocked';
 			document.getElementById('adminStatus').style.color = '#22c55e';
 			this.showToast('Admin panel unlocked', 'success');
 		} else {
-			this.showToast('Incorrect PIN', 'error');
+			this.adminPINAttempts++;
+			if (this.adminPINAttempts >= 3) {
+				this.adminPINLockUntil = now + 60000; // 60s lockout
+				this.adminPINAttempts = 0;
+				this.showToast('3 wrong attempts — locked 60s', 'error');
+			} else {
+				this.showToast('Incorrect PIN (' + (3 - this.adminPINAttempts) + ' attempts left)', 'error');
+			}
 		}
 	},
 
@@ -2923,6 +2941,8 @@ SUMMARY
 	coordinatesToSVG: function(mgrsStr) {
 		const parsed = this.parseMGRS(mgrsStr);
 		if (!parsed) return null;
+		// Validate zone is plausible for Estonia/Baltics (zones 34-35)
+		if (parsed.zone < 34 || parsed.zone > 36) return null;
 		// Convert MGRS to approximate lat/lon for Estonia
 		let lat, lon;
 		if (parsed.zone === 35 && parsed.letter === 'V') {
@@ -2941,6 +2961,7 @@ SUMMARY
 			lon = 24.0 + (parsed.easting - 82000) * (4.0 / 8000);
 			lat = 57.8 + (parsed.northing - 87000) * (2.0 / 5000);
 		}
+		if (!isFinite(lon) || !isFinite(lat)) return null;
 		const pt = this.geoToSVG(lon, lat);
 		return { x: Math.max(10, Math.min(790, pt.x)), y: Math.max(10, Math.min(490, pt.y)) };
 	},

@@ -1,4 +1,7 @@
-# Security Audit Report — Intel Fusion v2.0
+# Security Audit Report — Intel Fusion v2.0 (Historical)
+
+> **Note:** This is the v2.0 audit report preserved for audit trail purposes.
+> For the current security architecture and CISO deployment guide, see [../SECURITY.md](../SECURITY.md) (v2.1.1, 8 April 2026).
 
 **Date:** April 7, 2026
 **Scope:** Full security review of intel_fusion.html (single-file browser application)
