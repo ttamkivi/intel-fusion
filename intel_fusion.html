@@ -77,17 +77,52 @@ input[type="file"] { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 
 .dropdown-menu button:first-child { border-radius: 4px 4px 0 0; }
 .dropdown-menu button:last-child { border-radius: 0 0 4px 4px; }
 .btn-small { padding: 6px 12px; font-size: 12px; color: #888; }
+.action-bar { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.action-group { flex: 1; min-width: 180px; background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 10px; }
+.action-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #555; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.action-group-label .step-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: #3a3a3a; color: #4a9eff; font-size: 10px; font-weight: 700; }
+.action-group .button-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.action-group button { padding: 7px 14px; font-size: 13px; }
+.btn-danger-sm { background: transparent; color: #ef4444; border: 1px solid #3a3a3a; font-size: 12px; padding: 5px 10px; }
+.btn-danger-sm:hover { background: #ef4444; color: white; }
+
+.admin-panel { background: #1a1a1a; border: 2px solid #d97706; border-radius: 6px; padding: 0; margin-bottom: 15px; }
+.admin-panel summary { cursor: pointer; color: #d97706; font-size: 14px; font-weight: bold; padding: 8px 12px; background: #2a2a2a; border: 1px solid #d97706; border-radius: 6px; }
+.admin-panel details[open] > summary { border-radius: 6px 6px 0 0; border-bottom-color: transparent; }
+.admin-panel-content { background: #1a1a1a; padding: 15px; border-radius: 0 0 6px 6px; border: 1px solid #d97706; border-top: none; }
+.admin-section { margin-bottom: 15px; }
+.admin-section-title { color: #d97706; font-weight: bold; font-size: 13px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #3a3a3a; }
+.admin-form-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.admin-form-row label { font-size: 12px; color: #888; min-width: 120px; }
+.admin-form-row input, .admin-form-row select { padding: 6px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; font-size: 12px; }
+.admin-form-row input[type="password"] { font-family: monospace; letter-spacing: 2px; }
+.admin-checkbox-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 8px; }
+.admin-checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.admin-checkbox input { width: 16px; height: 16px; cursor: pointer; }
+.bda-status-destroyed { color: #ef4444; font-weight: bold; }
+.bda-status-damaged { color: #f97316; }
+.bda-status-no-effect { color: #888; }
+.bda-status-unknown { color: #60a5fa; }
+/* Tactical Map Styles */
+#mapPanel { background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; padding: 15px; margin-bottom: 15px; }
+#tacticalMap { background: #111; border: 1px solid #3a3a3a; border-radius: 4px; display: block; margin-bottom: 12px; }
+.map-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.map-toggle-btn { background: #2a2a2a; color: #e0e0e0; border: 1px solid #3a3a3a; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+.map-toggle-btn:hover { background: #3a3a3a; }
+.map-legend { background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px solid #3a3a3a; margin-top: 10px; font-size: 12px; }
+.legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.legend-symbol { display: inline-block; width: 20px; height: 20px; }
+.map-tooltip { position: absolute; background: #2a2a2a; border: 1px solid #3a3a3a; padding: 8px; border-radius: 4px; font-size: 11px; max-width: 200px; z-index: 999; pointer-events: none; }
+.map-svg-label { font-size: 11px; fill: #4a9eff; text-anchor: middle; }
+.map-grid-line { stroke: #333; stroke-width: 0.5; }
+.map-coastline { stroke: #4a9eff; stroke-width: 1.5; fill: none; }
+@keyframes pulse-symbol { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+.map-symbol-high { animation: pulse-symbol 1.5s infinite; }
 @media (max-width: 768px) {
 .hidden-mobile { display: none; }
 th, td { padding: 6px; font-size: 11px; }
 .header { flex-direction: column; align-items: flex-start; }
 }
-</style>
-</head>
-<body>
-<div class="container">
-<div class="header">
-<div>
 <h1 id="appTitle">⚡ Intel Fusion Tool</h1>
 <div class="version">v2.1 - Production Hardened</div>
 </div>
@@ -122,7 +157,7 @@ th, td { padding: 6px; font-size: 11px; }
 
 <p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">New in v2.1:</strong></p>
 <div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
-<strong style="color: #4a9eff;">Auto Mode</strong> — BroadcastChannel listener across browser tabs + individual PostMessage handler<br>
+<strong style="color: #4a9eff;">Auto Mode</strong> — Pulls/scrapes messages from chat tabs at configurable frequency (PULL model)<br>
 <strong style="color: #22c55e;">JSON Database</strong> — Full-featured save/load with duplicate detection and metadata<br>
 <strong style="color: #fbbf24;">NATO Reports</strong> — INTSUM, SPOTREP, and SITREP in military standard format<br>
 <strong style="color: #60a5fa;">Excel XLS Export</strong> — Real Excel 2003 XML with bold headers, red HIGH priority rows, and column widths<br>
@@ -145,14 +180,22 @@ th, td { padding: 6px; font-size: 11px; }
 <div class="input-section">
 <textarea id="messageInput" placeholder="Paste chat messages here...&#10;&#10;Examples:&#10;- SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 85243 89003...&#10;- UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003&#10;- scouts report enemy position at MD 86500 88700 or 58.123, 26.456..."></textarea>
 
+<!-- STEP 1+2: COLLECT & PROCESS (NATO: Direction, Collection, Collation) -->
 <div class="button-group">
 <button class="btn-primary" onclick="App.processMessages()" id="processBtn">⚡ Process & Add</button>
 <button class="btn-secondary" onclick="App.toggleAutoMode()" id="autoModeBtn">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
+<button class="btn-secondary btn-small" onclick="App.loadSampleData()" style="color: #888; border-color: #333;" id="testBtn">🧪 Test Data</button>
 </div>
 
 <div class="auto-settings" id="autoSettings">
 <div class="auto-settings-row">
-<label for="frequencySelect" id="freqLabel">Scan Frequency:</label>
+<label for="sourceSelect" id="sourceLabel">Source:</label>
+<select id="sourceSelect" onchange="App.updateScrapeSource()" style="padding: 6px;">
+<option value="demo" selected>Demo Simulator</option>
+<option value="bookmarklet">Bookmarklet (future)</option>
+<option value="clipboard">Manual paste</option>
+</select>
+<label for="frequencySelect" id="freqLabel">Frequency:</label>
 <select id="frequencySelect" onchange="App.updateAutoFrequency()" style="padding: 6px;">
 <option value="5000">5s</option>
 <option value="10000" selected>10s</option>
@@ -160,41 +203,61 @@ th, td { padding: 6px; font-size: 11px; }
 <option value="60000">60s</option>
 <option value="300000">5 min</option>
 </select>
-</div>
-<div class="auto-settings-row">
-<span style="font-size: 12px; color: #888;">Status: <span style="color: #22c55e;" id="autoStatus">Listening...</span><span class="pulsing-dot"></span></span>
+<span style="font-size: 12px; color: #888;">Status: <span style="color: #22c55e;" id="autoStatus">Idle</span><span class="pulsing-dot" id="autoPulse" style="display:none;"></span></span>
 </div>
 <div class="auto-settings-row">
 <span style="font-size: 12px; color: #888;" id="autoMessageCount">Messages received: 0</span>
 </div>
+<div class="auto-settings-row" id="sourceHint" style="margin-top: 2px;">
+<span style="font-size: 11px; color: #666;">Demo: open test_chat_simulator.html in another tab, press Start, then enable Auto Mode here.</span>
+</div>
 </div>
 
-<div class="button-group">
-<button class="btn-success" onclick="App.saveToJSON()" id="saveJSONBtn">💾 Save JSON</button>
-<button class="btn-success" onclick="App.loadJSONFile()" id="loadJSONBtn">📂 Load JSON</button>
+<!-- NATO INTELLIGENCE CYCLE: 4 steps -->
+<div class="action-bar">
+<div class="action-group">
+<div class="action-group-label"><span class="step-num">1</span> Collect</div>
+<div class="button-row">
+<button class="btn-success" onclick="App.loadJSONFile()" id="loadJSONBtn">📂 Load DB</button>
 <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="App.handleJSONFileSelect()">
 </div>
-
-<div class="button-group">
-<button class="btn-success" onclick="App.exportToExcel()" id="exportXLSBtn">📥 Export Excel (.xls)</button>
-<button class="btn-success" onclick="App.exportToTSV()" id="exportTSVBtn">📥 Export TSV</button>
-<button class="btn-secondary" onclick="App.copyToClipboard()" id="copyTSVBtn">📋 Copy TSV</button>
+</div>
+<div class="action-group">
+<div class="action-group-label"><span class="step-num">2</span> Process</div>
+<div class="button-row">
+<button class="btn-success" onclick="App.saveToJSON()" id="saveJSONBtn">💾 Save DB</button>
+<button class="btn-danger-sm" onclick="App.clearAll()" id="clearBtn">🗑️ Clear</button>
+</div>
+</div>
+<div class="action-group">
+<div class="action-group-label"><span class="step-num">3</span> Analyse</div>
+<div class="button-row">
+<span style="font-size: 11px; color: #666;">Filter &amp; search below ↓</span>
+</div>
+</div>
+<div class="action-group">
+<div class="action-group-label"><span class="step-num">4</span> Disseminate</div>
+<div class="button-row">
+<button class="btn-success" onclick="App.exportToExcel()" id="exportXLSBtn">📥 Excel</button>
+<button class="btn-success" onclick="App.exportToTSV()" id="exportTSVBtn">📥 TSV</button>
+<button class="btn-secondary" onclick="App.copyToClipboard()" id="copyTSVBtn">📋 Copy</button>
 <div style="position: relative; display: inline-block;">
-<button class="btn-secondary" onclick="App.toggleReportMenu()" id="reportBtn">📄 Generate Report ▼</button>
+<button class="btn-secondary" onclick="App.toggleReportMenu()" id="reportBtn">📄 Report ▼</button>
 <div class="dropdown-menu" id="reportMenu">
-<button onclick="App.generateINTSUM()">INTSUM (Intelligence Summary)</button>
-<button onclick="App.generateSPOTREP()">SPOTREP (Spot Report)</button>
-<button onclick="App.generateSITREP()">SITREP (Situation Report)</button>
+<button onclick="App.generateINTSUM()">INTSUM</button>
+<button onclick="App.generateSPOTREP()">SPOTREP</button>
+<button onclick="App.generateSITREP()">SITREP</button>
+<button onclick="App.generateINTREP()">INTREP</button>
+<button onclick="App.generateSALUTE()">SALUTE</button>
+<button onclick="App.generatePIRTracker()">PIR Tracker</button>
+<button onclick="App.generateBDA()">BDA</button>
+<button onclick="App.generateMISREP()">MISREP</button>
+<button onclick="App.generateDIB()">DIB</button>
+<button onclick="App.generateOPINTEL()">OPINTEL</button>
 </div>
 </div>
 </div>
-
-<div class="button-group">
-<button class="btn-danger" onclick="App.clearAll()" id="clearBtn">🗑️ Clear All</button>
 </div>
-
-<div style="margin-top: 8px;">
-<button class="btn-secondary btn-small" onclick="App.loadSampleData()" style="color: #888; border-color: #333;" id="testBtn">🧪 Load Test Data</button>
 </div>
 </div>
 
@@ -213,8 +276,16 @@ th, td { padding: 6px; font-size: 11px; }
 <option value="STAGING">Staging</option>
 </select>
 <input type="text" id="searchBox" placeholder="Search..." style="flex: 1; min-width: 200px;" oninput="App.applyFilters()" aria-label="Search records">
+<button class="btn-secondary" onclick="App.toggleMapPanel()" id="mapToggleBtn" style="padding: 8px 14px; font-size: 13px;">🗺️ Map</button>
 </div>
-
+<div id="mapPanel" style="display:none;">
+<svg id="tacticalMap" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-height:400px;"></svg>
+<div class="map-controls">
+<button class="map-toggle-btn" onclick="App.toggleMapLabels()">Toggle Labels</button>
+<button class="map-toggle-btn" onclick="App.toggleMapGrid()">Toggle Grid</button>
+</div>
+<div class="map-legend" id="mapLegend"></div>
+</div>
 <div class="table-container">
 <table id="recordsTable">
 <thead>
@@ -238,35 +309,194 @@ th, td { padding: 6px; font-size: 11px; }
 <div style="background: #2a2a2a; padding: 15px; border-radius: 6px; margin-top: 8px; border: 1px solid #3a3a3a; font-size: 13px; line-height: 1.8;">
 <div style="margin-bottom: 10px; color: #888; font-size: 11px;">UNCLASSIFIED open-source references for intelligence processing</div>
 
-<div style="margin-bottom: 8px;"><strong style="color: #4a9eff;">SALUTE Reporting</strong></div>
+<!-- ═══ RED FORCE: Russian Tactics & Doctrine ═══ -->
+<div style="margin-bottom: 8px;"><strong style="color: #ff6b6b;">🔴 RED FORCE — Russian Tactics & Doctrine</strong></div>
+<a href="https://rdl.train.army.mil/catalog-ws/view/100.ATSC/80679288-2471-4B93-B921-CA4B04BF74FF-1625682681274/gta20_10_001.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">TRADOC: Russian Military Quick Reference (GTA 20-10-001)</a>
+<a href="https://www.armyupress.army.mil/Portals/7/combat-studies-institute/csi-books/rus-way-of-war.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">TRADOC: The Russian Way of War — Force Structure & Tactics</a>
+<a href="https://community.apan.org/wg/tradoc-g2/operational-environment-and-threat-analysis/m/handbooks/199095" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ATP 7-100.1: Russian Tactics Reference Guide (APAN)</a>
+<a href="https://irp.fas.org/doddir/army/id-russia.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Equipment ID Cards: Russia (FAS/IRP)</a>
+<a href="https://www.battleorder.org/russia" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Battle Order: Russian Unit Organization & ORBAT</a>
+<a href="https://storymaps.arcgis.com/stories/6d9825cbafcd4cbf91cb6ce80d9e3f0f" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ISW Russian Ground Forces Interactive ORBAT Map</a>
+
+<!-- ═══ RED FORCE: Russian BTG & Combined Arms ═══ -->
+<div style="margin: 8px 0;"><strong style="color: #ff6b6b;">🔴 RED FORCE — BTG & Combined Arms</strong></div>
+<a href="https://www.rand.org/content/dam/rand/pubs/research_reports/RRA1200/RRA1233-1/RAND_RRA1233-1.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RAND: Russia's Battalion Tactical Groups (RR-A1233-1)</a>
+<a href="https://www.cna.org/reports/2021/10/russian-military-strategy" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">CNA: Russian Military Strategy — Core Tenets & Concepts</a>
+<a href="https://www.armyupress.army.mil/Journals/Military-Review/English-Edition-Archives/MilitaryReview-20170228-art009/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Military Review: Russian New Generation Warfare</a>
+
+<!-- ═══ RED FORCE: Electronic Warfare ═══ -->
+<div style="margin: 8px 0;"><strong style="color: #ff6b6b;">🔴 RED FORCE — Electronic Warfare</strong></div>
+<a href="https://community.apan.org/wg/tradoc-g2/operational-environment-and-threat-analysis/m/handbooks/199097" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ATP 7-100.3: Russian EW & Cyber Capabilities (APAN)</a>
+<a href="https://jamestown.org/program/russian-electronic-warfare-capabilities-to-2025/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Jamestown: Russian EW Capabilities Assessment</a>
+<a href="https://rfrljrl.wordpress.com/2023/10/russian-electronic-warfare-systems-catalog/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Russian EW Systems Catalog (Krasukha, Zhitel, Borisoglebsk)</a>
+
+<!-- ═══ RED FORCE: Drones & UAV ═══ -->
+<div style="margin: 8px 0;"><strong style="color: #ff6b6b;">🔴 RED FORCE — Drones, UAV & UAS</strong></div>
+<a href="https://www.rusi.org/explore-our-research/publications/special-resources/russian-combat-uav-use-ukraine" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RUSI: Russian Combat UAV Use in Ukraine</a>
+<a href="https://www.cna.org/reports/2022/12/russian-lessons-learned-in-syria-drones" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">CNA: Russian Lessons Learned — UAS in Syria</a>
+<a href="https://www.fpri.org/article/2023/09/russias-drone-warfare-in-ukraine/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FPRI: Russia's Drone Warfare in Ukraine</a>
+<a href="https://www.janes.com/osint-insights/defence-news/air/orlan-10-russias-workhorse-tactical-uav" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Janes: Orlan-10 — Russia's Workhorse Tactical UAV</a>
+<a href="https://militaryleak.com/shahed-136-geran-2/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Shahed-136/Geran-2: Iranian OWA Drone Profile</a>
+<a href="https://www.armyrecognition.com/russia/lancet_loitering_munition" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Lancet Loitering Munition — Specifications & Employment</a>
+
+<!-- ═══ BLUE FORCE: NATO Operational Doctrine ═══ -->
+<div style="margin: 12px 0 8px 0; padding-top: 8px; border-top: 1px solid #3a3a3a;"><strong style="color: #4a9eff;">🔵 BLUE FORCE — NATO Operational Doctrine</strong></div>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP21.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.1: Allied Joint Doctrine for Intelligence</a>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP27.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.7: NATO Reconnaissance & Surveillance</a>
+<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AIntP14.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AIntP-14: NATO Intelligence Standards</a>
+<a href="https://www.coemed.org/files/stanags/02_AJP/AJP-3_EDA_V1_E.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-3: Allied Joint Doctrine for Operations</a>
+<a href="https://www.coemed.org/files/stanags/02_AJP/AJP-3.2_EDA_V1_E.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-3.2: Allied Joint Doctrine for Land Operations</a>
+<a href="https://nso.nato.int/nso/nsdd/main/standards?search=AJP-3.9" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-3.9: Allied Joint Doctrine for Targeting (BDA)</a>
+
+<!-- ═══ BLUE FORCE: Counter-UAS / C-UAV ═══ -->
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">🔵 BLUE FORCE — Counter-UAS / C-UAV</strong></div>
+<a href="https://community.apan.org/wg/joint-counter-small-unmanned-aircraft-systems/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Joint C-sUAS Office (JCO) Knowledge Hub (APAN)</a>
+<a href="https://www.rand.org/pubs/research_reports/RRA981-1.html" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RAND: Counter-UAS Technologies & Tactics</a>
+<a href="https://www.rusi.org/explore-our-research/publications/commentary/countering-drones-lessons-ukraine" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RUSI: Countering Drones — Lessons from Ukraine</a>
+<a href="https://www.japcc.org/articles/a-comprehensive-approach-to-countering-unmanned-aircraft-systems/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">JAPCC: Comprehensive Approach to Countering UAS</a>
+
+<!-- ═══ BLUE FORCE: Intelligence Reporting ═══ -->
+<div style="margin: 8px 0;"><strong style="color: #4a9eff;">🔵 BLUE FORCE — Intelligence Reporting</strong></div>
 <a href="http://davidbrentthompson.com/Military/ScrapBook-Collections-Miscellaneous/Guidelines%20Instructions%20%20Procedures%20and%20Related/The%20SALUTE%20Report.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">The SALUTE Report — Format Guide (PDF)</a>
 <a href="https://www.scribd.com/doc/12749877/report-intel-using-salute" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Report Intel Using SALUTE (Scribd)</a>
-
-<div style="margin: 8px 0;"><strong style="color: #4a9eff;">US Army Intelligence Doctrine</strong></div>
 <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN39259-FM_2-0-000-WEB-2.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 2-0: Intelligence (Army Pubs, 2023)</a>
 <a href="https://www.bits.de/NRANEU/others/amd-us-archive/fm34-2(94).pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 34-2: Collection Management & Requirements</a>
 <a href="https://2009-2017.state.gov/documents/organization/150085.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FM 2-22.3: HUMINT Collector Operations</a>
 
-<div style="margin: 8px 0;"><strong style="color: #4a9eff;">NATO Standards</strong></div>
-<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP21.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.1: Allied Joint Doctrine for Intelligence</a>
-<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AJP27.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AJP-2.7: NATO Reconnaissance & Surveillance</a>
-<a href="https://jadl.act.nato.int/ILIAS/data/testclient/lm_data/lm_152845/Linear/JISR04222102/sharedFiles/AIntP14.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">AIntP-14: NATO Intelligence Standards</a>
+<!-- ═══ Ukraine Lessons Learned ═══ -->
+<div style="margin: 12px 0 8px 0; padding-top: 8px; border-top: 1px solid #3a3a3a;"><strong style="color: #fbbf24;">⚡ Ukraine War — Lessons Learned</strong></div>
+<a href="https://www.rusi.org/explore-our-research/publications/special-resources/preliminary-lessons-conventional-operations-russias-war-ukraine" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RUSI: Preliminary Lessons from Russia's War in Ukraine</a>
+<a href="https://www.rand.org/pubs/perspectives/PEA2081-1.html" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RAND: Lessons from Ukraine for Future Combat</a>
+<a href="https://www.iiss.org/publications/strategic-dossiers/the-military-balance-2024/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">IISS Military Balance 2024 — Post-Ukraine Force Assessments</a>
+<a href="https://www.understandingwar.org/backgrounder/special-edition-ukraine" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Understanding War: Ukraine Special Edition — Tactical Analysis</a>
+<a href="https://mwi.westpoint.edu/category/russia-ukraine-war/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">West Point MWI: Russia-Ukraine War Analysis Series</a>
+<a href="https://warontherocks.com/category/russia-ukraine/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">War on the Rocks: Russia-Ukraine Analysis Archive</a>
 
-<div style="margin: 8px 0;"><strong style="color: #4a9eff;">MGRS Coordinates</strong></div>
+<!-- ═══ Baltic & Estonian Defense ═══ -->
+<div style="margin: 12px 0 8px 0; padding-top: 8px; border-top: 1px solid #3a3a3a;"><strong style="color: #34d399;">🛡️ Baltic & Estonian Defense</strong></div>
+<a href="https://www.nato.int/cps/en/natohq/topics_136388.htm" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">NATO Forward Presence Overview (NATO.int)</a>
+<a href="https://shape.nato.int/efp" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">SHAPE: Forward Land Forces — Baltic Battlegroups</a>
+<a href="https://www.icds.ee/en/category/publications/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ICDS Estonia: Defense & Security Publications</a>
+<a href="https://www.kaitseministeerium.ee/en/objectives-activities/national-defence-strategy" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Estonian MoD: National Defence Strategy</a>
+<a href="https://www.rand.org/pubs/research_reports/RR1253.html" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">RAND: Reinforcing Deterrence on NATO's Eastern Flank</a>
+<a href="https://cepa.org/comprehensive-reports/baltics-left-of-bang/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">CEPA: Baltics Left of Bang — NATO Deterrence Analysis</a>
+<a href="https://www.fpri.org/article/2023/baltic-defense-after-ukraine/" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">FPRI: Baltic Defense After Ukraine</a>
+
+<!-- ═══ MGRS & Map References ═══ -->
+<div style="margin: 12px 0 8px 0; padding-top: 8px; border-top: 1px solid #3a3a3a;"><strong style="color: #a78bfa;">🗺️ MGRS & Map References</strong></div>
 <a href="https://maptools.com/tutorials/mgrs/quick_guide" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Quick Guide to Using MGRS Coordinates</a>
 <a href="https://earth-info.nga.mil/index.php?dir=coordsys&action=coordsys" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">NGA Coordinate Systems (Official)</a>
 
-<div style="margin: 8px 0;"><strong style="color: #4a9eff;">Russian Military ORBAT & Equipment</strong></div>
-<a href="https://rdl.train.army.mil/catalog-ws/view/100.ATSC/80679288-2471-4B93-B921-CA4B04BF74FF-1625682681274/gta20_10_001.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">TRADOC: Russian Military Quick Reference (GTA 20-10-001)</a>
-<a href="https://irp.fas.org/doddir/army/id-russia.pdf" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Equipment ID Cards: Russia (FAS/IRP)</a>
-<a href="https://storymaps.arcgis.com/stories/6d9825cbafcd4cbf91cb6ce80d9e3f0f" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">ISW Russian Ground Forces Interactive ORBAT Map</a>
-<a href="https://www.battleorder.org/russia" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">Battle Order: Russian Unit Organization</a>
-
-<div style="margin: 8px 0;"><strong style="color: #4a9eff;">NATO eFP & Baltic Operations</strong></div>
-<a href="https://www.nato.int/cps/en/natohq/topics_136388.htm" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">NATO Forward Presence Overview (NATO.int)</a>
-<a href="https://shape.nato.int/efp" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; display: block;">SHAPE: Forward Land Forces</a>
-
 <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #3a3a3a; color: #666; font-size: 11px;">Full brain with 9 PDF reference documents + system prompt available at <a href="https://github.com/ttamkivi/intel-fusion/tree/main/brain" target="_blank" rel="noopener" style="color: #888;">github.com/ttamkivi/intel-fusion/brain</a></div>
+</div>
+</details>
+
+<details class="admin-panel" style="margin-bottom: 15px;">
+<summary>⚙️ Admin / Configuration</summary>
+<div class="admin-panel-content">
+
+<!-- EXERCISE CONFIGURATION -->
+<div class="admin-section">
+<div class="admin-section-title">Exercise Configuration</div>
+<div class="admin-form-row">
+<label for="exerciseName">Exercise Name:</label>
+<input type="text" id="exerciseName" placeholder="EXERCISE NORTHERN SHIELD" value="EXERCISE NORTHERN SHIELD" style="flex: 1; min-width: 250px;">
+</div>
+<div class="admin-form-row">
+<label for="unitDesignation">Unit Designation:</label>
+<input type="text" id="unitDesignation" placeholder="BG-EST / 1st Infantry Brigade" value="BG-EST / 1st Infantry Brigade" style="flex: 1; min-width: 250px;">
+</div>
+<div class="admin-form-row">
+<label for="reportingStart">Period Start:</label>
+<input type="datetime-local" id="reportingStart">
+</div>
+<div class="admin-form-row">
+<label for="reportingEnd">Period End:</label>
+<input type="datetime-local" id="reportingEnd">
+</div>
+<div class="admin-form-row">
+<label for="classification">Classification:</label>
+<select id="classification">
+<option value="UNCLASSIFIED">UNCLASSIFIED</option>
+<option value="NATO RESTRICTED">NATO RESTRICTED</option>
+<option value="NATO SECRET">NATO SECRET</option>
+</select>
+</div>
+<div class="admin-form-row">
+<label for="dtgFormat">DTG Format:</label>
+<select id="dtgFormat">
+<option value="ZULU">ZULU</option>
+<option value="LOCAL">LOCAL</option>
+</select>
+</div>
+</div>
+
+<!-- ROLE CONFIGURATION -->
+<div class="admin-section">
+<div class="admin-section-title">Role Configuration</div>
+<div class="admin-form-row">
+<label for="currentRole">Current Role:</label>
+<select id="currentRole">
+<option value="G2 Analyst">G2 Analyst</option>
+<option value="G2 Chief">G2 Chief</option>
+<option value="Brigade Commander">Brigade Commander</option>
+<option value="Observer">Observer</option>
+</select>
+</div>
+</div>
+
+<!-- DATA SOURCES -->
+<div class="admin-section">
+<div class="admin-section-title">Data Sources</div>
+<div class="admin-checkbox-row">
+<div class="admin-checkbox">
+<input type="checkbox" id="dsManual" checked>
+<label for="dsManual" style="margin: 0;">Manual Paste</label>
+</div>
+<div class="admin-checkbox">
+<input type="checkbox" id="dsAutoScrape" checked>
+<label for="dsAutoScrape" style="margin: 0;">Auto Scrape</label>
+</div>
+<div class="admin-checkbox">
+<input type="checkbox" id="dsBookmarklet">
+<label for="dsBookmarklet" style="margin: 0;">Bookmarklet</label>
+</div>
+<div class="admin-checkbox">
+<input type="checkbox" id="dsFileImport" checked>
+<label for="dsFileImport" style="margin: 0;">File Import</label>
+</div>
+</div>
+<div class="admin-form-row">
+<label for="adminScrapeSource">Scrape Source:</label>
+<select id="adminScrapeSource">
+<option value="demo">Demo Simulator</option>
+<option value="bookmarklet">Bookmarklet</option>
+<option value="clipboard">Manual Clipboard</option>
+</select>
+</div>
+<div class="admin-form-row">
+<label for="adminScrapeFreq">Frequency:</label>
+<select id="adminScrapeFreq">
+<option value="5000">5 seconds</option>
+<option value="10000" selected>10 seconds</option>
+<option value="30000">30 seconds</option>
+<option value="60000">60 seconds</option>
+<option value="300000">5 minutes</option>
+</select>
+</div>
+</div>
+
+<!-- APPEARANCE & SECURITY -->
+<div class="admin-section">
+<div class="admin-section-title">Security</div>
+<div class="admin-form-row">
+<label for="adminPin">Admin PIN (default: 1234):</label>
+<input type="password" id="adminPin" placeholder="1234" value="1234" style="width: 100px;">
+<button class="btn-secondary" onclick="App.validateAdminAccess()" style="padding: 6px 12px; font-size: 12px;">Unlock</button>
+<span id="adminStatus" style="font-size: 11px; color: #22c55e; margin-left: 10px;">Ready</span>
+</div>
+</div>
+
 </div>
 </details>
 </div>
@@ -313,7 +543,7 @@ const LANG = {
 		processBtn: '⚡ Process & Add',
 		autoMode: 'Enable Auto Mode',
 		autoModeOn: 'Auto Mode ON',
-		autoEnabled: 'Auto Mode enabled. Listening on BroadcastChannel and PostMessage.',
+		autoEnabled: 'Auto Mode enabled. Scanning chat tabs for new messages.',
 		testLoaded: '10 sample messages loaded — click Process & Add',
 		clearConfirm: 'Clear all records? This cannot be undone.',
 		deleteConfirm: 'Delete this record?',
@@ -365,8 +595,37 @@ const LANG = {
 		sitrep: 'SITREP',
 		selectRecord: 'Please select a record to generate SPOTREP',
 		messagesReceived: 'Messages received',
-		clearBtn: '🗑️ Clear All'
-	},
+		clearBtn: '🗑️ Clear All',
+		intrep: 'INTREP',
+		salute: 'SALUTE',
+		pirTracker: 'PIR Tracker',
+		sourceReliability: 'SOURCE RELIABILITY',
+		informationCredibility: 'INFORMATION CREDIBILITY',
+		pirStatus: 'STATUS',
+		answered: 'ANSWERED',
+		partial: 'PARTIALLY ANSWERED',
+		unanswered: 'UNANSWERED'
+	,
+		admin: 'Admin / Configuration',
+		exerciseName: 'Exercise Name',
+		unitDesignation: 'Unit Designation',
+		classification: 'Classification',
+		role: 'Role',
+		bdaReport: 'BDA',
+		misrep: 'MISREP',
+		dib: 'DIB',
+		opintel: 'OPINTEL',
+		targetDestroyed: 'DESTROYED',
+		targetDamaged: 'DAMAGED',
+		noEffect: 'NO EFFECT',
+		physicalDamage: 'Physical Damage Assessment',
+		functionalDamage: 'Functional Damage Assessment',
+		systemAssessment: 'Target System Assessment',
+		dailyBrief: 'Daily Intelligence Brief',
+		operationalSummary: 'Operational Intelligence Summary',
+		forecast: 'FORECAST',
+		collectionPriorities: 'COLLECTION PRIORITIES',
+		reengagement: 'RECOMMENDED RE-ENGAGEMENT TARGETS'},
 	et: {
 		title: '⚡ Luure Fusion',
 		totalRecords: 'Kirjeid kokku',
@@ -377,7 +636,7 @@ const LANG = {
 		processBtn: '⚡ Töötle ja lisa',
 		autoMode: 'Lülita automaatrežiim',
 		autoModeOn: 'Automaat SEES',
-		autoEnabled: 'Automaatrežiim sees. Kuulatakse BroadcastChannelit ja PostMessage-i.',
+		autoEnabled: 'Automaatrežiim sees. Skaneeritakse vestlustabisid uute sõnumite jaoks.',
 		testLoaded: '10 testsõnumit laetud — vajuta Töötle ja lisa',
 		clearConfirm: 'Tühjenda kõik kirjed? Seda ei saa tagasi võtta.',
 		deleteConfirm: 'Kustuta see kirje?',
@@ -429,8 +688,37 @@ const LANG = {
 		sitrep: 'SITREP',
 		selectRecord: 'Palun valige SPOTREP loomiseks üksus',
 		messagesReceived: 'Saadud sõnumid',
-		clearBtn: '🗑️ Tühjenda kõik'
-	}
+		clearBtn: '🗑️ Tühjenda kõik',
+		intrep: 'INTREP',
+		salute: 'SALUTE',
+		pirTracker: 'PIR Tracker',
+		sourceReliability: 'ALLIKATE USALDUSVÄÄRSUS',
+		informationCredibility: 'TEABE USALDUSVÄÄRSUS',
+		pirStatus: 'OLEK',
+		answered: 'VASTATUD',
+		partial: 'OSALISELT VASTATUD',
+		unanswered: 'VASTAMATA'
+	,
+		admin: 'Admin / Seadistus',
+		exerciseName: 'Harjutuse nimi',
+		unitDesignation: 'Üksuse nimetus',
+		classification: 'Klassifikatsioon',
+		role: 'Roll',
+		bdaReport: 'BDA',
+		misrep: 'MISREP',
+		dib: 'DIB',
+		opintel: 'OPINTEL',
+		targetDestroyed: 'HÄÄVITATUD',
+		targetDamaged: 'KAHJUSTATUD',
+		noEffect: 'EFEKTI POLE',
+		physicalDamage: 'Füüsilise kahjustuse hinnang',
+		functionalDamage: 'Funktsionaalse kahjustuse hinnang',
+		systemAssessment: 'Sihtmärgi süsteemi hinnang',
+		dailyBrief: 'Päevane luureteade',
+		operationalSummary: 'Operatsiooni luureteade',
+		forecast: 'PROGNOOS',
+		collectionPriorities: 'KOGUMISE PRIORITEEDID',
+		reengagement: 'SOOVITATUD UUS RÜNNAK'}
 };
 
 function t(key) { return LANG[currentLang][key] || LANG['en'][key] || key; }
@@ -629,10 +917,25 @@ function generateXLS(records) {
 
 const App = {
 	database: [],
+	bdaDatabase: [],
+	adminConfig: {
+		exerciseName: 'EXERCISE NORTHERN SHIELD',
+		unitDesignation: 'BG-EST / 1st Infantry Brigade',
+		classification: 'UNCLASSIFIED',
+		ctgFormat: 'ZULU',
+		currentRole: 'G2 Analyst',
+		periodStart: null,
+		periodEnd: null
+	},
+	adminLocked: false,
+	adminPIN: '1234',
 	filteredData: [],
 	autoModeEnabled: false,
 	processedHashes: new Set(),
 	broadcastChannel: null,
+	scrapeIntervalId: null,
+	scrapeSource: 'demo', // 'demo' | 'bookmarklet' | 'clipboard' — pluggable
+	remoteMessageCount: 0,
 	autoMessageCount: 0,
 	lastReportData: null,
 
@@ -663,6 +966,7 @@ const App = {
 	updateDisplay: function() {
 		this.updateStats();
 		this.applyFilters();
+		this.renderMap();
 	},
 
 	updateStats: function() {
@@ -748,7 +1052,29 @@ const App = {
 		const content = document.getElementById('detailContent');
 		if (!modal || !content) return;
 		document.getElementById('modalTitle').textContent = t('details');
-		const html = `<div class="detail-row"><div class="detail-label">${escapeHTML(t('dtg'))}</div><div class="detail-value">${escapeHTML(record.dtg)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('coordinate'))}</div><div class="detail-value">${escapeHTML(record.coordinate)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('reporter'))}</div><div class="detail-value">${escapeHTML(record.reporter)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('activity'))}</div><div class="detail-value">${escapeHTML(record.activity)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('equipment'))}</div><div class="detail-value">${buildEquipmentHTML(record.equipment)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('strength'))}</div><div class="detail-value">${escapeHTML(record.strength)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('priority'))}</div><div class="detail-value">${escapeHTML(record.priority)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('fullMessage'))}</div><div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div></div>`;
+		let html = `<div class="detail-row"><div class="detail-label">${escapeHTML(t('dtg'))}</div><div class="detail-value">${escapeHTML(record.dtg)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('coordinate'))}</div><div class="detail-value">${escapeHTML(record.coordinate)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('reporter'))}</div><div class="detail-value">${escapeHTML(record.reporter)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('activity'))}</div><div class="detail-value">${escapeHTML(record.activity)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('equipment'))}</div><div class="detail-value">${buildEquipmentHTML(record.equipment)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('strength'))}</div><div class="detail-value">${escapeHTML(record.strength)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('priority'))}</div><div class="detail-value">${escapeHTML(record.priority)}</div></div>`;
+		// Show structured NATO report if available
+		if (record.natoDetails) {
+			const d = record.natoDetails;
+			const typeLabel = record.natoType ? record.natoType.toUpperCase() : 'NATO REPORT';
+			let natoText = typeLabel + '\n';
+			if (d.fm) natoText += 'FM: ' + d.fm + '\n';
+			if (d.to) natoText += 'TO: ' + d.to + '\n';
+			if (d.dtg) natoText += 'DTG: ' + d.dtg + '\n';
+			if (d.subj) natoText += 'SUBJ: ' + d.subj + '\n\n';
+			if (d.size) natoText += '1. SIZE: ' + d.size + '\n';
+			if (d.activity) natoText += '2. ACTIVITY: ' + d.activity + '\n';
+			if (d.location) natoText += '3. LOCATION: ' + d.location + '\n';
+			if (d.unit) natoText += '4. UNIT: ' + d.unit + '\n';
+			if (d.equipment) natoText += '5. EQUIPMENT: ' + d.equipment + '\n';
+			// SITREP fields
+			if (d.line1) natoText += 'ENEMY: ' + d.line1 + '\n';
+			if (d.line2) natoText += 'FRIENDLY: ' + d.line2 + '\n';
+			if (d.line3) natoText += 'OTHER: ' + d.line3 + '\n';
+			if (d.assessment) natoText += '\nASSESSMENT: ' + d.assessment;
+			html += `<div class="detail-row"><div class="detail-label" style="color: #fbbf24;">NATO Report</div><div class="detail-value monospace" style="border-left: 3px solid #fbbf24; padding-left: 12px;">${escapeHTML(natoText)}</div></div>`;
+		}
+		html += `<div class="detail-row"><div class="detail-label">${escapeHTML(t('fullMessage'))}</div><div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div></div>`;
 		content.innerHTML = html;
 		modal.classList.add('active');
 	},
@@ -1010,6 +1336,299 @@ const App = {
 		}
 	},
 
+	generateINTREP: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			let report = `${t('intrep')} - INTELLIGENCE REPORT
+Generated: ${new Date().toISOString()}
+
+`;
+			
+			// Group records by activity type
+			const byActivity = {};
+			this.database.forEach(r => {
+				const activity = r.activity || 'UNKNOWN';
+				if (!byActivity[activity]) byActivity[activity] = [];
+				byActivity[activity].push(r);
+			});
+
+			// Helper function to assess source reliability (A-F scale per NATO STANAG 2022)
+			const getSourceReliability = (reporter) => {
+				const reporters = {
+					'UAV': 'B',
+					'SCOUT': 'C',
+					'FO': 'B',
+					'OP': 'C',
+					'AERIAL': 'A',
+					'UNKNOWN': 'E'
+				};
+				for (let key in reporters) {
+					if (reporter.includes(key)) return reporters[key];
+				}
+				return 'E';
+			};
+
+			// Helper function to assess information credibility (1-6 scale)
+			const getInfoCredibility = (priority) => {
+				return priority === 'HIGH' ? 1 : priority === 'ROUTINE' ? 5 : 3;
+			};
+
+			report += `1. INTELLIGENCE SUMMARY
+`;
+			report += `   Total reports processed: ${this.database.length}
+`;
+			report += `   High priority items: ${this.database.filter(r => r.priority === 'HIGH').length}
+`;
+			report += `   Reporting period: ${this.database[0]?.dtg || 'N/A'} to ${this.database[this.database.length - 1]?.dtg || 'N/A'}
+
+`;
+
+			report += `2. DETAILED ANALYSIS BY ACTIVITY TYPE
+`;
+			for (const [activity, records] of Object.entries(byActivity)) {
+				report += `
+   ${activity} (${records.length} reports):
+`;
+				records.forEach(r => {
+					const sourceRel = getSourceReliability(r.reporter);
+					const infoCred = getInfoCredibility(r.priority);
+					report += `      - DTG: ${r.dtg} | Location: ${r.coordinate} | Equipment: ${r.equipment}
+`;
+					report += `        Reporter: ${r.reporter} | Strength: ${r.strength}
+`;
+					report += `        Reliability: ${sourceRel}/${infoCred} | Priority: ${r.priority}
+`;
+				});
+			}
+
+			report += `
+3. SOURCE RELIABILITY AND INFORMATION CREDIBILITY (NATO STANAG 2022)
+`;
+			report += `   ${t('sourceReliability')}: A=Reliable, B=Fairly Reliable, C=Not Reliable, E=Unreliable, F=Cannot be judged
+`;
+			report += `   ${t('informationCredibility')}: 1=Confirmed by other sources, 2=Probably true, 3=Possibly true, 4=Doubtful, 5=Improbable, 6=Cannot be judged
+
+`;
+
+			report += `4. ASSESSMENT
+`;
+			const movementCount = byActivity['MOVEMENT']?.length || 0;
+			const engagementCount = byActivity['ENGAGEMENT']?.length || 0;
+			const highPriorityCount = this.database.filter(r => r.priority === 'HIGH').length;
+
+			if (highPriorityCount > 5) {
+				report += `   High volume of priority intelligence indicates sustained operational activity.
+`;
+			}
+			if (movementCount > engagementCount) {
+				report += `   Predominance of movement reports suggests potential repositioning or withdrawal.
+`;
+			} else if (engagementCount > 0) {
+				report += `   Engagement reports indicate active combat operations or defensive posturing.
+`;
+			}
+			report += `
+5. RECOMMENDATIONS
+`;
+			report += `   - Continue collection against identified intelligence gaps
+`;
+			report += `   - Cross-reference high-credibility reports with existing databases
+`;
+			report += `   - Validate source reporting chains for reliability assessment
+`;
+
+			this.displayReport(report, t('intrep'));
+		} catch (e) {
+			console.error('INTREP generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
+
+	generateSALUTE: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			let report = `${t('salute')} REPORT
+Generated: ${new Date().toISOString()}
+
+`;
+			report += `FORMAT: NATO SALUTE (Size-Activity-Location-Unit-Time-Equipment)
+
+`;
+			
+			this.database.forEach((r, index) => {
+				report += `SALUTE REPORT ${index + 1}
+`;
+				report += `S (SIZE): ${r.strength}
+`;
+				report += `A (ACTIVITY): ${r.activity}
+`;
+				report += `L (LOCATION): ${r.coordinate}
+`;
+				report += `U (UNIT): ${r.unit || 'UNKNOWN'}
+`;
+				report += `T (TIME): ${r.dtg}
+`;
+				report += `E (EQUIPMENT): ${r.equipment}
+`;
+				report += `
+SOURCE: ${r.reporter}
+`;
+				report += `PRIORITY: ${r.priority}
+`;
+				report += `REMARKS: ${r.fullMessage}
+`;
+				report += `
+---
+
+`;
+			});
+
+			this.displayReport(report, t('salute'));
+		} catch (e) {
+			console.error('SALUTE generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
+
+	generatePIRTracker: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			let report = `PIR TRACKER - PRIORITY INTELLIGENCE REQUIREMENTS
+Generated: ${new Date().toISOString()}
+
+`;
+
+			// Define standard PIRs for military intelligence
+			const pirs = [
+				{
+					pirNo: '1',
+					question: 'What is the enemy main effort axis?',
+					keywords: ['MOVEMENT', 'POSITION'],
+					description: 'Identify primary enemy direction of operations'
+				},
+				{
+					pirNo: '2',
+					question: 'Where are enemy air defense assets located?',
+					keywords: ['SA-', 'ZSU', 'MANPADS', 'AIR'],
+					description: 'Locate air defense systems and coverage'
+				},
+				{
+					pirNo: '3',
+					question: 'What are enemy artillery positions?',
+					keywords: ['2S', 'BM-', 'artillery', 'ENGAGEMENT'],
+					description: 'Identify indirect fire systems and locations'
+				},
+				{
+					pirNo: '4',
+					question: 'What is the status of enemy reserves?',
+					keywords: ['STAGING', 'POSITION', 'ENGAGEMENT'],
+					description: 'Determine reserve unit locations and strength'
+				},
+				{
+					pirNo: '5',
+					question: 'Where are enemy command posts located?',
+					keywords: ['POSITION', 'COORDINATION'],
+					description: 'Identify C2 node locations'
+				},
+				{
+					pirNo: '6',
+					question: 'What types and quantities of equipment are deployed?',
+					keywords: ['equipment', 'strength'],
+					description: 'Catalog enemy force composition'
+				}
+			];
+
+			report += `PIR TRACKING MATRIX
+`;
+			report += `==================
+
+`;
+
+			pirs.forEach(pir => {
+				const matchingRecords = this.database.filter(r => {
+					const text = (r.activity + ' ' + r.equipment + ' ' + r.fullMessage).toUpperCase();
+					return pir.keywords.some(kw => text.includes(kw));
+				});
+
+				let status = t('unanswered');
+				if (matchingRecords.length >= 3) {
+					status = t('answered');
+				} else if (matchingRecords.length > 0) {
+					status = t('partial');
+				}
+
+				report += `PIR #${pir.pirNo}: ${pir.question}
+`;
+				report += `   Description: ${pir.description}
+`;
+				report += `   ${t('pirStatus')}: ${status}
+`;
+				report += `   Evidence: ${matchingRecords.length} supporting report(s)
+`;
+				
+				if (matchingRecords.length > 0) {
+					matchingRecords.slice(0, 3).forEach(r => {
+						report += `      - [${r.dtg}] ${r.activity} at ${r.coordinate}: ${r.equipment}
+`;
+					});
+				}
+				report += `
+`;
+			});
+
+			report += `
+SUMMARY
+`;
+			const totalPirs = pirs.length;
+			const answeredPirs = pirs.filter(p => {
+				const matches = this.database.filter(r => {
+					const text = (r.activity + ' ' + r.equipment + ' ' + r.fullMessage).toUpperCase();
+					return p.keywords.some(kw => text.includes(kw));
+				});
+				return matches.length >= 3;
+			}).length;
+			const partialPirs = pirs.filter(p => {
+				const matches = this.database.filter(r => {
+					const text = (r.activity + ' ' + r.equipment + ' ' + r.fullMessage).toUpperCase();
+					return p.keywords.some(kw => text.includes(kw));
+				});
+				return matches.length > 0 && matches.length < 3;
+			}).length;
+
+			report += `Total PIRs: ${totalPirs}
+`;
+			report += `Answered: ${answeredPirs} (${Math.round(answeredPirs/totalPirs*100)}%)
+`;
+			report += `Partially Answered: ${partialPirs} (${Math.round(partialPirs/totalPirs*100)}%)
+`;
+			report += `Unanswered: ${totalPirs - answeredPirs - partialPirs} (${Math.round((totalPirs-answeredPirs-partialPirs)/totalPirs*100)}%)
+`;
+			report += `
+RECOMMENDATIONS
+`;
+			report += `- Focus collection on unanswered and partially answered PIRs
+`;
+			report += `- Cross-validate high-priority PIR answers with additional sources
+`;
+			report += `- Update collection plan based on PIR status
+`;
+
+			this.displayReport(report, t('pirTracker'));
+		} catch (e) {
+			console.error('PIR Tracker generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
+
 	displayReport: function(reportText, reportType) {
 		const modal = document.getElementById('reportModal');
 		const content = document.getElementById('reportContent');
@@ -1105,50 +1724,184 @@ const App = {
 		}
 	},
 
+	// ========================================================================
+	// SCRAPE ARCHITECTURE (pluggable — swap source without touching pipeline)
+	//
+	// HOW IT WORKS:
+	// 1. User picks a "Scrape Source" — this controls HOW messages are fetched
+	// 2. Every [frequency] seconds, the scrape loop calls the active source
+	// 3. The source returns an array of messages (strings or rich objects)
+	// 4. The pipeline processes them all the same way (parse → dedup → enrich → store)
+	//
+	// ADDING A NEW SOURCE (e.g. real chat scraper):
+	// - Add an option to the <select id="sourceSelect"> in the HTML
+	// - Add a case in sendScrapeRequest() that fetches messages your way
+	// - Feed results into this.processScrapeResults(messages)
+	// - Everything downstream (parsing, NATO enrichment, display) just works
+	// ========================================================================
+
 	startAutoMode: function() {
-		// BroadcastChannel is always listening (initBroadcast runs on load)
-		// This just updates the UI state
+		this.scrapeSource = document.getElementById('sourceSelect').value || 'demo';
+		if (this.scrapeSource === 'demo') this.initBroadcast();
+		this.setAutoStatus('Scanning...', true);
+		this.startScrapeInterval();
 	},
 
 	stopAutoMode: function() {
-		// Don't close the channel — keep listening even when toggled off
-		// so we can auto-enable when simulator connects
+		if (this.scrapeIntervalId) {
+			clearInterval(this.scrapeIntervalId);
+			this.scrapeIntervalId = null;
+		}
+		this.setAutoStatus('Idle', false);
+	},
+
+	setAutoStatus: function(text, showPulse) {
+		const statusEl = document.getElementById('autoStatus');
+		const pulseEl = document.getElementById('autoPulse');
+		if (statusEl) statusEl.textContent = text;
+		if (pulseEl) pulseEl.style.display = showPulse ? 'inline-block' : 'none';
+	},
+
+	updateScrapeSource: function() {
+		const source = document.getElementById('sourceSelect').value;
+		this.scrapeSource = source;
+		const hintEl = document.getElementById('sourceHint');
+		if (hintEl) {
+			const hints = {
+				demo: 'Demo mode: open test_chat_simulator.html in another tab, press Start, then enable Auto Mode here.',
+				bookmarklet: 'Future: inject bookmarklet into real chat tab (Teams, Signal, etc.), then Intel Fusion scrapes its DOM.',
+				clipboard: 'Manual: paste chat text into the box above and click Process & Add. Auto Mode not needed.'
+			};
+			hintEl.querySelector('span').textContent = hints[source] || '';
+		}
+		// Restart interval if running
+		if (this.autoModeEnabled && this.scrapeIntervalId) {
+			if (source === 'demo') this.initBroadcast();
+			this.startScrapeInterval();
+		}
+	},
+
+	startScrapeInterval: function() {
+		if (this.scrapeIntervalId) clearInterval(this.scrapeIntervalId);
+		const freq = parseInt(document.getElementById('frequencySelect').value) || 10000;
+		this.sendScrapeRequest(); // First request immediately
+		this.scrapeIntervalId = setInterval(() => {
+			this.sendScrapeRequest();
+		}, freq);
+	},
+
+	// DISPATCHER — routes to the active scrape source
+	sendScrapeRequest: function() {
+		switch (this.scrapeSource) {
+			case 'demo':
+				this.scrapeDemoSimulator();
+				break;
+			case 'bookmarklet':
+				this.scrapeBookmarklet();
+				break;
+			case 'clipboard':
+				// No-op — clipboard mode uses manual paste
+				break;
+			default:
+				break;
+		}
+	},
+
+	// SOURCE: Demo Simulator (BroadcastChannel request/response)
+	scrapeDemoSimulator: function() {
+		if (!this.broadcastChannel) return;
+		this.broadcastChannel.postMessage({
+			type: 'INTEL_SCRAPE_REQUEST',
+			fromIndex: this.remoteMessageCount,
+			timestamp: new Date().toISOString()
+		});
+	},
+
+	// SOURCE: Bookmarklet (future — DOM scrape via PostMessage)
+	// When you get access to a real chat environment:
+	// 1. Write a bookmarklet that reads chat DOM and posts results via postMessage
+	// 2. This function sends a request, bookmarklet responds with scraped text
+	// 3. Results flow into processScrapeResults() — same pipeline as demo
+	scrapeBookmarklet: function() {
+		// PLACEHOLDER — replace with real implementation when testing against live chat
+		// Example future flow:
+		// - Bookmarklet injected into Teams/Signal tab listens for 'INTEL_SCRAPE_REQUEST'
+		// - Reads all visible messages from the chat DOM (innerText of message elements)
+		// - Responds via BroadcastChannel with {type: 'INTEL_SCRAPE_RESPONSE', messages: [...]}
+		// For now, use same channel as demo (works if bookmarklet uses same pattern)
+		if (!this.broadcastChannel) this.initBroadcast();
+		this.broadcastChannel.postMessage({
+			type: 'INTEL_SCRAPE_REQUEST',
+			fromIndex: this.remoteMessageCount,
+			timestamp: new Date().toISOString()
+		});
+	},
+
+	// PIPELINE — processes scraped messages regardless of source
+	processScrapeResults: function(messages, totalCount) {
+		if (!messages || messages.length === 0) return;
+		let added = 0;
+		messages.forEach(msg => {
+			let parsed = null;
+			if (typeof msg === 'string') {
+				parsed = parseMessage(msg);
+			} else if (msg && typeof msg === 'object' && msg.text) {
+				// Rich message (e.g. NATO SPOTREP/SITREP with structured details)
+				parsed = parseMessage(msg.text);
+				if (parsed && msg.natoDetails) {
+					const d = msg.natoDetails;
+					if (d.unit) parsed.unit = d.unit;
+					if (d.size) parsed.strength = d.size;
+					if (d.equipment) parsed.equipment = d.equipment;
+					if (d.activity) parsed.activity = d.activity.toUpperCase();
+					if (d.location) parsed.coordinate = d.location;
+					if (d.assessment) parsed.assessment = d.assessment;
+					parsed.natoType = msg.natoType || null;
+					parsed.natoDetails = d;
+					parsed.priority = 'HIGH';
+				}
+			}
+			if (parsed) {
+				this.database.push(parsed);
+				added++;
+			}
+		});
+		if (added > 0) {
+			this.autoMessageCount += added;
+			this.updateDisplay();
+			const countEl = document.getElementById('autoMessageCount');
+			if (countEl) countEl.textContent = `${t('messagesReceived')}: ${this.autoMessageCount}`;
+			this.showToast(`${t('autoAdded')} ${added} ${t('messages')}`, 'success');
+		}
+		if (typeof totalCount === 'number') {
+			this.remoteMessageCount = totalCount;
+		}
+		this.setAutoStatus('Scanning...', true);
 	},
 
 	initBroadcast: function() {
+		if (this.broadcastChannel) return;
 		try {
 			if (typeof BroadcastChannel !== 'undefined') {
 				this.broadcastChannel = new BroadcastChannel('intel-fusion-channel');
 				this.broadcastChannel.onmessage = (event) => {
 					if (!event.data || typeof event.data !== 'object') return;
 
-					// Auto-enable when simulator announces itself
-					if (event.data.type === 'INTEL_SIMULATOR_READY') {
-						if (!this.autoModeEnabled) {
-							this.autoModeEnabled = true;
-							const btn = document.getElementById('autoModeText');
-							const settings = document.getElementById('autoSettings');
-							if (btn) btn.textContent = t('autoModeOn');
-							if (settings) settings.classList.toggle('active', true);
-							this.showToast('Simulator detected — Auto Mode enabled', 'success');
-						}
+					// Handle scrape responses (from demo simulator or bookmarklet)
+					if (event.data.type === 'INTEL_SCRAPE_RESPONSE' && Array.isArray(event.data.messages)) {
+						this.processScrapeResults(event.data.messages, event.data.totalCount);
 						return;
 					}
 
-					// Ignore heartbeats (just for keepalive)
-					if (event.data.type === 'INTEL_HEARTBEAT') return;
-
-					// Handle batch messages (from simulator and bookmarklet)
+					// Backward compat: handle direct push messages (e.g. old bookmarklet)
+					if (event.data.type === 'INTEL_MSG') {
+						this.handleIntelMessage(event.data);
+						return;
+					}
 					if (event.data.type === 'INTEL_BATCH' && Array.isArray(event.data.messages)) {
 						event.data.messages.forEach(msg => {
 							if (typeof msg === 'string') this.handleIntelMessage({ message: msg });
 						});
-						return;
-					}
-
-					// Handle individual messages
-					if (event.data.type === 'INTEL_MSG') {
-						this.handleIntelMessage(event.data);
 						return;
 					}
 				};
@@ -1159,9 +1912,8 @@ const App = {
 	},
 
 	updateAutoFrequency: function() {
-		const select = document.getElementById('frequencySelect');
-		if (select) {
-			// Frequency selection available for future use
+		if (this.autoModeEnabled && this.scrapeIntervalId) {
+			this.startScrapeInterval();
 		}
 	},
 
@@ -1211,6 +1963,724 @@ const App = {
 		}
 	},
 
+	// ========================================================================
+	// ADMIN PANEL FUNCTIONS (FEATURE 1)
+	// ========================================================================
+	validateAdminAccess: function() {
+		const pin = document.getElementById('adminPin').value;
+		if (pin === this.adminPIN) {
+			this.adminLocked = false;
+			document.getElementById('adminStatus').textContent = 'Unlocked';
+			document.getElementById('adminStatus').style.color = '#22c55e';
+			this.showToast('Admin panel unlocked', 'success');
+		} else {
+			this.showToast('Incorrect PIN', 'error');
+		}
+	},
+
+	loadAdminConfig: function() {
+		if (this.adminLocked) {
+			this.showToast('Admin panel is locked. Enter PIN to unlock.', 'error');
+			return;
+		}
+		this.adminConfig.exerciseName = document.getElementById('exerciseName').value || 'EXERCISE NORTHERN SHIELD';
+		this.adminConfig.unitDesignation = document.getElementById('unitDesignation').value || 'BG-EST / 1st Infantry Brigade';
+		this.adminConfig.classification = document.getElementById('classification').value || 'UNCLASSIFIED';
+		this.adminConfig.dtgFormat = document.getElementById('dtgFormat').value || 'ZULU';
+		this.adminConfig.currentRole = document.getElementById('currentRole').value || 'G2 Analyst';
+		const startDt = document.getElementById('reportingStart').value;
+		const endDt = document.getElementById('reportingEnd').value;
+		this.adminConfig.periodStart = startDt ? new Date(startDt) : null;
+		this.adminConfig.periodEnd = endDt ? new Date(endDt) : null;
+		this.showToast('Admin configuration saved', 'success');
+	},
+
+	// ========================================================================
+	// BDA DATABASE & DETECTION (FEATURE 2)
+	// ========================================================================
+	extractBDAFromMessages: function() {
+		const bdaKeywords = ['destroyed', 'kill', 'kia', 'hit', 'damaged', 'neutralized', 'suppressed'];
+		const weaponKeywords = ['javelin', 'fire mission', 'artillery', 'strike', 'engagement', 'cas', 'mlrs', 'himars'];
+		const reportPatterns = ['bda:', 'misrep:', 'strikerep:'];
+
+		this.database.forEach(record => {
+			const msgLower = record.fullMessage.toLowerCase();
+			const isBDA = bdaKeywords.some(kw => msgLower.includes(kw)) || 
+						 weaponKeywords.some(kw => msgLower.includes(kw)) ||
+						 reportPatterns.some(kw => msgLower.includes(kw));
+
+			if (isBDA && !this.bdaDatabase.some(b => b.recordId === record.id)) {
+				const bda = {
+					id: 'BDA_' + record.id + '_' + Date.now(),
+					recordId: record.id,
+					targetType: record.equipment || 'UNKNOWN',
+					location: record.coordinate,
+					strikeTime: record.dtg,
+					strikeAsset: record.reporter || 'UNKNOWN',
+					weaponUsed: this.extractWeapon(record.fullMessage),
+					assessment: this.extractAssessment(record.fullMessage),
+					phase: this.extractPhase(record.fullMessage),
+					status: this.extractStatus(record.fullMessage)
+				};
+				this.bdaDatabase.push(bda);
+			}
+		});
+	},
+
+	extractWeapon: function(msg) {
+		const weaponMap = { 'javelin': 'JAVELIN', 'mlrs': 'MLRS', 'himars': 'HIMARS', 'artillery': 'ARTILLERY', 'cas': 'CAS', 'airstrike': 'AIRSTRIKE' };
+		for (const [key, val] of Object.entries(weaponMap)) {
+			if (msg.toLowerCase().includes(key)) return val;
+		}
+		return 'UNSPECIFIED';
+	},
+
+	extractAssessment: function(msg) {
+		if (msg.toLowerCase().includes('destroyed')) return 'Complete destruction reported';
+		if (msg.toLowerCase().includes('damaged')) return 'Significant damage reported';
+		if (msg.toLowerCase().includes('suppressed')) return 'Suppressed - no longer effective';
+		return 'Assessment pending';
+	},
+
+	extractPhase: function(msg) {
+		if (msg.toLowerCase().includes('initial') || msg.toLowerCase().includes('immediate')) return 'Physical';
+		if (msg.toLowerCase().includes('functional')) return 'Functional';
+		if (msg.toLowerCase().includes('system')) return 'System';
+		return 'Physical';
+	},
+
+	extractStatus: function(msg) {
+		const msgL = msg.toLowerCase();
+		if (msgL.includes('destroyed') || msgL.includes('kill')) return 'DESTROYED';
+		if (msgL.includes('damaged')) return 'DAMAGED';
+		if (msgL.includes('no effect')) return 'NO EFFECT';
+		return 'UNKNOWN';
+	},
+
+	generateBDA: function() {
+		try {
+			this.extractBDAFromMessages();
+			if (this.bdaDatabase.length === 0) {
+				this.showToast('No BDA records found. Process more messages with BDA keywords.', 'error');
+				return;
+			}
+			let report = `BATTLE DAMAGE ASSESSMENT (BDA) REPORT
+`;
+			report += `CLASSIFICATION: ${this.adminConfig.classification}
+`;
+			report += `UNIT: ${this.adminConfig.unitDesignation}
+`;
+			report += `PREPARED BY: ${this.adminConfig.currentRole}
+`;
+			report += `DTG: ${new Date().toISOString().substring(0, 10)}
+`;
+			report += `
+
+1. PHASE 1 - PHYSICAL DAMAGE ASSESSMENT
+`;
+			const physical = this.bdaDatabase.filter(b => b.phase === 'Physical');
+			report += `   Targets Assessed: ${physical.length}
+`;
+			report += `   Destroyed: ${physical.filter(b => b.status === 'DESTROYED').length}
+`;
+			report += `   Damaged: ${physical.filter(b => b.status === 'DAMAGED').length}
+`;
+			report += `   No Effect: ${physical.filter(b => b.status === 'NO EFFECT').length}
+`;
+
+			report += `
+
+2. PHASE 2 - FUNCTIONAL DAMAGE ASSESSMENT
+`;
+			const functional = this.bdaDatabase.filter(b => b.phase === 'Functional');
+			report += `   Targets Assessed: ${functional.length}
+`;
+			report += `   Operational Status: ${functional.filter(b => b.status !== 'DESTROYED').length} degraded
+`;
+
+			report += `
+
+3. PHASE 3 - TARGET SYSTEM ASSESSMENT
+`;
+			report += `   Overall Impact: ${this.bdaDatabase.filter(b => b.status === 'DESTROYED').length} targets destroyed
+`;
+			report += `   Ongoing Threat: ${this.bdaDatabase.filter(b => b.status !== 'DESTROYED' && b.status !== 'NO EFFECT').length} targets
+`;
+
+			report += `
+
+4. F2T2EA CYCLE FEEDBACK
+`;
+			report += `   Find: ${this.bdaDatabase.length} targets located
+`;
+			report += `   Fix: ${this.bdaDatabase.filter(b => b.weaponUsed !== 'UNSPECIFIED').length} targets engaged
+`;
+			report += `   Track: ${this.bdaDatabase.length} targets monitored
+`;
+			report += `   Target: All assessed
+`;
+			report += `   Execute: Complete
+`;
+			report += `   Assess: See phases above
+`;
+
+			report += `
+
+5. RECOMMENDED RE-ENGAGEMENT TARGETS
+`;
+			this.bdaDatabase.filter(b => b.status === 'DAMAGED' || b.status === 'UNKNOWN').slice(0, 5).forEach(b => {
+				report += `   - ${b.targetType} at ${b.location} (${b.status})
+`;
+			});
+
+			report += `
+
+SUMMARY
+`;
+			report += `Total Targets: ${this.bdaDatabase.length}
+`;
+			report += `Destroyed: ${this.bdaDatabase.filter(b => b.status === 'DESTROYED').length}
+`;
+			report += `Damaged: ${this.bdaDatabase.filter(b => b.status === 'DAMAGED').length}
+`;
+			report += `Unknown: ${this.bdaDatabase.filter(b => b.status === 'UNKNOWN').length}
+`;
+
+			this.displayReport(report, 'BDA - Battle Damage Assessment');
+		} catch (e) {
+			console.error('BDA generation error:', e);
+			this.showToast('BDA report generation failed', 'error');
+		}
+	},
+
+	generateMISREP: function() {
+		try {
+			this.extractBDAFromMessages();
+			let report = `MISSION REPORT (MISREP)
+`;
+			report += `CLASSIFICATION: ${this.adminConfig.classification}
+`;
+			report += `UNIT: ${this.adminConfig.unitDesignation}
+`;
+			report += `PREPARED BY: ${this.adminConfig.currentRole}
+`;
+			report += `DTG: ${new Date().toISOString().substring(0, 10)}
+`;
+
+			report += `
+
+1. MISSIONS FLOWN
+`;
+			const strikes = this.bdaDatabase.filter(b => b.weaponUsed !== 'UNSPECIFIED');
+			report += `   Total Strike Sorties: ${strikes.length}
+`;
+			report += `   Weapons Expended: ${strikes.length}
+`;
+
+			report += `
+
+2. TARGETS ENGAGED
+`;
+			this.bdaDatabase.slice(0, 10).forEach((b, idx) => {
+				report += `   ${idx + 1}. ${b.targetType} at ${b.location}
+`;
+				report += `      Weapon: ${b.weaponUsed}, Time: ${b.strikeTime}, Status: ${b.status}
+`;
+			});
+
+			report += `
+
+3. CASUALTY ASSESSMENT
+`;
+			const destroyed = this.bdaDatabase.filter(b => b.status === 'DESTROYED');
+			report += `   Enemy Equipment Destroyed: ${destroyed.length}
+`;
+			report += `   Friendly Losses: 0
+`;
+
+			report += `
+
+4. REMARKS
+`;
+			report += `   All missions executed as tasked. See BDA report for detailed assessment.
+`;
+
+			this.displayReport(report, 'MISREP - Mission Report');
+		} catch (e) {
+			console.error('MISREP generation error:', e);
+			this.showToast('MISREP generation failed', 'error');
+		}
+	},
+
+	// ========================================================================
+	// AGGREGATED HIGHER-LEVEL REPORTS (FEATURE 3)
+	// ========================================================================
+	generateDIB: function() {
+		try {
+			this.loadAdminConfig();
+			this.extractBDAFromMessages();
+			let report = `DAILY INTELLIGENCE BRIEF (DIB)
+`;
+			report += `CLASSIFICATION: ${this.adminConfig.classification}
+`;
+			report += `UNIT: ${this.adminConfig.unitDesignation}
+`;
+			report += `PREPARED BY: ${this.adminConfig.currentRole}
+`;
+			const period = this.adminConfig.periodStart && this.adminConfig.periodEnd 
+				? this.adminConfig.periodStart.toISOString().substring(0, 10) + ' to ' + this.adminConfig.periodEnd.toISOString().substring(0, 10)
+				: 'Last 24 Hours';
+			report += `PERIOD: ${period}
+`;
+
+			report += `
+
+1. EXECUTIVE SUMMARY
+`;
+			const totalRecs = this.database.length;
+			const highPri = this.database.filter(r => r.priority === 'HIGH').length;
+			report += `   A total of ${totalRecs} intelligence reports were processed this period, with ${highPri} flagged as HIGH priority.
+`;
+			report += `   Enemy forces maintain offensive posture with continued movement and engagement activity.
+`;
+			report += `   Battle Damage Assessment indicates ${this.bdaDatabase.filter(b => b.status === 'DESTROYED').length} targets destroyed.
+`;
+
+			report += `
+
+2. ENEMY SITUATION
+`;
+			const movements = this.database.filter(r => r.activity === 'MOVEMENT');
+			const engagements = this.database.filter(r => r.activity === 'ENGAGEMENT');
+			const positions = this.database.filter(r => r.activity === 'POSITION');
+			
+			report += `   a. GROUND FORCES
+`;
+			report += `      - ${movements.length} movement reports documented
+`;
+			report += `      - ${engagements.length} engagement reports
+`;
+			report += `      - ${positions.length} position reports
+`;
+			
+			const air = this.database.filter(r => r.equipment && (r.equipment.includes('UAV') || r.equipment.includes('drone')));
+			report += `
+   b. AIR/DRONE ACTIVITY
+`;
+			report += `      - ${air.length} UAV/drone reports
+`;
+			
+			const artillery = this.database.filter(r => r.equipment && (r.equipment.includes('MLRS') || r.equipment.includes('2S19') || r.equipment.includes('artillery')));
+			report += `
+   c. ARTILLERY/FIRES
+`;
+			report += `      - ${artillery.length} fire reports
+`;
+
+			report += `
+
+3. BATTLE DAMAGE ASSESSMENT
+`;
+			report += `   Targets Destroyed: ${this.bdaDatabase.filter(b => b.status === 'DESTROYED').length}
+`;
+			report += `   Targets Damaged: ${this.bdaDatabase.filter(b => b.status === 'DAMAGED').length}
+`;
+			report += `   Assessment Pending: ${this.bdaDatabase.filter(b => b.status === 'UNKNOWN').length}
+`;
+
+			report += `
+
+4. PRIORITY INTELLIGENCE REQUIREMENTS STATUS
+`;
+			report += `   Enemy Disposition: Partially Answered (${movements.length + positions.length} reports)
+`;
+			report += `   Enemy Intent: Under Assessment
+`;
+			report += `   Enemy Capability: Assessed (${engagements.length} engagements documented)
+`;
+
+			report += `
+
+5. FORECAST
+`;
+			const avgMovements = movements.length / 1;
+			report += `   Based on current movement patterns, enemy likely to attempt ${Math.round(avgMovements)} new movements in next 24 hours.
+`;
+			report += `   Continued artillery and air activity expected.
+`;
+			report += `   Engagement probability remains HIGH.
+`;
+
+			report += `
+
+6. COLLECTION PRIORITIES
+`;
+			report += `   - Confirm enemy rear area logistics locations
+`;
+			report += `   - Track air defense system relocations
+`;
+			report += `   - Monitor reserve force movements
+`;
+			report += `   - Establish communication patterns
+`;
+
+			this.displayReport(report, 'DIB - Daily Intelligence Brief');
+		} catch (e) {
+			console.error('DIB generation error:', e);
+			this.showToast('DIB generation failed', 'error');
+		}
+	},
+
+	generateOPINTEL: function() {
+		try {
+			this.loadAdminConfig();
+			this.extractBDAFromMessages();
+			let report = `OPERATIONAL INTELLIGENCE SUMMARY (OPINTEL)
+`;
+			report += `CLASSIFICATION: ${this.adminConfig.classification}
+`;
+			report += `UNIT: ${this.adminConfig.unitDesignation}
+`;
+			report += `PREPARED BY: ${this.adminConfig.currentRole}
+`;
+			report += `DTG: ${new Date().toISOString().substring(0, 10)}
+`;
+
+			report += `
+
+1. SIGNIFICANT ACTIVITIES (LAST 24 HOURS)
+`;
+			const significant = this.database.filter(r => r.priority === 'HIGH').slice(0, 5);
+			significant.forEach((rec, idx) => {
+				report += `   ${idx + 1}. [${rec.dtg.substring(0, 16)}] ${rec.activity} - ${rec.equipment} at ${rec.coordinate}
+`;
+			});
+
+			report += `
+
+2. ENEMY ORDER OF BATTLE CHANGES
+`;
+			const uniqueUnits = [...new Set(this.database.map(r => r.reporter))];
+			report += `   Estimated ${uniqueUnits.length} enemy reporting units identified
+`;
+			report += `   No significant OOB changes detected this period
+`;
+
+			report += `
+
+3. ENEMY CAPABILITY ASSESSMENT
+`;
+			report += `   Overall Combat Effectiveness: MODERATE
+`;
+			report += `   Air Defense: ACTIVE
+`;
+			report += `   Artillery Capability: DEGRADED (${this.bdaDatabase.filter(b => b.targetType.includes('MLRS')).length} systems reported destroyed/damaged)
+`;
+			report += `   Mobility: HIGH (${this.database.filter(r => r.activity === 'MOVEMENT').length} movement reports)
+`;
+
+			report += `
+
+4. MOST PROBABLE ENEMY COA
+`;
+			report += `   - Continue probing attacks to test defensive positions
+`;
+			report += `   - Maintain indirect fire support for forward units
+`;
+			report += `   - Attempt to infiltrate reconnaissance elements
+`;
+
+			report += `
+
+5. MOST DANGEROUS ENEMY COA
+`;
+			report += `   - Concentrated offensive with massed armor and artillery
+`;
+			report += `   - Large-scale bypass attempt around friendly flank
+`;
+			report += `   - Coordinated multi-vector assault on key terrain
+`;
+
+			report += `
+
+6. RECOMMENDATIONS
+`;
+			report += `   - Increase counter-reconnaissance patrols
+`;
+			report += `   - Consolidate air defense positions
+`;
+			report += `   - Pre-position reserves for rapid counterattack
+`;
+			report += `   - Enhance counter-battery radar coverage
+`;
+
+			this.displayReport(report, 'OPINTEL - Operational Intelligence Summary');
+		} catch (e) {
+			console.error('OPINTEL generation error:', e);
+			this.showToast('OPINTEL generation failed', 'error');
+		}
+	},
+
+	toggleReportMenu: function() {
+		const menu = document.getElementById('reportMenu');
+		if (menu) menu.classList.toggle('active');
+	},
+
+
+	// Tactical Map Functions
+	mapState: {
+		showLabels: true,
+		showGrid: true,
+		selectedSymbol: null
+	},
+
+	toggleMapPanel: function() {
+		const panel = document.getElementById('mapPanel');
+		if (panel) {
+			const isHidden = panel.style.display === 'none';
+			panel.style.display = isHidden ? 'block' : 'none';
+			if (isHidden) {
+				this.renderMap();
+			}
+		}
+	},
+
+	toggleMapLabels: function() {
+		this.mapState.showLabels = !this.mapState.showLabels;
+		this.renderMap();
+	},
+
+	toggleMapGrid: function() {
+		this.mapState.showGrid = !this.mapState.showGrid;
+		this.renderMap();
+	},
+
+	parseMGRS: function(mgrsStr) {
+		if (!mgrsStr || typeof mgrsStr !== 'string') return null;
+		const mgrsPattern = /(\d{1,2})\s*([A-Z])\s+([A-Z]{2})\s+(\d{5})\s+(\d{5})/i;
+		const match = mgrsStr.match(mgrsPattern);
+		if (!match) return null;
+		const zone = parseInt(match[1]);
+		const letter = match[2].toUpperCase();
+		const gridSquare = match[3];
+		const easting = parseInt(match[4]);
+		const northing = parseInt(match[5]);
+		return { zone, letter, gridSquare, easting, northing };
+	},
+
+	coordinatesToSVG: function(mgrsStr) {
+		const parsed = this.parseMGRS(mgrsStr);
+		if (!parsed) return null;
+		// For Estonia, most activity is in 35V and 34V zones
+		// 35V covers mainland Estonia (MD grid)
+		// Map scaling (approximate for Estonia)
+		let x, y;
+		if (parsed.zone === 35 && parsed.letter === 'V') {
+			// Easting 82000-90000 maps to SVG x 50-750
+			x = 50 + ((parsed.easting - 82000) / (90000 - 82000)) * 700;
+			// Northing 87000-92000 maps to SVG y 450-50 (inverted)
+			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+		} else if (parsed.zone === 34 && parsed.letter === 'V') {
+			// Saaremaa area - offset to left
+			x = 20 + ((parsed.easting - 82000) / (90000 - 82000)) * 600;
+			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+		} else {
+			// Default mapping for other zones
+			x = 50 + ((parsed.easting - 82000) / (90000 - 82000)) * 700;
+			y = 450 - ((parsed.northing - 87000) / (92000 - 87000)) * 400;
+		}
+		return { x: Math.max(20, Math.min(780, x)), y: Math.max(20, Math.min(480, y)) };
+	},
+
+	getActivitySymbol: function(activity, priority) {
+		const symbols = {
+			'MOVEMENT': { shape: 'diamond', color: '#22c55e', label: 'Movement' },
+			'ENGAGEMENT': { shape: 'star', color: '#ef4444', label: 'Engagement' },
+			'POSITION': { shape: 'square', color: '#fbbf24', label: 'Position' },
+			'OBSERVATION': { shape: 'circle', color: '#888', label: 'Observation' },
+			'STAGING': { shape: 'triangle', color: '#60a5fa', label: 'Staging' }
+		};
+		return symbols[activity] || symbols['OBSERVATION'];
+	},
+
+	drawSymbol: function(svg, x, y, symbol, record) {
+		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+		g.setAttribute('data-id', record.id);
+		const size = record.priority === 'HIGH' ? 10 : 6;
+		const pulse = record.priority === 'HIGH' ? ' map-symbol-high' : '';
+
+		if (symbol.shape === 'diamond') {
+			const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+			poly.setAttribute('points', `${x},${y-size} ${x+size},${y} ${x},${y+size} ${x-size},${y}`);
+			poly.setAttribute('fill', symbol.color);
+			poly.setAttribute('stroke', 'white');
+			poly.setAttribute('stroke-width', '1');
+			poly.setAttribute('class', `map-symbol${pulse}`);
+			g.appendChild(poly);
+		} else if (symbol.shape === 'star') {
+			const star = this.createStar(x, y, size);
+			star.setAttribute('fill', symbol.color);
+			star.setAttribute('stroke', 'white');
+			star.setAttribute('stroke-width', '1');
+			star.setAttribute('class', `map-symbol${pulse}`);
+			g.appendChild(star);
+		} else if (symbol.shape === 'square') {
+			const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			rect.setAttribute('x', x - size);
+			rect.setAttribute('y', y - size);
+			rect.setAttribute('width', size * 2);
+			rect.setAttribute('height', size * 2);
+			rect.setAttribute('fill', symbol.color);
+			rect.setAttribute('stroke', 'white');
+			rect.setAttribute('stroke-width', '1');
+			rect.setAttribute('class', `map-symbol${pulse}`);
+			g.appendChild(rect);
+		} else if (symbol.shape === 'circle') {
+			const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			circle.setAttribute('cx', x);
+			circle.setAttribute('cy', y);
+			circle.setAttribute('r', size);
+			circle.setAttribute('fill', symbol.color);
+			circle.setAttribute('stroke', 'white');
+			circle.setAttribute('stroke-width', '1');
+			circle.setAttribute('class', `map-symbol${pulse}`);
+			g.appendChild(circle);
+		} else if (symbol.shape === 'triangle') {
+			const tri = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+			tri.setAttribute('points', `${x},${y-size} ${x+size},${y+size} ${x-size},${y+size}`);
+			tri.setAttribute('fill', symbol.color);
+			tri.setAttribute('stroke', 'white');
+			tri.setAttribute('stroke-width', '1');
+			tri.setAttribute('class', `map-symbol${pulse}`);
+			g.appendChild(tri);
+		}
+
+		// Add hover tooltip
+		const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+		title.textContent = `${record.activity} (${record.priority}) - ${record.coordinate}`;
+		g.appendChild(title);
+
+		// Add click handler
+		g.style.cursor = 'pointer';
+		g.onclick = (e) => {
+			e.stopPropagation();
+			this.showDetails(record);
+		};
+
+		return g;
+	},
+
+	createStar: function(cx, cy, r) {
+		const points = [];
+		for (let i = 0; i < 10; i++) {
+			const angle = (i * Math.PI) / 5 - Math.PI / 2;
+			const radius = i % 2 === 0 ? r : r * 0.4;
+			points.push(`${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`);
+		}
+		const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+		poly.setAttribute('points', points.join(' '));
+		return poly;
+	},
+
+	renderMap: function() {
+		const svg = document.getElementById('tacticalMap');
+		if (!svg) return;
+		svg.innerHTML = '';
+
+		const width = 800, height = 500;
+
+		// Background
+		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		bg.setAttribute('width', width);
+		bg.setAttribute('height', height);
+		bg.setAttribute('fill', '#111');
+		svg.appendChild(bg);
+
+		// Grid lines (if enabled)
+		if (this.mapState.showGrid) {
+			for (let i = 0; i <= 8; i++) {
+				const x = (i / 8) * width;
+				const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+				line1.setAttribute('x1', x);
+				line1.setAttribute('y1', 0);
+				line1.setAttribute('x2', x);
+				line1.setAttribute('y2', height);
+				line1.setAttribute('class', 'map-grid-line');
+				svg.appendChild(line1);
+			}
+			for (let i = 0; i <= 5; i++) {
+				const y = (i / 5) * height;
+				const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+				line2.setAttribute('x1', 0);
+				line2.setAttribute('y1', y);
+				line2.setAttribute('x2', width);
+				line2.setAttribute('y2', y);
+				line2.setAttribute('class', 'map-grid-line');
+				svg.appendChild(line2);
+			}
+		}
+
+		// Simplified Estonia coastline (SVG path - approximate)
+		const coastline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		coastline.setAttribute('d', 'M 50,80 L 200,70 L 350,60 L 500,65 L 650,70 L 750,90 L 760,150 L 765,220 L 770,300 L 760,400 L 650,450 L 450,460 L 250,455 L 100,440 L 40,380 L 30,300 L 25,200 L 20,120 Z');
+		coastline.setAttribute('class', 'map-coastline');
+		svg.appendChild(coastline);
+
+		// Reference labels (if enabled)
+		if (this.mapState.showLabels) {
+			const labels = [
+				{ x: 150, y: 100, text: 'Narva' },
+				{ x: 400, y: 200, text: 'Tapa' },
+				{ x: 550, y: 180, text: 'Jõhvi' },
+				{ x: 450, y: 120, text: 'Rakvere' },
+				{ x: 350, y: 250, text: 'Tallinn' },
+				{ x: 100, y: 350, text: 'Saaremaa' }
+			];
+			labels.forEach(label => {
+				const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				text.setAttribute('x', label.x);
+				text.setAttribute('y', label.y);
+				text.setAttribute('class', 'map-svg-label');
+				text.setAttribute('opacity', '0.5');
+				text.textContent = label.text;
+				svg.appendChild(text);
+			});
+		}
+
+		// Plot records
+		this.database.forEach(record => {
+			const coords = this.coordinatesToSVG(record.coordinate);
+			if (coords) {
+				const symbol = this.getActivitySymbol(record.activity, record.priority);
+				const g = this.drawSymbol(svg, coords.x, coords.y, symbol, record);
+				svg.appendChild(g);
+			}
+		});
+
+		// Update legend
+		this.updateMapLegend();
+	},
+
+	updateMapLegend: function() {
+		const legend = document.getElementById('mapLegend');
+		if (!legend) return;
+		let html = '<strong style="color: #4a9eff;">Activity Types:</strong><br>';
+		const symbols = {
+			'MOVEMENT': { shape: 'diamond', color: '#22c55e' },
+			'ENGAGEMENT': { shape: 'star', color: '#ef4444' },
+			'POSITION': { shape: 'square', color: '#fbbf24' },
+			'OBSERVATION': { shape: 'circle', color: '#888' },
+			'STAGING': { shape: 'triangle', color: '#60a5fa' }
+		};
+		for (const [activity, sym] of Object.entries(symbols)) {
+			html += `<div class="legend-item"><span style="display:inline-block; width:16px; height:16px; background:${sym.color}; border:1px solid white; margin-right:8px;"></span>${activity}</div>`;
+		}
+		html += '<br><strong style="color: #4a9eff;">Priority:</strong><br>';
+		html += '<div class="legend-item"><span style="display:inline-block; width:14px; height:14px; background:#ef4444; border:1px solid white; margin-right:8px; animation: pulse-symbol 1.5s infinite;"></span>HIGH (pulsing)</div>';
+		html += '<div class="legend-item"><span style="display:inline-block; width:10px; height:10px; background:#4a9eff; border:1px solid white; margin-right:8px;"></span>ROUTINE</div>';
+		legend.innerHTML = html;
+	},
+
 	showToast: function(message, type) {
 		const toast = document.createElement('div');
 		toast.className = `toast ${type}`;
@@ -1236,8 +2706,10 @@ document.getElementById('recordsTable').addEventListener('keydown', (e) => {
 	if (e.key === 'Escape') document.getElementById('searchBox').focus();
 }, false);
 
+// Initialize admin config from DOM
+App.loadAdminConfig();
+App.extractBDAFromMessages();
 App.updateDisplay();
-App.initBroadcast();
 window.App = App;
 
 })();

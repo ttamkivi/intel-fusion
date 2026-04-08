@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
-    <title>Intel Fusion Test Chat Simulator</title>
+    <title>Chat Simulator - Multi-Scenario</title>
     <style>
         * {
             margin: 0;
@@ -361,7 +361,46 @@
             font-size: 13px;
         }
 
-        /* Scrollbar styling */
+        .editor-textarea {
+            width: 100%;
+            height: 280px;
+            background-color: #0d0d0d;
+            color: #bbb;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            resize: vertical;
+        }
+
+        .editor-label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            color: #4a9eff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .editor-input {
+            width: 100%;
+            background-color: #0d0d0d;
+            color: #bbb;
+            border: 1px solid #333;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -393,10 +432,18 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
-        <div class="header-title" id="headerTitle">⚙️ Intel Fusion Test Chat Simulator</div>
+        <div class="header-title" id="headerTitle">⚙️ Chat Simulator</div>
         <div class="header-controls">
+            <div class="control-group">
+                <label class="control-label" data-i18n="label_scenario">Scenario:</label>
+                <select id="scenarioSelect" onchange="changeScenario(this.value)">
+                    <option value="northern-shield">Operation NORTHERN SHIELD</option>
+                    <option value="island-fortress">Operation ISLAND FORTRESS</option>
+                    <option value="gray-storm">Operation GRAY STORM</option>
+                    <option value="custom">Custom Scenario</option>
+                </select>
+            </div>
             <div class="control-group">
                 <button id="startBtn" onclick="simulator.start()" data-i18n="btn_start">▶ Start</button>
                 <button id="stopBtn" onclick="simulator.stop()" disabled data-i18n="btn_stop">⏹ Stop</button>
@@ -409,84 +456,34 @@
             <div class="control-group">
                 <label class="control-label" data-i18n="label_phase">Phase:</label>
                 <select id="phaseSelect" onchange="simulator.jumpToPhase(this.value)">
-                    <option value="1" data-i18n="phase_1">Phase 1: Reconnaissance</option>
-                    <option value="2" data-i18n="phase_2">Phase 2: Advance</option>
-                    <option value="3" data-i18n="phase_3">Phase 3: Contact</option>
-                    <option value="4" data-i18n="phase_4">Phase 4: Counterattack</option>
-                </select></div>
+                    <option value="1">Phase 1</option>
+                    <option value="2">Phase 2</option>
+                    <option value="3">Phase 3</option>
+                    <option value="4">Phase 4</option>
+                </select>
+            </div>
             <div class="message-counter">
                 <span id="messageCount">0</span> <span data-i18n="label_messages">messages</span>
             </div>
-            <button class="secondary" onclick="simulator.sendAllToIntelFusion()" data-i18n="btn_send">📤 Send to Intel Fusion</button>
-            <button class="secondary" onclick="openIntelFusion()" data-i18n="btn_open">🔗 Open Intel Fusion</button>
+            <button class="secondary" onclick="openIntelFusion()">🔗 Open Intel Fusion</button>
+            <button class="secondary" id="editorBtn" onclick="openEditor()">✏️ Editor</button>
             <button class="lang-button" id="langBtn" onclick="toggleLang()">🇬🇧 English</button>
         </div>
     </div>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Chat Section -->
         <div class="chat-section">
             <div class="chat-feed" id="chatFeed">
-                <div class="empty-state" data-i18n="empty_state">Ready to begin. Click "Start" to generate messages.</div>
+                <div class="empty-state">Ready to begin. Click "Start" to generate messages.</div>
             </div>
         </div>
 
-        <!-- Sidebar: Scenario Brief -->
         <div class="sidebar">
-            <div class="sidebar-title" id="sidebarTitle">📋 Operation NORTHERN SHIELD</div>
-            <div class="scenario-content">
-                <h3 data-i18n="section_setting">Setting</h3>
-                <p>Estonia, Lääne-Viru County, Spring 2026. NATO eFP Battle Group Estonia (UK-led, with Estonian, French, and Danish contingents) defending against a conventional incursion from the east.</p>
-
-                <h3 data-i18n="section_red">Red Force (OPFOR)</h3>
-                <h4>138th Motor Rifle Brigade</h4>
-                <ul>
-                    <li>Main axis: Tallinn-Narva highway (E20)</li>
-                    <li>1st Tank Battalion (T-72B3M, T-80BVM)</li>
-                    <li>2S19 Msta battalion, BM-21 Grad battery</li>
-                    <li>SA-11 Buk, SA-15 Tor air defense</li>
-                    <li>BRDM-2 scouts, Orlan-10 UAV</li>
-                </ul>
-                <p><strong>Objective:</strong> Seize Tapa military base, disrupt NATO logistics.</p>
-
-                <h3 data-i18n="section_blue">Blue Force (FRIENDLY)</h3>
-                <h4>Battle Group Estonia</h4>
-                <ul>
-                    <li>UK infantry company, Estonian mechanized company</li>
-                    <li>French recon platoon, Danish ISTAR</li>
-                    <li>5 UAVs (Shadow/Puma class)</li>
-                    <li>4 Forward observers, 6 Scout teams</li>
-                    <li>8 Observation posts</li>
-                </ul>
-
-                <h3 data-i18n="section_terrain">Key Terrain (MGRS 35V)</h3>
-                <ul>
-                    <li>Tapa military base: MD 84500 89500</li>
-                    <li>E20 corridor: MD 85000-87000</li>
-                    <li>Auvere border: MD 89000 88000</li>
-                    <li>Jõhvi logistics: MD 87500 89000</li>
-                    <li>Kunda port: MD 83000 91000</li>
-                    <li>Rakvere town: MD 82500 89500</li>
-                </ul>
-
-                <h3>Expected Phases</h3>
-                <h4 data-i18n="phase_1_full">Phase 1: Reconnaissance (msg 1-10)</h4>
-                <p>Blue UAVs and scouts detect Red buildup near border. Red recon elements probe forward.</p>
-
-                <h4 data-i18n="phase_2_full">Phase 2: Advance (msg 11-25)</h4>
-                <p>Red main body moves west on E20. Blue reports movement, calls for fire.</p>
-
-                <h4 data-i18n="phase_3_full">Phase 3: Contact (msg 26-40)</h4>
-                <p>First engagements along defensive line. SPOTREPs, SITREPs, casualties reported.</p>
-
-                <h4 data-i18n="phase_4_full">Phase 4: Counterattack (msg 41-50)</h4>
-                <p>Estonian reserve committed. Blue indirect fire. Red force signs of culmination.</p>
-            </div>
+            <div class="sidebar-title" id="sidebarTitle">📋 Scenario</div>
+            <div class="scenario-content" id="scenarioContent"></div>
         </div>
     </div>
 
-    <!-- NATO Message Modal -->
     <div id="messageModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal()">&times;</span>
@@ -494,68 +491,58 @@
         </div>
     </div>
 
+    <div id="editorModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeEditor()">&times;</span>
+            <h2 style="color: #4a9eff; margin-bottom: 16px;">Custom Scenario Editor</h2>
+
+            <label class="editor-label">Scenario Name</label>
+            <input type="text" id="editorName" class="editor-input" placeholder="e.g., My Custom Scenario">
+
+            <label class="editor-label">Scenario Description (HTML)</label>
+            <textarea id="editorDescription" class="editor-textarea" placeholder="Enter HTML scenario description"></textarea>
+
+            <label class="editor-label">Messages (JSON)</label>
+            <textarea id="editorMessages" class="editor-textarea" placeholder="[{&quot;phase&quot;:1,&quot;type&quot;:&quot;plain&quot;,&quot;time&quot;:&quot;[06:45]&quot;,&quot;sender&quot;:&quot;UNIT&quot;,&quot;text&quot;:&quot;Message with grid 35V MD 85000 89000&quot;}]"></textarea>
+
+            <div class="modal-buttons">
+                <button class="secondary" onclick="closeEditor()">Cancel</button>
+                <button onclick="saveCustomScenario()">Save & Load</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ============================================================================
-        // LOCALIZATION
-        // ============================================================================
         const LANG = {
             'en': {
-                'header_title': '⚙️ Intel Fusion Test Chat Simulator',
+                'header_title': '⚙️ Chat Simulator',
                 'btn_start': '▶ Start',
                 'btn_stop': '⏹ Stop',
                 'label_speed': 'Speed:',
                 'label_phase': 'Phase:',
+                'label_scenario': 'Scenario:',
                 'label_messages': 'messages',
-                'btn_send': '📤 Send to Intel Fusion',
                 'btn_open': '🔗 Open Intel Fusion',
+                'btn_editor': '✏️ Editor',
+                'btn_cancel': 'Cancel',
+                'btn_save': 'Save & Load',
                 'lang_btn': '🇬🇧 English',
                 'empty_state': 'Ready to begin. Click "Start" to generate messages.',
-                'section_setting': 'Setting',
-                'section_red': 'Red Force (OPFOR)',
-                'section_blue': 'Blue Force (FRIENDLY)',
-                'section_terrain': 'Key Terrain (MGRS 35V)',
-                'phase_1': 'Phase 1: Reconnaissance',
-                'phase_2': 'Phase 2: Advance',
-                'phase_3': 'Phase 3: Contact',
-                'phase_4': 'Phase 4: Counterattack',
-                'phase_1_full': 'Phase 1: Reconnaissance (msg 1-10)',
-                'phase_2_full': 'Phase 2: Advance (msg 11-25)',
-                'phase_3_full': 'Phase 3: Contact (msg 26-40)',
-                'phase_4_full': 'Phase 4: Counterattack (msg 41-50)',
-                'sidebar_title': '📋 Operation NORTHERN SHIELD',
-                'phase_label_1': '🔍 FAAS 1: Luure',
-                'phase_label_2': '🚀 FAAS 2: Pealetung',
-                'phase_label_3': '⚔️ FAAS 3: Kokkupuude',
-                'phase_label_4': '🔄 FAAS 4: Vastulöök',
             },
             'et': {
-                'header_title': '⚙️ Luure Fusion Testi Simulaator',
+                'header_title': '⚙️ Chat Simulator',
                 'btn_start': '▶ Käivita',
                 'btn_stop': '⏹ Peata',
                 'label_speed': 'Kiirus:',
                 'label_phase': 'Faas:',
+                'label_scenario': 'Stsenaarium:',
                 'label_messages': 'sõnumit',
-                'btn_send': '📤 Saada Intel Fusionisse',
                 'btn_open': '🔗 Ava Intel Fusion',
+                'btn_editor': '✏️ Redaktor',
+                'btn_cancel': 'Tühista',
+                'btn_save': 'Salvesta ja laadi',
                 'lang_btn': '🇪🇪 Eesti',
                 'empty_state': 'Valmis alustama. Vajuta \'Käivita\' sõnumite genereerimiseks.',
-                'section_setting': 'Olukord',
-                'section_red': 'Punased (VAENLANE)',
-                'section_blue': 'Sinised (OMA)',
-                'section_terrain': 'Peamine maastik (MGRS 35V)',
-                'phase_1': 'Faas 1: Luure',
-                'phase_2': 'Faas 2: Pealetung',
-                'phase_3': 'Faas 3: Kokkupuude',
-                'phase_4': 'Faas 4: Vastulöök',
-                'phase_1_full': 'Faas 1: Luure (sõn 1-10)',
-                'phase_2_full': 'Faas 2: Pealetung (sõn 11-25)',
-                'phase_3_full': 'Faas 3: Kokkupuude (sõn 26-40)',
-                'phase_4_full': 'Faas 4: Vastulöök (sõn 41-50)',
-                'sidebar_title': '📋 Operatsiooni NORTHERN SHIELD',
-                'phase_label_1': '🔍 FAAS 1: Luure',
-                'phase_label_2': '🚀 FAAS 2: Pealetung',
-                'phase_label_3': '⚔️ FAAS 3: Kokkupuude',
-                'phase_label_4': '🔄 FAAS 4: Vastulöök',
             }
         };
 
@@ -566,652 +553,291 @@
         }
 
         function applyLang() {
-            // Update header title
             document.getElementById('headerTitle').textContent = t('header_title');
-
-            // Update sidebar title
-            document.getElementById('sidebarTitle').textContent = t('sidebar_title');
-
-            // Update all elements with data-i18n attribute
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                el.textContent = t(key);
-            });
-
-            // Update lang button
             document.getElementById('langBtn').textContent = t('lang_btn');
         }
 
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'et' : 'en';
             applyLang();
+            if (simulator) simulator.updateUI();
         }
 
-        // ============================================================================
-        // CONFIGURATION
-        // ============================================================================
         const CONFIG = {
             DEFAULT_SPEED: 5000,
-            MIN_SPEED: 1000,
-            MAX_SPEED: 30000,
-            GRID_ZONE: '35V MD',
             BROADCAST_CHANNEL_NAME: 'intel-fusion-channel',
         };
 
-        // ============================================================================
-        // SCENARIO DATA
-        // ============================================================================
-        const SCENARIO = {
-            senders: {
-                uav: ['UAV1', 'UAV2', 'UAV3', 'UAV4', 'UAV5'],
-                scout: ['SCOUT1', 'SCOUT2', 'SCOUT3', 'SCOUT4', 'SCOUT5', 'SCOUT6'],
-                fo: ['FO1', 'FO2', 'FO3', 'FO4'],
-                hq: ['BG-EST S2', 'BG-EST S3', 'BG-EST CMD', '1 INF BDE HQ', 'EST SCOUTS BN'],
-                op: ['OP1', 'OP2', 'OP3', 'OP4', 'OP5', 'OP6', 'OP7', 'OP8'],
+        // SCENARIO GENERATORS
+        function GeneratorNorthernShield() {
+            const gridZone = '35V MD';
+            const messages = [];
+            messages.push({ phase: 1, type: 'plain', time: '[06:45]', sender: 'UAV1', text: `Orlan-10 UAVs detected, grid ${gridZone} 89200 87800, recon sweep` });
+            messages.push({ phase: 1, type: 'plain', time: '[06:58]', sender: 'SCOUT1', text: `BRDM-2 scouts in defilade, grid ${gridZone} 89100 87900` });
+            messages.push({ phase: 1, type: 'spotrep', time: '[07:12]', sender: 'BG-EST S2', text: 'SPOTREP 001', details: { fm: 'BG-EST S2', to: '1 INF BDE HQ', dtg: '081345ZAPR2026', subj: 'RECONNAISSANCE ACTIVITY', size: 'SQUAD', activity: 'RECON SWEEP', location: `${gridZone} 89000 88000`, unit: '138 MRB', equipment: 'BRDM-2, Orlan-10, Orlan-30', assessment: 'RECON WITH DRONE SUPPORT. MAJOR OPERATION PRELUDE.' } });
+            messages.push({ phase: 1, type: 'plain', time: '[07:28]', sender: 'FO1', text: `Krasukha-4 EW system detected, grid ${gridZone} 88800 88200, 300km jamming` });
+            messages.push({ phase: 1, type: 'plain', time: '[07:45]', sender: 'OP2', text: `T-72B3M company assembling, grid ${gridZone} 88950 88150` });
+            messages.push({ phase: 1, type: 'plain', time: '[08:02]', sender: 'UAV2', text: `FPV drones staging, grid ${gridZone} 89100 88050, armed grenade config` });
+            messages.push({ phase: 1, type: 'plain', time: '[08:18]', sender: 'SCOUT2', text: `2S19 Msta battery position, grid ${gridZone} 88900 88100` });
+            messages.push({ phase: 1, type: 'plain', time: '[08:35]', sender: 'FO2', text: `SA-11 Buk air defense, grid ${gridZone} 89200 87800, radar active` });
+            messages.push({ phase: 1, type: 'spotrep', time: '[08:52]', sender: 'EST SCOUTS BN', text: 'SPOTREP 002', details: { fm: 'EST SCOUTS BN', to: '1 INF BDE HQ', dtg: '081345ZAPR2026', subj: 'DRONE AND EW THREAT', size: 'COMPANY DRONES', activity: 'SURVEILLANCE', location: `${gridZone} 88800-89200`, unit: '138 MRB', equipment: 'Orlan-10, Orlan-30, FPV, Krasukha-4', assessment: 'DRONE SWARM AND JAMMING ACTIVE. COUNTER-UAS MEASURES REQUIRED.' } });
+            messages.push({ phase: 1, type: 'plain', time: '[09:08]', sender: 'UAV3', text: `Lancet loitering munition system detected, grid ${gridZone} 88950 87950` });
+            messages.push({ phase: 1, type: 'plain', time: '[09:25]', sender: 'SCOUT3', text: `BMP-3 company assault formation, grid ${gridZone} 89000 88000` });
+            messages.push({ phase: 1, type: 'plain', time: '[09:42]', sender: 'FO3', text: `Zhitel GPS jamming activated, grid ${gridZone} 89100 87900` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:00]', sender: 'BG-EST CMD', text: `Escalation imminent. Counter-UAV go active. Priority on Orlan and FPV.` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:17]', sender: 'UAV4', text: `Supply convoy stage, grid ${gridZone} 88800 87800, fuel and ammo` });
+
+            messages.push({ phase: 2, type: 'plain', time: '[11:00]', sender: 'UAV1', text: `Main assault column moving, grid ${gridZone} 87500 88800, 25+ vehicles` });
+            messages.push({ phase: 2, type: 'plain', time: '[11:18]', sender: 'SCOUT4', text: `Orlan-30 laser designator overhead, grid ${gridZone} 87400 88700` });
+            messages.push({ phase: 2, type: 'plain', time: '[11:35]', sender: 'FO1', text: `BM-21 Grad volley impact, grid ${gridZone} 87600 88900, casualties at OP5` });
+            messages.push({ phase: 2, type: 'spotrep', time: '[11:52]', sender: 'BG-EST S3', text: 'SPOTREP 005', details: { fm: 'BG-EST S3', to: '1 INF BDE HQ', dtg: '[T] 1150Z APR2026', subj: 'ENEMY ADVANCE', size: 'COMPANY+', activity: 'MOVEMENT E20', location: `${gridZone} 87500 88800`, unit: '1 TK BN', equipment: 'T-72B3M, T-80BVM, BMP-2, BMP-3, 2S19, BM-21, Orlan-30', assessment: 'MAIN COLUMN ADVANCING. DRONE SUPPORT ACTIVE.' } });
+            messages.push({ phase: 2, type: 'plain', time: '[12:09]', sender: 'OP4', text: `Flanking force north, grid ${gridZone} 87300 88600, 8x BMP vehicles` });
+            messages.push({ phase: 2, type: 'plain', time: '[12:26]', sender: 'SCOUT5', text: `Warrior engaged FPV drone, grid ${gridZone} 87700 89000, one destroyed` });
+            messages.push({ phase: 2, type: 'plain', time: '[12:43]', sender: 'FO2', text: `Fire mission danger close, 3x BMP assault, grid ${gridZone} 87200 88500` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:00]', sender: 'BG-EST CMD', text: `Northern flank pressure. Reserve dispatched. Air support requested.` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:17]', sender: 'UAV2', text: `Second echelon (12x T-80BVM) in column, grid ${gridZone} 87800 89100` });
+            messages.push({ phase: 2, type: 'spotrep', time: '[13:34]', sender: 'EST SCOUTS BN', text: 'SPOTREP 008', details: { fm: 'EST SCOUTS BN', to: '1 INF BDE HQ', dtg: '[T] 1333Z APR2026', subj: 'FLANKING FORCE THREAT', size: 'COMPANY DRONES', activity: 'FLANK MOVEMENT', location: `${gridZone} 87300-87800`, unit: '2 MR CO', equipment: 'BMP-2, BMP-3, FPV', assessment: 'DOUBLE ENVELOPMENT. NORTHERN FLANK CRITICAL. RESERVE REQUIRED.' } });
+            messages.push({ phase: 2, type: 'plain', time: '[13:51]', sender: 'SCOUT6', text: `Third supply convoy, grid ${gridZone} 87000 88400, ammo and fuel` });
+
+            messages.push({ phase: 3, type: 'plain', time: '[14:15]', sender: 'OP1', text: `Contact! Javelin hit T-72B3M, grid ${gridZone} 86500 89200, mobility kill` });
+            messages.push({ phase: 3, type: 'plain', time: '[14:32]', sender: 'FO3', text: `Warrior under fire, 2 WIA, grid ${gridZone} 86400 89100` });
+            messages.push({ phase: 3, type: 'sitrep', time: '[14:49]', sender: 'BG-EST S2', text: 'SITREP 001', details: { fm: 'BG-EST S2', to: '1 INF BDE HQ', dtg: '[T] 1448Z APR2026', subj: 'HEAVY CONTACT', line1: `ENEMY: 20+ vehicles, grid ${gridZone} 86600 89300, T-72/BMP MIX, DRONE ACTIVE`, line2: 'FRIENDLY: 1x Warrior damaged (2 WIA), ammo FULL', line3: 'CASUALTIES: 1 T-72 DESTROYED', assessment: 'HEAVY ENGAGEMENT. HOLDING LINE. LANCET THREAT.' } });
+            messages.push({ phase: 3, type: 'plain', time: '[15:06]', sender: 'UAV3', text: `Lancet firing! Impact grid ${gridZone} 86300 89000, direct hit OP7` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:23]', sender: 'SCOUT6', text: `Line holding! 3x T-72 destroyed, grid ${gridZone} 86700 89400` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:40]', sender: 'FO4', text: `Company assault, grid ${gridZone} 86200 88900, FPV suppression` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:57]', sender: 'BG-EST CMD', text: `Excellent defense! Reserves in position. Suppress drones.` });
+            messages.push({ phase: 3, type: 'spotrep', time: '[16:14]', sender: 'FO1', text: 'SPOTREP 015', details: { fm: 'FO1', to: '1 INF BDE HQ', dtg: '[T] 1614Z APR2026', subj: 'CASUALTY ASSESSMENT', size: '4x T-72 DESTROYED, 7x BMP', activity: 'ASSAULT CONT', location: `${gridZone} 86100 89000`, unit: '1 TK BN', equipment: 'T-72B3M, BMP, Lancet', assessment: 'HEAVY LOSSES. MOMENTUM CONTINUES. COUNTER-DRONE SUCCESSFUL.' } });
+            messages.push({ phase: 3, type: 'plain', time: '[16:31]', sender: 'OP5', text: `Second wave assault, grid ${gridZone} 85800 89600, 2 tank platoons` });
+
+            messages.push({ phase: 4, type: 'plain', time: '[17:15]', sender: 'EST SCOUTS BN', text: `Flank attack, grid ${gridZone} 85200 89800, assault formation` });
+            messages.push({ phase: 4, type: 'plain', time: '[17:32]', sender: 'FO2', text: `Fire plan ready: grid ${gridZone} 85300 89900 and 85100 89700` });
+            messages.push({ phase: 4, type: 'plain', time: '[17:49]', sender: 'UAV4', text: `Enemy reserve hesitating, grid ${gridZone} 85400 90000, cohesion breaking` });
+            messages.push({ phase: 4, type: 'spotrep', time: '[18:06]', sender: 'EST SCOUTS BN', text: 'SPOTREP 022', details: { fm: 'EST SCOUTS BN', to: '1 INF BDE HQ', dtg: '[T] 1806Z APR2026', subj: 'COUNTERATTACK', size: '12 VEH ENGAGING', activity: 'OFFENSIVE', location: `${gridZone} 85200 89800`, unit: '3 MR CO', equipment: 'BMP-2, BMP-3', assessment: 'GAINING MOMENTUM. ENEMY FRAGMENTING. 3x BMP DESTROYED. CONTINUE PRESSURE.' } });
+            messages.push({ phase: 4, type: 'plain', time: '[18:23]', sender: 'BG-EST CMD', text: `Excellent! Enemy culminating. Aggressive pursuit.` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:40]', sender: 'FO3', text: `Withdrawal! Massed retreat east, grid ${gridZone} 84900 89500, battalion` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:57]', sender: 'UAV5', text: `Artillery retreat, 2S19 hit by counter-UAS, grid ${gridZone} 85500 90100` });
+            messages.push({ phase: 4, type: 'sitrep', time: '[19:14]', sender: 'BG-EST S3', text: 'SITREP 003', details: { fm: 'BG-EST S3', to: '1 INF BDE HQ', dtg: '[T] 1914Z APR2026', subj: 'WITHDRAWAL CONFIRMED', line1: `ENEMY: RETREATING DISORGANIZED, ${gridZone} 84500-85500, 15+ VEHICLES`, line2: 'FRIENDLY: 1x Warrior total loss, 4 WIA, ammo DEPLETED 25%', line3: 'TERRAIN: LINE FULLY HELD. NO BREACH. COUNTER-UAS SUPERIOR.', assessment: 'ASSAULT REPULSED. 138 MRB DEFEATED. TAPA SECURE. PURSUE.' } });
+            messages.push({ phase: 4, type: 'plain', time: '[19:31]', sender: 'BG-EST S2', text: `VICTORY. 138 MRB repulsed. NATO holds. Counter-UAS superior.` });
+
+            return messages;
+        }
+
+        function GeneratorIslandFortress() {
+            const gridZone = '34V MF';
+            const messages = [];
+            messages.push({ phase: 1, type: 'plain', time: '[08:30]', sender: 'COASTAL OB1', text: `Steregushchiy corvette, grid ${gridZone} 85500 76000, from Kaliningrad` });
+            messages.push({ phase: 1, type: 'plain', time: '[08:47]', sender: 'EST NAVY CMD', text: `Buyan-M with Kalibr, grid ${gridZone} 86000 76500` });
+            messages.push({ phase: 1, type: 'spotrep', time: '[09:04]', sender: 'CG SAAREMAA', text: 'SPOTREP 001', details: { fm: 'CG SAAREMAA', to: 'EST NAVAL CMD', dtg: '[T] 0904Z JUN2026', subj: 'NAVAL BUILDUP', size: '2x CORVETTES, 1x LST', activity: 'WESTBOUND', location: `${gridZone} 85500-86000 76000-76500`, unit: 'PACIFIC FLEET', equipment: 'Steregushchiy, Buyan-M, Ropucha', assessment: 'AMPHIBIOUS OPERATION. ALERT RAISED. KAITSELIIT MOBILIZED.' } });
+            messages.push({ phase: 1, type: 'plain', time: '[09:21]', sender: 'NAVAL OB2', text: `Shahed-136 drones, grid ${gridZone} 85800 76200, heading Saaremaa` });
+            messages.push({ phase: 1, type: 'plain', time: '[09:38]', sender: 'KAITSELIIT SAAREMAA', text: `Mobilizing. Anti-tank ready. Blue Spear ready. Battle stations.` });
+            messages.push({ phase: 1, type: 'plain', time: '[09:55]', sender: 'EST NAVY CMD', text: `Kilo submarine, grid ${gridZone} 86200 76800, screening` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:12]', sender: 'COASTAL OB3', text: `Ropucha LSTs, grid ${gridZone} 85700 76100, VDV on deck` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:29]', sender: 'NATO AWACS', text: `5 vessels confirmed, grid ${gridZone} 85000-86200 75900-76800, Blue Spear ready` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:46]', sender: 'KAITSELIIT CMD', text: `All units: amphibious force incoming. Naval gunfire expected.` });
+            messages.push({ phase: 1, type: 'plain', time: '[11:03]', sender: 'EST NAVY CMD', text: `Blue Spear locked ready. ETA beach: 45 minutes.` });
+
+            messages.push({ phase: 2, type: 'plain', time: '[11:45]', sender: 'COASTAL OB1', text: `Task force accelerating, grid ${gridZone} 85200 76500, assault speed` });
+            messages.push({ phase: 2, type: 'plain', time: '[12:02]', sender: 'NAVAL PATROL', text: `Fast attack engaging corvette, grid ${gridZone} 85400 76600, AA fire` });
+            messages.push({ phase: 2, type: 'spotrep', time: '[12:19]', sender: 'EST NAVY CMD', text: 'SPOTREP 005', details: { fm: 'EST NAVY CMD', to: 'NATO NAVAL CMD', dtg: '[T] 1219Z JUN2026', subj: 'NAVAL ENGAGEMENT', size: '2x CORVETTES, 2x LST', activity: 'ASSAULT FORMATION', location: `${gridZone} 85200 76500`, unit: 'PACIFIC FLEET', equipment: 'Steregushchiy, Buyan-M, Ropucha, Kilo, Shahed', assessment: 'FORCE ADVANCING. BLUE SPEAR AUTH. LANDING 1300-1330Z.' } });
+            messages.push({ phase: 2, type: 'plain', time: '[12:36]', sender: 'COASTAL DEF', text: `Kalibr impact! Grid ${gridZone} 85300 75400, Kuressaare port damage` });
+            messages.push({ phase: 2, type: 'plain', time: '[12:53]', sender: 'BLUE SPEAR CMD', text: `Target lock: lead corvette, grid ${gridZone} 85300 76600, firing 4x missiles` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:10]', sender: 'NATO AWACS', text: `Direct hit! Corvette damaged, grid ${gridZone} 85300 76600, burning, speed reduced` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:27]', sender: 'KAITSELIIT SAAREMAA', text: `Drone defense. 4x Shahed down, 2x FPV suppressed. Beach line manned.` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:44]', sender: 'EST NAVY CMD', text: `Second salvo: 4x missiles Buyan-M, grid ${gridZone} 85500 76400` });
+            messages.push({ phase: 2, type: 'plain', time: '[14:01]', sender: 'NAVAL PATROL', text: `Corvette listing, grid ${gridZone} 85300 76600, third hit, abandon preparations` });
+
+            messages.push({ phase: 3, type: 'plain', time: '[14:18]', sender: 'COASTAL OB1', text: `LSTs lowering boats! Grid ${gridZone} 84800 76300, assault boats, 200+` });
+            messages.push({ phase: 3, type: 'plain', time: '[14:35]', sender: 'KAITSELIIT BEACH', text: `Contact! Landing craft, grid ${gridZone} 84900 76400, small arms fire!` });
+            messages.push({ phase: 3, type: 'sitrep', time: '[14:52]', sender: 'KAITSELIIT CMD', text: 'SITREP 001', details: { fm: 'KAITSELIIT CMD', to: 'EST DEFENSE CMD', dtg: '[T] 1452Z JUN2026', subj: 'AMPHIBIOUS ASSAULT', line1: `ENEMY: VDV 76TH LANDING, grid ${gridZone} 84700-85000 76200-76500, 800+`, line2: 'FRIENDLY: Companies engaged, casualties mounting, ammo CRITICAL', line3: 'SUPPORT: NATO air requested, Blue Spear reloading, coastal holding', assessment: 'HEAVY ASSAULT. ENEMY GAINING FOOTHOLD. REINFORCEMENTS URGENT.' } });
+            messages.push({ phase: 3, type: 'plain', time: '[15:09]', sender: 'KAITSELIIT SAAREMAA', text: `Second wave VDV, grid ${gridZone} 85000 76350, dunes entrench` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:26]', sender: 'EST DEFENSE CMD', text: `F-18 Hornets routing. ETA 20min. Blue Spear engaging LST #2.` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:43]', sender: 'NAVAL OB2', text: `LST #2 struck, grid ${gridZone} 85200 76500, listing starboard` });
+            messages.push({ phase: 3, type: 'plain', time: '[16:00]', sender: 'KAITSELIIT SAAREMAA', text: `Ground combat intense, VDV probe Kuressaare, grid ${gridZone} 85200 75500` });
+            messages.push({ phase: 3, type: 'spotrep', time: '[16:17]', sender: 'KAITSELIIT FWD', text: 'SPOTREP 015', details: { fm: 'KAITSELIIT FWD CO', to: 'KAITSELIIT REG CMD', dtg: '[T] 1617Z JUN2026', subj: 'CASUALTY ASSESS', size: '300+ VDV LANDED, 40+ KIA', activity: 'ASSAULT ONGOING', location: `${gridZone} 84800-85300 76000-76500`, unit: '76TH AIR ASSAULT', equipment: 'Rifles, RPGs, Mortars, MGs', assessment: 'HEAVY CASUALTIES BUT CONTINUES. SECOND WAVE LANDED. SITUATION GRAVE.' } });
+
+            messages.push({ phase: 4, type: 'plain', time: '[16:48]', sender: 'NATO COMMANDER', text: `F-18 inbound, grid ${gridZone} 84900 76300, strafe run VDV concentration` });
+            messages.push({ phase: 4, type: 'plain', time: '[17:05]', sender: 'KAITSELIIT SAAREMAA', text: `Enemy slowing. Air devastating. Line holding. Counter-attack commence.` });
+            messages.push({ phase: 4, type: 'plain', time: '[17:22]', sender: 'EST NAVY CMD', text: `Final salvo: lead corvette sinking, grid ${gridZone} 85300 76500` });
+            messages.push({ phase: 4, type: 'sitrep', time: '[17:39]', sender: 'EST DEFENSE CMD', text: 'SITREP 003', details: { fm: 'EST DEFENSE CMD', to: 'NATO COMMAND', dtg: '[T] 1739Z JUN2026', subj: 'ASSAULT REPULSED', line1: 'ENEMY: VDV ROUTED, 600+ CASUALTIES, LST #2 SUNK, CORVETTE BURNING', line2: 'FRIENDLY: Kaitseliit 50+ KIA, 120+ WIA, ammo CRITICAL but supply en route', line3: 'SUPPORT: NATO air superiority, naval gunfire indefinite', assessment: 'ASSAULT REPULSED. HEAVY ENEMY LOSSES. SAAREMAA DEFENDED. WITHDRAWAL SIGNAL.' } });
+            messages.push({ phase: 4, type: 'plain', time: '[17:56]', sender: 'NAVAL PATROL', text: `Russian vessels disengaging, grid ${gridZone} 86000 76500, northeast Kaliningrad` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:13]', sender: 'KAITSELIIT SAAREMAA', text: `Beach secured. VDV surrendering. 450+ KIA, 100+ POW. Victory.` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:30]', sender: 'EST DEFENSE CMD', text: `VICTORY. Amphibious assault defeated. Saaremaa held. NATO sea control confirmed.` });
+
+            return messages;
+        }
+
+        function GeneratorGrayStorm() {
+            const gridZone = '35V MD';
+            const messages = [];
+            messages.push({ phase: 1, type: 'plain', time: '[09:30]', sender: 'BORDER GUARD', text: `Suspicious activity Saatse Boot, grid ${gridZone} 90500 87500, armed personnel, deniable` });
+            messages.push({ phase: 1, type: 'plain', time: '[09:47]', sender: 'BG NARVA', text: `Green men crossing, grid ${gridZone} 90200 87800, no insignia, Russian weapons` });
+            messages.push({ phase: 1, type: 'spotrep', time: '[10:04]', sender: 'KAITSELIIT REGIONAL', text: 'SPOTREP 001', details: { fm: 'KAITSELIIT REGIONAL', to: 'KAITSELIIT CMD', dtg: '[T] 1004Z APR2026', subj: 'INFILTRATION - UNCLEAR', size: 'SQUAD (4-6)', activity: 'BORDER CROSSING', location: `${gridZone} 90200-90500 87500-87800`, unit: 'RUSSIAN "GREEN MEN"', equipment: 'Civilian, Russian Arms', assessment: 'ARMED PROVOCATEURS. NO INSIGNIA. POSSIBLE GRU. AMBIGUOUS ATTRIBUTION.' } });
+            messages.push({ phase: 1, type: 'plain', time: '[10:21]', sender: 'CYBER DEF', text: `Network anomaly, SCADA probed, grid ${gridZone} 88000 89000, injection` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:38]', sender: 'EST IT SEC', text: `VPNFilter variant, Ida-Viru substations, zero-day exploit` });
+            messages.push({ phase: 1, type: 'plain', time: '[10:55]', sender: 'BORDER GUARD', text: `Second green men, grid ${gridZone} 90300 87600, Ivangorod fortress` });
+            messages.push({ phase: 1, type: 'plain', time: '[11:12]', sender: 'KAITSELIIT CMD', text: `Alert status. Infiltrators territory. Rules of engagement: defend and detain.` });
+            messages.push({ phase: 1, type: 'plain', time: '[11:29]', sender: 'CYBER DEF', text: `Grid destabilization, load shedding, grid ${gridZone} 87900 88900, blackouts` });
+            messages.push({ phase: 1, type: 'plain', time: '[11:46]', sender: 'NATO LIAISON', text: `NATO advisors activated. Assume Russian origin.` });
+
+            messages.push({ phase: 2, type: 'plain', time: '[12:30]', sender: 'EST IT SEC', text: `Outage! Ida-Viru down, grid ${gridZone} 88000 89000, SCADA compromised` });
+            messages.push({ phase: 2, type: 'plain', time: '[12:47]', sender: 'SIGNAL INT', text: `Zhitel jammer, grid ${gridZone} 90000 88000, broad spectrum` });
+            messages.push({ phase: 2, type: 'spotrep', time: '[13:04]', sender: 'EST CYBER CMD', text: 'SPOTREP 005', details: { fm: 'EST CYBER CMD', to: 'GOVT CRISIS', dtg: '[T] 1304Z APR2026', subj: 'HYBRID ATTACK', size: 'CRITICAL INFRA', activity: 'CYBER + EW', location: `${gridZone} 87900-90000 87500-89000`, unit: 'GRU CYBER + EW', equipment: 'Malware, Zhitel, Drones', assessment: 'HYBRID ATTACK. GRID OFFLINE. COMMS JAMMED. GROUND ATTACK LIKELY.' } });
+            messages.push({ phase: 2, type: 'plain', time: '[13:21]', sender: 'AIR DEF', text: `Drone swarm: Orlan + FPV, grid ${gridZone} 89800 88200, counter-UAS engage` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:38]', sender: 'BORDER GUARD', text: `Green men fire! Saatse Boot, grid ${gridZone} 90500 87500` });
+            messages.push({ phase: 2, type: 'plain', time: '[13:55]', sender: 'KAITSELIIT NARVA', text: `Spetsnaz squad, grid ${gridZone} 90200 87800, counter-fire suppressing` });
+            messages.push({ phase: 2, type: 'plain', time: '[14:12]', sender: 'EST IT SEC', text: `Telecom down, cellular disrupted Ida-Viru, fiber cut` });
+            messages.push({ phase: 2, type: 'plain', time: '[14:29]', sender: 'NATO AWACS', text: `FPV drone strike substation, grid ${gridZone} 88100 88950, transformer damage` });
+
+            messages.push({ phase: 3, type: 'plain', time: '[15:15]', sender: 'BORDER GUARD CMD', text: `Ground force crossing! Mechanized company, grid ${gridZone} 90000 87600, T-72/BMP` });
+            messages.push({ phase: 3, type: 'plain', time: '[15:32]', sender: 'KAITSELIIT RES', text: `Mobilizing reserves, grid ${gridZone} 89500 88000, anti-armor ambush` });
+            messages.push({ phase: 3, type: 'sitrep', time: '[15:49]', sender: 'KAITSELIIT CMD', text: 'SITREP 001', details: { fm: 'KAITSELIIT CMD', to: 'EST DEFENSE MIN', dtg: '[T] 1549Z APR2026', subj: 'ESCALATION - GROUND', line1: `ENEMY: COMPANY (~80), grid ${gridZone} 90000 87600, T-72 + BMP`, line2: 'FRIENDLY: Kaitseliit reserve, NATO co-loc, air available Denmark', line3: 'HYBRID: Cyber + EW ongoing, comms partial, grid manual override', assessment: 'ESCALATION HYBRID TO KINETIC. PROBE UNDERWAY. FULL NATO RESPONSE.' } });
+            messages.push({ phase: 3, type: 'plain', time: '[16:06]', sender: 'KAITSELIIT RECON', text: `Second mech element, grid ${gridZone} 89800 87700, flank Saatse` });
+            messages.push({ phase: 3, type: 'plain', time: '[16:23]', sender: 'AIR DEF CMD', text: `Counter-drone success: 6x FPV down, 3x Orlan destroyed` });
+            messages.push({ phase: 3, type: 'plain', time: '[16:40]', sender: 'BORDER GUARD', text: `Contact! Javelin T-72, grid ${gridZone} 90100 87700, direct hit` });
+            messages.push({ phase: 3, type: 'plain', time: '[16:57]', sender: 'NATO LIAISON', text: `F-16 Denmark authorized, ETA 12min, air superiority and CAS` });
+
+            messages.push({ phase: 4, type: 'plain', time: '[17:45]', sender: 'NATO AIR CMD', text: `F-16 inbound, grid ${gridZone} 89900 87600, engage column` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:02]', sender: 'EST CYBER CMD', text: `Counter-cyber: malware isolated, grid restore 80%, access partial` });
+            messages.push({ phase: 4, type: 'spotrep', time: '[18:19]', sender: 'KAITSELIIT RES', text: 'SPOTREP 022', details: { fm: 'KAITSELIIT RES', to: 'KAITSELIIT CMD', dtg: '[T] 1819Z APR2026', subj: 'PROBE REPULSED', size: '1x T-72 DESTROYED, 3x BMP', activity: 'DEFENSE COMPLETE', location: `${gridZone} 89900 87600`, unit: 'RUSSIAN COMPANY', equipment: 'T-72, BMP-2, Arms', assessment: 'PROBE DEFEATED. RETREAT INITIATED. KAITSELIIT VICTORIOUS. NATO AIR DECISIVE.' } });
+            messages.push({ phase: 4, type: 'plain', time: '[18:36]', sender: 'EST DEFENSE MIN', text: `Green men neutralized. Force defeated. Cyber restored. Grid online.` });
+            messages.push({ phase: 4, type: 'plain', time: '[18:53]', sender: 'BORDER GUARD CMD', text: `Russian forces withdrawing, grid ${gridZone} 90200 87400, pursuit halted` });
+            messages.push({ phase: 4, type: 'plain', time: '[19:10]', sender: 'NATO COMMANDER', text: `VICTORY. Hybrid attack defeated. Cyber secured. NATO commitment demonstrated.` });
+
+            return messages;
+        }
+
+        const SCENARIOS = {
+            'northern-shield': {
+                name: 'Operation NORTHERN SHIELD',
+                nameEt: 'Operatsiooni NORTHERN SHIELD',
+                phaseLabels: { 1: '🔍 Reconnaissance', 2: '🚀 Advance', 3: '⚔️ Contact', 4: '🔄 Counterattack' },
+                phaseLabelsEt: { 1: '🔍 Luure', 2: '🚀 Pealetung', 3: '⚔️ Kokkupuude', 4: '🔄 Vastulöök' },
+                description: '<h3>Operation NORTHERN SHIELD</h3><p>NATO eFP conventional defense against 138 MRB across Narva corridor. Modern drone/EW warfare with Orlan-10/30, Lancet, Krasukha-4 jamming. Counter-UAS essential.</p>',
+                descriptionEt: '<h3>Operatsiooni NORTHERN SHIELD</h3><p>NATO eFP tavaline kaitse Narva korridor. 138 MRB rünnak modernsete droonidega ja häiringuga. Counter-UAS oluline.</p>',
+                generator: GeneratorNorthernShield
             },
-            redUnits: [
-                '138 MRB', '1 TK BN', '2 MR CO', '3 MR CO',
-                'BN 2S19 ART', 'BM-21 GRAD BTY',
-                'SA-11 BUK BTY', 'SA-15 TOR DET',
-                'BRDM-2 SC PLT', 'Orlan-10 UAV PLT'
-            ],
-            redEquipment: [
-                'T-72B3M', 'T-80BVM', 'BMP-2', 'BMP-3', 'BTR-80',
-                '2S19 Msta', 'BM-21 Grad', '122mm How',
-                'SA-11 Buk', 'SA-15 Tor', 'Pantsir-S1',
-                'BRDM-2', 'Ural Truck', 'Orlan-10'
-            ],
-            blueEquipment: ['Warrior', 'Saxon', 'Fuchs', 'Scimitar', 'Javelin', 'Milan ATGM', 'Puma UAV', 'Shadow UAV'],
-            grids: {
-                phase1: [
-                    '89200 87800', '89100 87900', '88900 88100', '89000 88000',
-                    '88800 88200', '89100 88050', '88950 88150'
-                ],
-                phase2: [
-                    '87500 88800', '87400 88700', '87600 88900', '87300 88600',
-                    '87700 89000', '87200 88500', '87800 89100', '87100 88400'
-                ],
-                phase3: [
-                    '86500 89200', '86400 89100', '86600 89300', '86300 89000',
-                    '86700 89400', '86200 88900', '86800 89500', '86100 88800',
-                    '85800 89600', '85900 89700'
-                ],
-                phase4: [
-                    '85200 89800', '85300 89900', '85100 89700', '85400 90000',
-                    '84900 89500', '85500 90100', '84800 89400', '85600 90200',
-                    '84700 89300', '85700 90300'
-                ],
-                tapa: '84500 89500',
-                johvi: '87500 89000',
-                rakvere: '82500 89500',
-                kunda: '83000 91000',
+            'island-fortress': {
+                name: 'Operation ISLAND FORTRESS',
+                nameEt: 'Operatsiooni ISLAND FORTRESS',
+                phaseLabels: { 1: '🔍 Detection', 2: '🌊 Naval Approach', 3: '⚓ Landing', 4: '🛡️ Defense' },
+                phaseLabelsEt: { 1: '🔍 Avastamine', 2: '🌊 Meresiirdemine', 3: '⚓ Maabumistehted', 4: '🛡️ Kaitse' },
+                description: '<h3>Operation ISLAND FORTRESS</h3><p>VDV amphibious assault on Saaremaa from Kaliningrad. Steregushchiy corvettes, Ropucha LSTs, Kalibr missiles. Blue Spear coastal defense decisive.</p>',
+                descriptionEt: '<h3>Operatsiooni ISLAND FORTRESS</h3><p>VDV amfibiootiline rünnak Saaremaa saarele. Steregushchiy fregatid, Ropucha LST-d. Blue Spear süsteem otsustav.</p>',
+                generator: GeneratorIslandFortress
             },
+            'gray-storm': {
+                name: 'Operation GRAY STORM',
+                nameEt: 'Operatsiooni GRAY STORM',
+                phaseLabels: { 1: '🎭 Provocation', 2: '💻 Cyber/EW', 3: '🚁 Ground Probe', 4: '🛡️ Response' },
+                phaseLabelsEt: { 1: '🎭 Provokatsioon', 2: '💻 Küber/EW', 3: '🚁 Maapealne uuring', 4: '🛡️ Vastus' },
+                description: '<h3>Operation GRAY STORM</h3><p>Hybrid gray zone escalation: green men, cyber attack on power grid, EW jamming (Zhitel, Pole-21), FPV drone swarms. Kaitseliit response with NATO support.</p>',
+                descriptionEt: '<h3>Operatsiooni GRAY STORM</h3><p>Hübriid skallatsioon: rohelised mehed, küber-, EW-operatsioonid. Kaitseliit vastus NATO tugega.</p>',
+                generator: GeneratorGrayStorm
+            }
         };
 
-        // ============================================================================
-        // MESSAGE GENERATOR
-        // ============================================================================
         class MessageGenerator {
-            constructor() {
+            constructor(scenario) {
+                this.scenario = scenario;
                 this.messageCount = 0;
-                this.currentPhase = 1;
                 this.generatedMessages = [];
+                this.regenerate();
             }
-
-            generatePhase1() {
-                const messages = [];
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[06:45]',
-                    sender: 'UAV1',
-                    text: `3x BRDM-2 scout vehicles moving west, grid ${CONFIG.GRID_ZONE} 89200 87800, slow movement`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[06:52]',
-                    sender: 'SCOUT3',
-                    text: `Orlan-10 UAV sighted, likely recon for 138 MRB, overhead grid ${CONFIG.GRID_ZONE} 89100 87900`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'spotrep',
-                    time: '[07:08]',
-                    sender: 'BG-EST S2',
-                    text: 'SPOTREP 001',
-                    details: {
-                        fm: 'BG-EST S2',
-                        to: '1 INF BDE HQ',
-                        dtg: '081345ZAPR2026',
-                        subj: 'ENEMY RECONNAISSANCE ACTIVITY',
-                        size: 'SQUAD (4-6 VEH)',
-                        activity: 'RECONNAISSANCE SWEEP',
-                        location: `${CONFIG.GRID_ZONE} 89000 88000`,
-                        unit: 'BRDM-2 SCOUTS, 138 MRB',
-                        equipment: 'BRDM-2',
-                        assessment: 'ENEMY CONDUCTING INITIAL BORDER RECONNAISSANCE. POSSIBLE PRELUDE TO LARGER MOVEMENT.'
-                    }
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[07:15]',
-                    sender: 'OP2',
-                    text: `Dismounts observed near Auvere, grid ${CONFIG.GRID_ZONE} 88950 88150, squad size, digging positions`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[07:34]',
-                    sender: 'FO1',
-                    text: `Enemy SP arty movement detected east of positions, ${CONFIG.GRID_ZONE} 88800 88200, assessed 2S19 Msta`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[07:56]',
-                    sender: 'UAV3',
-                    text: `Confirmed 2x T-72B3M tanks at company assembly area, grid ${CONFIG.GRID_ZONE} 89100 88050, stationary`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[08:12]',
-                    sender: 'SCOUT1',
-                    text: `Company+ of BMP-2 at treeline, grid ${CONFIG.GRID_ZONE} 88900 88100, maintaining readiness posture`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[08:28]',
-                    sender: 'FO3',
-                    text: `SAM site detected! SA-11 Buk battery, grid ${CONFIG.GRID_ZONE} 89200 87800, likely air defense for main body`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'plain',
-                    time: '[08:45]',
-                    sender: 'UAV4',
-                    text: `Large convoy forming rear area, grid ${CONFIG.GRID_ZONE} 88950 87950, 20+ vehicles, supply vehicles identified`
-                });
-                messages.push({
-                    phase: 1,
-                    type: 'spotrep',
-                    time: '[09:02]',
-                    sender: 'BG-EST S2',
-                    text: 'SPOTREP 002',
-                    details: {
-                        fm: 'BG-EST S2',
-                        to: '1 INF BDE HQ',
-                        dtg: '081345ZAPR2026',
-                        subj: 'ENEMY AIR DEFENSE DEPLOYMENT',
-                        size: 'BATTERY (4-6 SYSTEMS)',
-                        activity: 'AIR DEFENSE POSITIONING',
-                        location: `${CONFIG.GRID_ZONE} 89200 87800`,
-                        unit: 'SA-11 BUK BTY, 138 MRB AD',
-                        equipment: 'SA-11 Buk, Radar vehicles',
-                        assessment: 'ENEMY ESTABLISHING AIR DEFENSE UMBRELLA. SUGGESTS MAJOR OFFENSIVE OPERATION PLANNED.'
-                    }
-                });
-                return messages;
+            regenerate() {
+                this.generatedMessages = this.scenario.generator();
+                this.messageCount = 0;
             }
-
-            generatePhase2() {
-                const messages = [];
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[10:30]',
-                    sender: 'UAV2',
-                    text: `Column movement begins! 15x vehicles including T-72/BMP-2 mix, grid ${CONFIG.GRID_ZONE} 87500 88800, moderate speed westbound`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[10:45]',
-                    sender: 'SCOUT4',
-                    text: `Enemy dismounts at grid ${CONFIG.GRID_ZONE} 87400 88700, establishing assault positions, 2-3 platoons`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[11:02]',
-                    sender: 'FO2',
-                    text: `Flash — receiving indirect fire! Impacts grid ${CONFIG.GRID_ZONE} 87600 88900, smoke, 2S19 suspected`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[11:18]',
-                    sender: 'OP4',
-                    text: `Main attack axis confirmed E20 corridor. Tanks advancing line-abreast, grid ${CONFIG.GRID_ZONE} 87300 88600`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[11:34]',
-                    sender: 'UAV5',
-                    text: `BM-21 Grad battery rapid deployment, grid ${CONFIG.GRID_ZONE} 87700 89000, rocket volleys preparing`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'spotrep',
-                    time: '[11:50]',
-                    sender: 'BG-EST S3',
-                    text: 'SPOTREP 005',
-                    details: {
-                        fm: 'BG-EST S3',
-                        to: '1 INF BDE HQ',
-                        dtg: '081150ZAPR2026',
-                        subj: 'ENEMY MAIN BODY ADVANCE',
-                        size: 'PLATOON+ (10-15 VEHICLES)',
-                        activity: 'MOVEMENT WEST ALONG E20 AXIS',
-                        location: `${CONFIG.GRID_ZONE} 87500 88800`,
-                        unit: '1 TK BN / 138 MRB',
-                        equipment: 'T-72B3M, BMP-2, BMP-3',
-                        assessment: 'MAIN ASSAULT COLUMN ADVANCING. ESTIMATED 3-4 HOURS TO REACH TAPA. ARTILLERY SUPPORT ACTIVE.'
-                    }
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[12:06]',
-                    sender: 'SCOUT2',
-                    text: `Flanking force detected! 8x vehicles attempting northern arc around position, grid ${CONFIG.GRID_ZONE} 87200 88500`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[12:22]',
-                    sender: 'OP5',
-                    text: `Contact! One Warrior returning fire on T-72, grid ${CONFIG.GRID_ZONE} 87800 89100, Javelin prepared for engagement`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[12:38]',
-                    sender: 'FO4',
-                    text: `Calling Fire Mission — 8x enemy vehicles, grid ${CONFIG.GRID_ZONE} 87100 88400, recommend HE, WP smoke`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[12:55]',
-                    sender: 'BG-EST CMD',
-                    text: `All call signs this is BG-EST CMD. Consolidate defensive line. Enemy advance 2 km from outer perimeter. Engage at will.`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[13:11]',
-                    sender: 'UAV1',
-                    text: `Second echelon armor observed, 12x T-80BVM in column, grid ${CONFIG.GRID_ZONE} 87300 89200, following main assault force`
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'spotrep',
-                    time: '[13:27]',
-                    sender: 'EST SCOUTS BN',
-                    text: 'SPOTREP 008',
-                    details: {
-                        fm: 'EST SCOUTS BN',
-                        to: '1 INF BDE HQ',
-                        dtg: '081327ZAPR2026',
-                        subj: 'FLANKING FORCE DETECTED',
-                        size: 'COMPANY (8-10 VEHICLES)',
-                        activity: 'MOVEMENT TO FLANK POSITION',
-                        location: `${CONFIG.GRID_ZONE} 87200 88500`,
-                        unit: '2 MR CO, 138 MRB',
-                        equipment: 'BMP-2, BMP-3, BTR-80',
-                        assessment: 'ENEMY ATTEMPTING DOUBLE ENVELOPMENT. NORTHERN FLANK COMPROMISED. REQUEST RESERVE COMMITMENT.'
-                    }
-                });
-                messages.push({
-                    phase: 2,
-                    type: 'plain',
-                    time: '[13:43]',
-                    sender: 'SCOUT5',
-                    text: `SA-15 Tor detachment positioning near Jõhvi, grid ${CONFIG.GRID_ZONE} 87500 89000, threats to our UAVs imminent`
-                });
-                return messages;
-            }
-
-            generatePhase3() {
-                const messages = [];
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[14:05]',
-                    sender: 'OP1',
-                    text: `Engage! T-72 destroyed by Javelin at grid ${CONFIG.GRID_ZONE} 86500 89200, one enemy KIA, continued fire`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[14:23]',
-                    sender: 'FO1',
-                    text: `Casualties reported! Warrior hit, 1 WIA, still combat effective, grid ${CONFIG.GRID_ZONE} 86400 89100`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'sitrep',
-                    time: '[14:38]',
-                    sender: 'BG-EST S2',
-                    text: 'SITREP 001',
-                    details: {
-                        fm: 'BG-EST S2',
-                        to: '1 INF BDE HQ',
-                        dtg: '081438ZAPR2026',
-                        subj: 'CONTACT REPORT — ENEMY ASSAULT',
-                        line1: 'ENEMY: 20+ vehicles in contact, T-72/BMP-2, grid ${CONFIG.GRID_ZONE} 86600 89300',
-                        line2: 'FRIENDLY: 1x Warrior damaged, 1 WIA, ammunition status FULL',
-                        line3: 'CASUALTIES: 1 enemy tank KIA confirmed',
-                        assessment: 'HEAVY CONTACT ONGOING. ENEMY PRESSURE INCREASING. HOLDING DEFENSIVE POSITION.'
-                    }
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[14:54]',
-                    sender: 'UAV3',
-                    text: `BM-21 GRAD volley incoming! 18x rockets, impact grid ${CONFIG.GRID_ZONE} 86300 89000, massive secondary explosions`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[15:10]',
-                    sender: 'OP3',
-                    text: `Defensive line holding. Enemy taking heavy casualties but continuing assault. Grid ${CONFIG.GRID_ZONE} 86700 89400`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[15:26]',
-                    sender: 'SCOUT6',
-                    text: `Three T-72 tanks pinned in defilade, attempting artillery fire support, grid ${CONFIG.GRID_ZONE} 86200 88900, no direct fire possible`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[15:42]',
-                    sender: 'FO2',
-                    text: `Flash! BMP-2 company (8x vehicles) maneuvering for flank attack, grid ${CONFIG.GRID_ZONE} 86800 89500, engaging now`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[15:58]',
-                    sender: 'BG-EST CMD',
-                    text: `All units maintain position. First Reserve Company moving to reinforce northern sector. ETA 15 minutes.`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'spotrep',
-                    time: '[16:14]',
-                    sender: 'FO3',
-                    text: 'SPOTREP 015',
-                    details: {
-                        fm: 'FO3',
-                        to: '1 INF BDE HQ',
-                        dtg: '081614ZAPR2026',
-                        subj: 'ENEMY CASUALTY ASSESSMENT',
-                        size: '3x T-72 DESTROYED, 5x BMP-2 DAMAGED',
-                        activity: 'ASSAULT OPERATIONS CONTINUE',
-                        location: `${CONFIG.GRID_ZONE} 86100 88800`,
-                        unit: '1 TK BN / 138 MRB',
-                        equipment: 'T-72B3M, BMP-2, BMP-3',
-                        assessment: 'ENEMY SUSTAINING HEAVY LOSSES BUT ASSAULT MOMENTUM CONTINUES. RECOMMEND INDIRECT FIRE SUPPORT PRIORITY ON GRID 85800 89600.'
-                    }
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[16:30]',
-                    sender: 'UAV4',
-                    text: `Artillery battery repositioning, 2S19 Msta moving south, grid ${CONFIG.GRID_ZONE} 85800 89600, engaging new position`
-                });
-                messages.push({
-                    phase: 3,
-                    type: 'plain',
-                    time: '[16:46]',
-                    sender: 'SCOUT1',
-                    text: `Enemy consolidating intermediate position. Assessing casualties, regrouping forces, grid ${CONFIG.GRID_ZONE} 85900 89700`
-                });
-                return messages;
-            }
-
-            generatePhase4() {
-                const messages = [];
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[17:15]',
-                    sender: 'EST SCOUTS BN',
-                    text: `Estonian Scout Battalion (25x vehicles) moving to attack enemy right flank, grid ${CONFIG.GRID_ZONE} 85200 89800, assault formation`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[17:31]',
-                    sender: 'FO4',
-                    text: `Preparing fire plan for counterattack. Concentrations requested on grid ${CONFIG.GRID_ZONE} 85300 89900 and 85100 89700`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[17:47]',
-                    sender: 'UAV2',
-                    text: `Enemy reserve hesitating, taking fire, grid ${CONFIG.GRID_ZONE} 85400 90000, coordination breaking down`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'spotrep',
-                    time: '[18:03]',
-                    sender: 'EST SCOUTS BN',
-                    text: 'SPOTREP 022',
-                    details: {
-                        fm: 'EST SCOUTS BN',
-                        to: '1 INF BDE HQ',
-                        dtg: '081803ZAPR2026',
-                        subj: 'COUNTERATTACK CONTACT REPORT',
-                        size: 'COMPANY+ (10-12 VEH ENGAGING)',
-                        activity: 'OFFENSIVE OPERATIONS',
-                        location: `${CONFIG.GRID_ZONE} 85200 89800`,
-                        unit: '3 MR CO, 138 MRB (ENEMY)',
-                        equipment: 'BMP-2, BMP-3, Small Arms',
-                        assessment: 'FRIENDLY COUNTERATTACK GAINING MOMENTUM. ENEMY FORCES FRAGMENTING. 3x BMP-2 DESTROYED. RECOMMEND CONTINUED PRESSURE.'
-                    }
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[18:19]',
-                    sender: 'BG-EST CMD',
-                    text: `Excellent work, all units. Enemy showing signs of culmination. Maintain aggressive posture.`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[18:35]',
-                    sender: 'FO1',
-                    text: `Enemy main body withdrawing eastward! Massed movement, grid ${CONFIG.GRID_ZONE} 84900 89500, estimated battalion strength`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[18:51]',
-                    sender: 'UAV5',
-                    text: `Artillery battery retreating at high speed, 2S19 Msta, grid ${CONFIG.GRID_ZONE} 85500 90100, tail-end of column`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'sitrep',
-                    time: '[19:07]',
-                    sender: 'BG-EST S3',
-                    text: 'SITREP 003',
-                    details: {
-                        fm: 'BG-EST S3',
-                        to: '1 INF BDE HQ',
-                        dtg: '081907ZAPR2026',
-                        subj: 'ENEMY WITHDRAWAL CONFIRMED',
-                        line1: 'ENEMY: MAIN BODY RETREATING EASTWARD, DISORGANIZED, 15+ VEHICLES IN FLIGHT',
-                        line2: 'FRIENDLY: 1x Warrior total loss, 3 WIA, ammunition DEPLETED 30%, morale HIGH',
-                        line3: 'TERRAIN: DEFENSIVE POSITIONS FULLY HELD, NO BREACH ACHIEVED BY OPFOR',
-                        assessment: 'ENEMY ASSAULT REPULSED. 138 MRB WITHDREW AFTER 5+ HOURS OF CONTACT. TAPA FACILITY SECURE. RECOMMEND EXPLOITATION AND PURSUIT.'
-                    }
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[19:23]',
-                    sender: 'SCOUT3',
-                    text: `Counting destroyed equipment: 8x T-72, 12x BMP-2, 2x 2S19 Msta, 1x SA-11 Buk. Total distance 25 km from starting position.`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[19:39]',
-                    sender: 'FO2',
-                    text: `Casualty report: 24 enemy KIA, 17 WIA, 8 POW in nearby sector. Equipment losses catastrophic for 138 MRB.`
-                });
-                messages.push({
-                    phase: 4,
-                    type: 'plain',
-                    time: '[19:55]',
-                    sender: 'BG-EST S2',
-                    text: `Operation NORTHERN SHIELD: Blue Force Victory. Enemy incursion repulsed with heavy losses. NATO eFP holds ground.`
-                });
-                return messages;
-            }
-
-            generateAll() {
-                this.generatedMessages = [];
-                this.generatedMessages.push(...this.generatePhase1());
-                this.generatedMessages.push(...this.generatePhase2());
-                this.generatedMessages.push(...this.generatePhase3());
-                this.generatedMessages.push(...this.generatePhase4());
-                return this.generatedMessages;
-            }
-
             getNext() {
                 if (this.messageCount < this.generatedMessages.length) {
                     return this.generatedMessages[this.messageCount++];
                 }
                 return null;
             }
-
-            reset() {
-                this.messageCount = 0;
-            }
-
+            reset() { this.messageCount = 0; }
             jumpToPhase(phase) {
                 const phaseMap = {
                     '1': (msg) => msg.phase === 1,
-                    '2': (msg) => msg.phase === 1 || msg.phase === 2,
-                    '3': (msg) => msg.phase === 1 || msg.phase === 2 || msg.phase === 3,
+                    '2': (msg) => msg.phase <= 2,
+                    '3': (msg) => msg.phase <= 3,
                     '4': (msg) => true,
                 };
-
-                const filter = phaseMap[phase];
-                this.messageCount = this.generatedMessages.filter(filter).length;
-                this.currentPhase = parseInt(phase);
+                this.messageCount = this.generatedMessages.filter(phaseMap[phase]).length;
             }
         }
 
-        // ============================================================================
-        // SIMULATOR ENGINE
-        // ============================================================================
         class ChatSimulator {
             constructor() {
                 this.isRunning = false;
-                this.messageGenerator = new MessageGenerator();
+                this.currentScenario = SCENARIOS['northern-shield'];
+                this.messageGenerator = new MessageGenerator(this.currentScenario);
                 this.speed = CONFIG.DEFAULT_SPEED;
-                this.currentMessageIndex = 0;
                 this.timeoutId = null;
                 this.broadcastChannel = null;
-                this.heartbeatInterval = null;
+                this.displayedMessages = [];
 
                 try {
                     this.broadcastChannel = new BroadcastChannel(CONFIG.BROADCAST_CHANNEL_NAME);
-                } catch (e) {
-                    console.log('BroadcastChannel not available:', e);
-                }
-
-                this.messageGenerator.generateAll();
-                this.sendHandshake();
-            }
-
-            sendHandshake() {
-                if (this.broadcastChannel) {
-                    this.broadcastChannel.postMessage({
-                        type: 'INTEL_SIMULATOR_READY',
-                        source: 'test_chat_simulator',
-                        timestamp: new Date().toISOString()
-                    });
-                }
-            }
-
-            startHeartbeat() {
-                if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
-                this.heartbeatInterval = setInterval(() => {
-                    if (this.broadcastChannel && this.isRunning) {
+                    this.broadcastChannel.onmessage = (event) => {
+                        if (!event.data || event.data.type !== 'INTEL_SCRAPE_REQUEST') return;
+                        const fromIndex = event.data.fromIndex || 0;
                         this.broadcastChannel.postMessage({
-                            type: 'INTEL_HEARTBEAT',
+                            type: 'INTEL_SCRAPE_RESPONSE',
+                            messages: this.displayedMessages.slice(fromIndex),
+                            totalCount: this.displayedMessages.length,
                             timestamp: new Date().toISOString()
                         });
-                    }
-                }, 10000);
+                    };
+                } catch (e) {}
             }
 
-            stopHeartbeat() {
-                if (this.heartbeatInterval) {
-                    clearInterval(this.heartbeatInterval);
-                    this.heartbeatInterval = null;
-                }
+            setScenario(scenarioKey) {
+                this.currentScenario = SCENARIOS[scenarioKey];
+                this.messageGenerator = new MessageGenerator(this.currentScenario);
+                this.reset();
+                this.updateUI();
+            }
+
+            reset() {
+                this.isRunning = false;
+                this.messageGenerator.reset();
+                this.displayedMessages = [];
+                document.getElementById('chatFeed').innerHTML = '<div class="empty-state">Ready to begin.</div>';
+                document.getElementById('messageCount').textContent = '0';
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+
+            updateUI() {
+                const name = currentLang === 'et' ? this.currentScenario.nameEt : this.currentScenario.name;
+                document.getElementById('sidebarTitle').textContent = '📋 ' + name;
+                document.getElementById('scenarioContent').innerHTML = currentLang === 'et' ? this.currentScenario.descriptionEt : this.currentScenario.description;
             }
 
             start() {
                 if (this.isRunning) return;
-
                 this.isRunning = true;
                 document.getElementById('startBtn').disabled = true;
                 document.getElementById('stopBtn').disabled = false;
-                document.getElementById('phaseSelect').disabled = true;
-
-                if (this.currentMessageIndex === 0) {
-                    document.getElementById('chatFeed').innerHTML = '';
-                }
-
-                this.startHeartbeat();
+                if (this.messageGenerator.messageCount === 0) document.getElementById('chatFeed').innerHTML = '';
                 this.scheduleNext();
             }
 
             stop() {
                 this.isRunning = false;
                 if (this.timeoutId) clearTimeout(this.timeoutId);
-                this.stopHeartbeat();
-
                 document.getElementById('startBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = true;
-                document.getElementById('phaseSelect').disabled = false;
             }
 
             scheduleNext() {
                 if (!this.isRunning) return;
-
                 const message = this.messageGenerator.getNext();
                 if (!message) {
                     this.stop();
-                    this.addSystemMessage('⚠️ Scenario complete. All 50 messages generated.');
                     return;
                 }
-
                 this.displayMessage(message);
-
-                this.timeoutId = setTimeout(() => {
-                    this.scheduleNext();
-                }, this.speed);
+                this.timeoutId = setTimeout(() => this.scheduleNext(), this.speed);
             }
 
             displayMessage(message) {
@@ -1220,9 +846,8 @@
                 messageEl.className = 'message';
 
                 if (message.type === 'spotrep' || message.type === 'sitrep') {
-                    const detailIdx = window._natoDetails ? window._natoDetails.length : 0;
-                    if (!window._natoDetails) window._natoDetails = [];
-                    window._natoDetails.push({ type: message.type, details: message.details });
+                    const idx = (window._natoDetails = window._natoDetails || []).length;
+                    window._natoDetails.push(message);
 
                     const timeSpan = document.createElement('span');
                     timeSpan.className = 'message-time';
@@ -1235,12 +860,11 @@
                     const link = document.createElement('a');
                     link.className = 'message-link';
                     link.href = '#';
-                    link.textContent = '📋 ' + message.type.toUpperCase() + ' ' + message.text + ' — Click to view';
-                    link.addEventListener('click', function(e) {
+                    link.textContent = message.type.toUpperCase() + ' — Click';
+                    link.onclick = (e) => {
                         e.preventDefault();
-                        const d = window._natoDetails[detailIdx];
-                        showMessage(d.type, d.details);
-                    });
+                        showMessage(window._natoDetails[idx]);
+                    };
 
                     messageEl.appendChild(timeSpan);
                     messageEl.appendChild(document.createTextNode(' '));
@@ -1248,156 +872,55 @@
                     messageEl.appendChild(document.createTextNode(': '));
                     messageEl.appendChild(link);
                 } else {
-                    messageEl.innerHTML = `
-                        <span class="message-time">${message.time}</span>
-                        <span class="message-sender">${message.sender}</span>:
-                        <span class="message-text">${message.text}</span>
-                    `;
+                    messageEl.innerHTML = `<span class="message-time">${message.time}</span> <span class="message-sender">${message.sender}</span>: <span class="message-text">${message.text}</span>`;
                 }
 
-                if (chatFeed.querySelector('.empty-state')) {
-                    chatFeed.innerHTML = '';
-                }
-
-                if (this.messageGenerator.messageCount > 1) {
-                    const prevMessage = this.messageGenerator.generatedMessages[this.messageGenerator.messageCount - 2];
-                    if (prevMessage && prevMessage.phase !== message.phase) {
-                        const phaseNames = {
-                            1: t('phase_label_1'),
-                            2: t('phase_label_2'),
-                            3: t('phase_label_3'),
-                            4: t('phase_label_4')
-                        };
-                        const phaseEl = document.createElement('div');
-                        phaseEl.className = 'phase-label';
-                        phaseEl.textContent = phaseNames[message.phase];
-                        chatFeed.appendChild(phaseEl);
-                    }
-                }
-
+                if (chatFeed.querySelector('.empty-state')) chatFeed.innerHTML = '';
                 chatFeed.appendChild(messageEl);
                 chatFeed.scrollTop = chatFeed.scrollHeight;
 
                 document.getElementById('messageCount').textContent = this.messageGenerator.messageCount;
-
-                this.sendToIntelFusion(message);
-            }
-
-            addSystemMessage(text) {
-                const chatFeed = document.getElementById('chatFeed');
-                const messageEl = document.createElement('div');
-                messageEl.className = 'message';
-                messageEl.style.borderLeftColor = '#aaa';
-                messageEl.innerHTML = `<span class="message-text" style="color: #aaa;">${text}</span>`;
-                chatFeed.appendChild(messageEl);
-                chatFeed.scrollTop = chatFeed.scrollHeight;
-            }
-
-            sendToIntelFusion(message) {
-                const messageText = `[${message.time.replace(/[\[\]]/g, '')}] ${message.sender}: ${message.text}`;
-
-                if (window.opener) {
-                    window.opener.postMessage({
-                        type: 'INTEL_BATCH',
-                        messages: [messageText]
-                    }, '*');
-                }
-
-                if (this.broadcastChannel) {
-                    this.broadcastChannel.postMessage({
-                        type: 'INTEL_MESSAGE',
-                        payload: messageText,
-                        timestamp: new Date().toISOString()
-                    });
-                }
+                this.displayedMessages.push(`[${message.time.replace(/[\[\]]/g, '')}] ${message.sender}: ${message.text}`);
             }
 
             updateSpeed(value) {
-                const speedValue = parseFloat(value);
-                this.speed = speedValue * 1000;
-                document.getElementById('speedDisplay').textContent = speedValue.toFixed(1) + 's';
+                this.speed = parseFloat(value) * 1000;
+                document.getElementById('speedDisplay').textContent = parseFloat(value).toFixed(1) + 's';
             }
 
             jumpToPhase(phase) {
                 this.messageGenerator.jumpToPhase(phase);
-                this.currentMessageIndex = this.messageGenerator.messageCount;
-
                 document.getElementById('chatFeed').innerHTML = '';
+                this.displayedMessages = [];
                 for (let i = 0; i < this.messageGenerator.messageCount; i++) {
                     this.displayMessage(this.messageGenerator.generatedMessages[i]);
-                }
-                document.getElementById('messageCount').textContent = this.messageGenerator.messageCount;
-            }
-
-            sendAllToIntelFusion() {
-                const messages = this.messageGenerator.generatedMessages.map(msg =>
-                    `[${msg.time.replace(/[\[\]]/g, '')}] ${msg.sender}: ${msg.text}`
-                );
-
-                if (window.opener) {
-                    window.opener.postMessage({
-                        type: 'INTEL_BATCH',
-                        messages: messages
-                    }, '*');
-                    alert(`Sent ${messages.length} messages to Intel Fusion via PostMessage`);
-                }
-
-                if (this.broadcastChannel) {
-                    this.broadcastChannel.postMessage({
-                        type: 'INTEL_BATCH',
-                        messages: messages,
-                        timestamp: new Date().toISOString()
-                    });
-                    alert(`Sent ${messages.length} messages to Intel Fusion via BroadcastChannel`);
                 }
             }
         }
 
-        // ============================================================================
-        // GLOBAL FUNCTIONS
-        // ============================================================================
         const simulator = new ChatSimulator();
+        simulator.updateUI();
 
-        function showMessage(type, details) {
+        function changeScenario(scenarioKey) {
+            if (scenarioKey === 'custom') {
+                simulator.stop();
+                openEditor();
+            } else {
+                simulator.setScenario(scenarioKey);
+            }
+        }
+
+        function showMessage(message) {
             const modal = document.getElementById('messageModal');
             const modalBody = document.getElementById('modalBody');
-
+            const d = message.details;
             let html = '';
-
-            if (type === 'spotrep') {
-                html = `
-<div class="nato-header">SPOT REPORT (SPOTREP)</div>
-FM: ${details.fm}
-TO: ${details.to}
-DTG: ${details.dtg}
-SUBJ: ${details.subj}
-
-1. SIZE: ${details.size}
-2. ACTIVITY: ${details.activity}
-3. LOCATION: ${details.location}
-4. UNIT: ${details.unit}
-5. EQUIPMENT: ${details.equipment}
-6. TIME: ${details.dtg}
-
-ASSESSMENT: ${details.assessment}
-`;
-            } else if (type === 'sitrep') {
-                html = `
-<div class="nato-header">SITUATION REPORT (SITREP)</div>
-FM: ${details.fm}
-TO: ${details.to}
-DTG: ${details.dtg}
-SUBJ: ${details.subj}
-
-ENEMY: ${details.line1}
-FRIENDLY: ${details.line2}
-OTHER: ${details.line3}
-
-ASSESSMENT: ${details.assessment}
-`;
+            if (message.type === 'spotrep') {
+                html = `FM: ${d.fm}\nTO: ${d.to}\nDTG: ${d.dtg}\nSUBJ: ${d.subj}\n\n1. SIZE: ${d.size}\n2. ACTIVITY: ${d.activity}\n3. LOCATION: ${d.location}\n4. UNIT: ${d.unit}\n5. EQUIPMENT: ${d.equipment}\n\nASSESSMENT: ${d.assessment}`;
+            } else if (message.type === 'sitrep') {
+                html = `FM: ${d.fm}\nTO: ${d.to}\nDTG: ${d.dtg}\nSUBJ: ${d.subj}\n\nENEMY: ${d.line1}\nFRIENDLY: ${d.line2}\nOTHER: ${d.line3}\n\nASSESSMENT: ${d.assessment}`;
             }
-
-            modalBody.innerHTML = html;
+            modalBody.textContent = html;
             modal.style.display = 'block';
         }
 
@@ -1405,23 +928,55 @@ ASSESSMENT: ${details.assessment}
             document.getElementById('messageModal').style.display = 'none';
         }
 
+        function openEditor() {
+            document.getElementById('editorModal').style.display = 'block';
+        }
+
+        function closeEditor() {
+            document.getElementById('editorModal').style.display = 'none';
+        }
+
+        function saveCustomScenario() {
+            const name = document.getElementById('editorName').value.trim();
+            const desc = document.getElementById('editorDescription').value.trim();
+            const jsonStr = document.getElementById('editorMessages').value.trim();
+            if (!name || !desc || !jsonStr) {
+                alert('All fields required');
+                return;
+            }
+            try {
+                const messages = JSON.parse(jsonStr);
+                if (!Array.isArray(messages)) throw new Error('Must be array');
+                const custom = {
+                    name: name, nameEt: name,
+                    phaseLabels: { 1: '🔍 Phase 1', 2: '🚀 Phase 2', 3: '⚔️ Phase 3', 4: '🔄 Phase 4' },
+                    phaseLabelsEt: { 1: '🔍 Faas 1', 2: '🚀 Faas 2', 3: '⚔️ Faas 3', 4: '🔄 Faas 4' },
+                    description: desc, descriptionEt: desc,
+                    generator: () => messages
+                };
+                SCENARIOS['custom'] = custom;
+                simulator.setScenario('custom');
+                document.getElementById('scenarioSelect').value = 'custom';
+                closeEditor();
+            } catch (e) {
+                alert('JSON error: ' + e.message);
+            }
+        }
+
         function openIntelFusion() {
             window.open('intel_fusion.html', 'IntelFusion', 'width=1400,height=900,left=100,top=100');
         }
 
-        window.onclick = function (event) {
-            const modal = document.getElementById('messageModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
+        window.onclick = (e) => {
+            if (e.target.id === 'messageModal') closeModal();
+            if (e.target.id === 'editorModal') closeEditor();
         };
 
         window.addEventListener('beforeunload', () => {
-            simulator.stopHeartbeat();
-            if (simulator.broadcastChannel) {
-                simulator.broadcastChannel.close();
-            }
+            if (simulator.broadcastChannel) simulator.broadcastChannel.close();
         });
+
+        applyLang();
     </script>
 </body>
 </html>
