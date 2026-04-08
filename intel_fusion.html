@@ -1106,24 +1106,55 @@ const App = {
 	},
 
 	startAutoMode: function() {
+		// BroadcastChannel is always listening (initBroadcast runs on load)
+		// This just updates the UI state
+	},
+
+	stopAutoMode: function() {
+		// Don't close the channel — keep listening even when toggled off
+		// so we can auto-enable when simulator connects
+	},
+
+	initBroadcast: function() {
 		try {
 			if (typeof BroadcastChannel !== 'undefined') {
 				this.broadcastChannel = new BroadcastChannel('intel-fusion-channel');
 				this.broadcastChannel.onmessage = (event) => {
-					if (event.data && event.data.type === 'INTEL_MSG') {
+					if (!event.data || typeof event.data !== 'object') return;
+
+					// Auto-enable when simulator announces itself
+					if (event.data.type === 'INTEL_SIMULATOR_READY') {
+						if (!this.autoModeEnabled) {
+							this.autoModeEnabled = true;
+							const btn = document.getElementById('autoModeText');
+							const settings = document.getElementById('autoSettings');
+							if (btn) btn.textContent = t('autoModeOn');
+							if (settings) settings.classList.toggle('active', true);
+							this.showToast('Simulator detected — Auto Mode enabled', 'success');
+						}
+						return;
+					}
+
+					// Ignore heartbeats (just for keepalive)
+					if (event.data.type === 'INTEL_HEARTBEAT') return;
+
+					// Handle batch messages (from simulator and bookmarklet)
+					if (event.data.type === 'INTEL_BATCH' && Array.isArray(event.data.messages)) {
+						event.data.messages.forEach(msg => {
+							if (typeof msg === 'string') this.handleIntelMessage({ message: msg });
+						});
+						return;
+					}
+
+					// Handle individual messages
+					if (event.data.type === 'INTEL_MSG') {
 						this.handleIntelMessage(event.data);
+						return;
 					}
 				};
 			}
 		} catch (e) {
 			console.error('BroadcastChannel error:', e);
-		}
-	},
-
-	stopAutoMode: function() {
-		if (this.broadcastChannel) {
-			this.broadcastChannel.close();
-			this.broadcastChannel = null;
 		}
 	},
 
@@ -1137,7 +1168,7 @@ const App = {
 	handleIntelMessage: function(data) {
 		if (!this.autoModeEnabled) return;
 		const message = data.message || data.text;
-		if (typeof message === 'string' && message.length > 30) {
+		if (typeof message === 'string' && message.length > 20) {
 			const parsed = parseMessage(message);
 			if (parsed) {
 				this.database.push(parsed);
@@ -1206,6 +1237,7 @@ document.getElementById('recordsTable').addEventListener('keydown', (e) => {
 }, false);
 
 App.updateDisplay();
+App.initBroadcast();
 window.App = App;
 
 })();

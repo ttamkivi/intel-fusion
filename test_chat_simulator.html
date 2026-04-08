@@ -83,6 +83,22 @@
             background-color: #3a3a3a;
         }
 
+        .lang-button {
+            background-color: #2a2a2a;
+            color: #4a9eff;
+            border: 1px solid #4a9eff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .lang-button:hover {
+            background-color: #3a3a3a;
+        }
+
         .control-group {
             display: flex;
             gap: 8px;
@@ -379,31 +395,31 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <div class="header-title">⚙️ Intel Fusion Test Chat Simulator</div>
+        <div class="header-title" id="headerTitle">⚙️ Intel Fusion Test Chat Simulator</div>
         <div class="header-controls">
             <div class="control-group">
-                <button id="startBtn" onclick="simulator.start()">▶ Start</button>
-                <button id="stopBtn" onclick="simulator.stop()" disabled>⏹ Stop</button>
+                <button id="startBtn" onclick="simulator.start()" data-i18n="btn_start">▶ Start</button>
+                <button id="stopBtn" onclick="simulator.stop()" disabled data-i18n="btn_stop">⏹ Stop</button>
             </div>
             <div class="control-group">
-                <label class="control-label">Speed:</label>
+                <label class="control-label" data-i18n="label_speed">Speed:</label>
                 <input type="range" id="speedSlider" min="1" max="30" value="5" oninput="simulator.updateSpeed(this.value)">
                 <span class="speed-display" id="speedDisplay">5.0s</span>
             </div>
             <div class="control-group">
-                <label class="control-label">Phase:</label>
+                <label class="control-label" data-i18n="label_phase">Phase:</label>
                 <select id="phaseSelect" onchange="simulator.jumpToPhase(this.value)">
-                    <option value="1">Phase 1: Reconnaissance</option>
-                    <option value="2">Phase 2: Advance</option>
-                    <option value="3">Phase 3: Contact</option>
-                    <option value="4">Phase 4: Counterattack</option>
-                </select>
-            </div>
+                    <option value="1" data-i18n="phase_1">Phase 1: Reconnaissance</option>
+                    <option value="2" data-i18n="phase_2">Phase 2: Advance</option>
+                    <option value="3" data-i18n="phase_3">Phase 3: Contact</option>
+                    <option value="4" data-i18n="phase_4">Phase 4: Counterattack</option>
+                </select></div>
             <div class="message-counter">
-                <span id="messageCount">0</span> messages
+                <span id="messageCount">0</span> <span data-i18n="label_messages">messages</span>
             </div>
-            <button class="secondary" onclick="simulator.sendAllToIntelFusion()">📤 Send to Intel Fusion</button>
-            <button class="secondary" onclick="openIntelFusion()">🔗 Open Intel Fusion</button>
+            <button class="secondary" onclick="simulator.sendAllToIntelFusion()" data-i18n="btn_send">📤 Send to Intel Fusion</button>
+            <button class="secondary" onclick="openIntelFusion()" data-i18n="btn_open">🔗 Open Intel Fusion</button>
+            <button class="lang-button" id="langBtn" onclick="toggleLang()">🇬🇧 English</button>
         </div>
     </div>
 
@@ -412,18 +428,18 @@
         <!-- Chat Section -->
         <div class="chat-section">
             <div class="chat-feed" id="chatFeed">
-                <div class="empty-state">Ready to begin. Click "Start" to generate messages.</div>
+                <div class="empty-state" data-i18n="empty_state">Ready to begin. Click "Start" to generate messages.</div>
             </div>
         </div>
 
         <!-- Sidebar: Scenario Brief -->
         <div class="sidebar">
-            <div class="sidebar-title">📋 Operation NORTHERN SHIELD</div>
+            <div class="sidebar-title" id="sidebarTitle">📋 Operation NORTHERN SHIELD</div>
             <div class="scenario-content">
-                <h3>Setting</h3>
+                <h3 data-i18n="section_setting">Setting</h3>
                 <p>Estonia, Lääne-Viru County, Spring 2026. NATO eFP Battle Group Estonia (UK-led, with Estonian, French, and Danish contingents) defending against a conventional incursion from the east.</p>
 
-                <h3>Red Force (OPFOR)</h3>
+                <h3 data-i18n="section_red">Red Force (OPFOR)</h3>
                 <h4>138th Motor Rifle Brigade</h4>
                 <ul>
                     <li>Main axis: Tallinn-Narva highway (E20)</li>
@@ -434,7 +450,7 @@
                 </ul>
                 <p><strong>Objective:</strong> Seize Tapa military base, disrupt NATO logistics.</p>
 
-                <h3>Blue Force (FRIENDLY)</h3>
+                <h3 data-i18n="section_blue">Blue Force (FRIENDLY)</h3>
                 <h4>Battle Group Estonia</h4>
                 <ul>
                     <li>UK infantry company, Estonian mechanized company</li>
@@ -444,7 +460,7 @@
                     <li>8 Observation posts</li>
                 </ul>
 
-                <h3>Key Terrain (MGRS 35V)</h3>
+                <h3 data-i18n="section_terrain">Key Terrain (MGRS 35V)</h3>
                 <ul>
                     <li>Tapa military base: MD 84500 89500</li>
                     <li>E20 corridor: MD 85000-87000</li>
@@ -455,16 +471,16 @@
                 </ul>
 
                 <h3>Expected Phases</h3>
-                <h4>Phase 1: Reconnaissance (msg 1-10)</h4>
+                <h4 data-i18n="phase_1_full">Phase 1: Reconnaissance (msg 1-10)</h4>
                 <p>Blue UAVs and scouts detect Red buildup near border. Red recon elements probe forward.</p>
 
-                <h4>Phase 2: Advance (msg 11-25)</h4>
+                <h4 data-i18n="phase_2_full">Phase 2: Advance (msg 11-25)</h4>
                 <p>Red main body moves west on E20. Blue reports movement, calls for fire.</p>
 
-                <h4>Phase 3: Contact (msg 26-40)</h4>
+                <h4 data-i18n="phase_3_full">Phase 3: Contact (msg 26-40)</h4>
                 <p>First engagements along defensive line. SPOTREPs, SITREPs, casualties reported.</p>
 
-                <h4>Phase 4: Counterattack (msg 41-50)</h4>
+                <h4 data-i18n="phase_4_full">Phase 4: Counterattack (msg 41-50)</h4>
                 <p>Estonian reserve committed. Blue indirect fire. Red force signs of culmination.</p>
             </div>
         </div>
@@ -480,10 +496,102 @@
 
     <script>
         // ============================================================================
+        // LOCALIZATION
+        // ============================================================================
+        const LANG = {
+            'en': {
+                'header_title': '⚙️ Intel Fusion Test Chat Simulator',
+                'btn_start': '▶ Start',
+                'btn_stop': '⏹ Stop',
+                'label_speed': 'Speed:',
+                'label_phase': 'Phase:',
+                'label_messages': 'messages',
+                'btn_send': '📤 Send to Intel Fusion',
+                'btn_open': '🔗 Open Intel Fusion',
+                'lang_btn': '🇬🇧 English',
+                'empty_state': 'Ready to begin. Click "Start" to generate messages.',
+                'section_setting': 'Setting',
+                'section_red': 'Red Force (OPFOR)',
+                'section_blue': 'Blue Force (FRIENDLY)',
+                'section_terrain': 'Key Terrain (MGRS 35V)',
+                'phase_1': 'Phase 1: Reconnaissance',
+                'phase_2': 'Phase 2: Advance',
+                'phase_3': 'Phase 3: Contact',
+                'phase_4': 'Phase 4: Counterattack',
+                'phase_1_full': 'Phase 1: Reconnaissance (msg 1-10)',
+                'phase_2_full': 'Phase 2: Advance (msg 11-25)',
+                'phase_3_full': 'Phase 3: Contact (msg 26-40)',
+                'phase_4_full': 'Phase 4: Counterattack (msg 41-50)',
+                'sidebar_title': '📋 Operation NORTHERN SHIELD',
+                'phase_label_1': '🔍 FAAS 1: Luure',
+                'phase_label_2': '🚀 FAAS 2: Pealetung',
+                'phase_label_3': '⚔️ FAAS 3: Kokkupuude',
+                'phase_label_4': '🔄 FAAS 4: Vastulöök',
+            },
+            'et': {
+                'header_title': '⚙️ Luure Fusion Testi Simulaator',
+                'btn_start': '▶ Käivita',
+                'btn_stop': '⏹ Peata',
+                'label_speed': 'Kiirus:',
+                'label_phase': 'Faas:',
+                'label_messages': 'sõnumit',
+                'btn_send': '📤 Saada Intel Fusionisse',
+                'btn_open': '🔗 Ava Intel Fusion',
+                'lang_btn': '🇪🇪 Eesti',
+                'empty_state': 'Valmis alustama. Vajuta \'Käivita\' sõnumite genereerimiseks.',
+                'section_setting': 'Olukord',
+                'section_red': 'Punased (VAENLANE)',
+                'section_blue': 'Sinised (OMA)',
+                'section_terrain': 'Peamine maastik (MGRS 35V)',
+                'phase_1': 'Faas 1: Luure',
+                'phase_2': 'Faas 2: Pealetung',
+                'phase_3': 'Faas 3: Kokkupuude',
+                'phase_4': 'Faas 4: Vastulöök',
+                'phase_1_full': 'Faas 1: Luure (sõn 1-10)',
+                'phase_2_full': 'Faas 2: Pealetung (sõn 11-25)',
+                'phase_3_full': 'Faas 3: Kokkupuude (sõn 26-40)',
+                'phase_4_full': 'Faas 4: Vastulöök (sõn 41-50)',
+                'sidebar_title': '📋 Operatsiooni NORTHERN SHIELD',
+                'phase_label_1': '🔍 FAAS 1: Luure',
+                'phase_label_2': '🚀 FAAS 2: Pealetung',
+                'phase_label_3': '⚔️ FAAS 3: Kokkupuude',
+                'phase_label_4': '🔄 FAAS 4: Vastulöök',
+            }
+        };
+
+        let currentLang = 'en';
+
+        function t(key) {
+            return LANG[currentLang][key] || LANG['en'][key] || key;
+        }
+
+        function applyLang() {
+            // Update header title
+            document.getElementById('headerTitle').textContent = t('header_title');
+
+            // Update sidebar title
+            document.getElementById('sidebarTitle').textContent = t('sidebar_title');
+
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+
+            // Update lang button
+            document.getElementById('langBtn').textContent = t('lang_btn');
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'et' : 'en';
+            applyLang();
+        }
+
+        // ============================================================================
         // CONFIGURATION
         // ============================================================================
         const CONFIG = {
-            DEFAULT_SPEED: 5000, // milliseconds between messages
+            DEFAULT_SPEED: 5000,
             MIN_SPEED: 1000,
             MAX_SPEED: 30000,
             GRID_ZONE: '35V MD',
@@ -514,8 +622,6 @@
                 'BRDM-2', 'Ural Truck', 'Orlan-10'
             ],
             blueEquipment: ['Warrior', 'Saxon', 'Fuchs', 'Scimitar', 'Javelin', 'Milan ATGM', 'Puma UAV', 'Shadow UAV'],
-
-            // Realistic grids in the operational area (35V MD, Tallinn-Narva-Tapa region)
             grids: {
                 phase1: [
                     '89200 87800', '89100 87900', '88900 88100', '89000 88000',
@@ -554,7 +660,6 @@
 
             generatePhase1() {
                 const messages = [];
-                // Reconnaissance: UAVs and scouts detect Red buildup
                 messages.push({
                     phase: 1,
                     type: 'plain',
@@ -654,7 +759,6 @@
 
             generatePhase2() {
                 const messages = [];
-                // Advance: Red main body moves west
                 messages.push({
                     phase: 2,
                     type: 'plain',
@@ -775,7 +879,6 @@
 
             generatePhase3() {
                 const messages = [];
-                // Contact: First engagements
                 messages.push({
                     phase: 3,
                     type: 'plain',
@@ -880,7 +983,6 @@
 
             generatePhase4() {
                 const messages = [];
-                // Counterattack: Reserve committed, Blue offensive action
                 messages.push({
                     phase: 4,
                     type: 'plain',
@@ -1028,16 +1130,45 @@
                 this.currentMessageIndex = 0;
                 this.timeoutId = null;
                 this.broadcastChannel = null;
+                this.heartbeatInterval = null;
 
-                // Initialize BroadcastChannel for cross-tab communication
                 try {
                     this.broadcastChannel = new BroadcastChannel(CONFIG.BROADCAST_CHANNEL_NAME);
                 } catch (e) {
                     console.log('BroadcastChannel not available:', e);
                 }
 
-                // Generate all messages at startup
                 this.messageGenerator.generateAll();
+                this.sendHandshake();
+            }
+
+            sendHandshake() {
+                if (this.broadcastChannel) {
+                    this.broadcastChannel.postMessage({
+                        type: 'INTEL_SIMULATOR_READY',
+                        source: 'test_chat_simulator',
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+
+            startHeartbeat() {
+                if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
+                this.heartbeatInterval = setInterval(() => {
+                    if (this.broadcastChannel && this.isRunning) {
+                        this.broadcastChannel.postMessage({
+                            type: 'INTEL_HEARTBEAT',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                }, 10000);
+            }
+
+            stopHeartbeat() {
+                if (this.heartbeatInterval) {
+                    clearInterval(this.heartbeatInterval);
+                    this.heartbeatInterval = null;
+                }
             }
 
             start() {
@@ -1048,17 +1179,18 @@
                 document.getElementById('stopBtn').disabled = false;
                 document.getElementById('phaseSelect').disabled = true;
 
-                // Clear chat if restarting
                 if (this.currentMessageIndex === 0) {
                     document.getElementById('chatFeed').innerHTML = '';
                 }
 
+                this.startHeartbeat();
                 this.scheduleNext();
             }
 
             stop() {
                 this.isRunning = false;
                 if (this.timeoutId) clearTimeout(this.timeoutId);
+                this.stopHeartbeat();
 
                 document.getElementById('startBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = true;
@@ -1070,7 +1202,6 @@
 
                 const message = this.messageGenerator.getNext();
                 if (!message) {
-                    // Scenario complete
                     this.stop();
                     this.addSystemMessage('⚠️ Scenario complete. All 50 messages generated.');
                     return;
@@ -1089,7 +1220,6 @@
                 messageEl.className = 'message';
 
                 if (message.type === 'spotrep' || message.type === 'sitrep') {
-                    // Clickable NATO message — store details by index to avoid JSON-in-HTML issues
                     const detailIdx = window._natoDetails ? window._natoDetails.length : 0;
                     if (!window._natoDetails) window._natoDetails = [];
                     window._natoDetails.push({ type: message.type, details: message.details });
@@ -1118,7 +1248,6 @@
                     messageEl.appendChild(document.createTextNode(': '));
                     messageEl.appendChild(link);
                 } else {
-                    // Plain text message
                     messageEl.innerHTML = `
                         <span class="message-time">${message.time}</span>
                         <span class="message-sender">${message.sender}</span>:
@@ -1126,20 +1255,18 @@
                     `;
                 }
 
-                // Clear empty state on first message
                 if (chatFeed.querySelector('.empty-state')) {
                     chatFeed.innerHTML = '';
                 }
 
-                // Add phase label at phase boundaries
                 if (this.messageGenerator.messageCount > 1) {
                     const prevMessage = this.messageGenerator.generatedMessages[this.messageGenerator.messageCount - 2];
                     if (prevMessage && prevMessage.phase !== message.phase) {
                         const phaseNames = {
-                            1: '🔍 PHASE 1: Reconnaissance',
-                            2: '🚀 PHASE 2: Advance',
-                            3: '⚔️ PHASE 3: Contact',
-                            4: '🔄 PHASE 4: Counterattack'
+                            1: t('phase_label_1'),
+                            2: t('phase_label_2'),
+                            3: t('phase_label_3'),
+                            4: t('phase_label_4')
                         };
                         const phaseEl = document.createElement('div');
                         phaseEl.className = 'phase-label';
@@ -1151,10 +1278,8 @@
                 chatFeed.appendChild(messageEl);
                 chatFeed.scrollTop = chatFeed.scrollHeight;
 
-                // Update message counter
                 document.getElementById('messageCount').textContent = this.messageGenerator.messageCount;
 
-                // Send message to Intel Fusion
                 this.sendToIntelFusion(message);
             }
 
@@ -1171,7 +1296,6 @@
             sendToIntelFusion(message) {
                 const messageText = `[${message.time.replace(/[\[\]]/g, '')}] ${message.sender}: ${message.text}`;
 
-                // Send via PostMessage to opener
                 if (window.opener) {
                     window.opener.postMessage({
                         type: 'INTEL_BATCH',
@@ -1179,7 +1303,6 @@
                     }, '*');
                 }
 
-                // Send via BroadcastChannel
                 if (this.broadcastChannel) {
                     this.broadcastChannel.postMessage({
                         type: 'INTEL_MESSAGE',
@@ -1190,7 +1313,6 @@
             }
 
             updateSpeed(value) {
-                // Speed is 1-30, convert to milliseconds
                 const speedValue = parseFloat(value);
                 this.speed = speedValue * 1000;
                 document.getElementById('speedDisplay').textContent = speedValue.toFixed(1) + 's';
@@ -1200,7 +1322,6 @@
                 this.messageGenerator.jumpToPhase(phase);
                 this.currentMessageIndex = this.messageGenerator.messageCount;
 
-                // Refresh display
                 document.getElementById('chatFeed').innerHTML = '';
                 for (let i = 0; i < this.messageGenerator.messageCount; i++) {
                     this.displayMessage(this.messageGenerator.generatedMessages[i]);
@@ -1288,7 +1409,6 @@ ASSESSMENT: ${details.assessment}
             window.open('intel_fusion.html', 'IntelFusion', 'width=1400,height=900,left=100,top=100');
         }
 
-        // Close modal when clicking outside
         window.onclick = function (event) {
             const modal = document.getElementById('messageModal');
             if (event.target === modal) {
@@ -1296,8 +1416,8 @@ ASSESSMENT: ${details.assessment}
             }
         };
 
-        // Handle window unload to clean up BroadcastChannel
         window.addEventListener('beforeunload', () => {
+            simulator.stopHeartbeat();
             if (simulator.broadcastChannel) {
                 simulator.broadcastChannel.close();
             }
