@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+    <title>Intel Fusion Test Chat Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #0d0d0d;
+            border-bottom: 2px solid #4a9eff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a9eff;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #4a9eff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #3a8edf;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        button.secondary {
+            background-color: #2a2a2a;
+            color: #4a9eff;
+            border: 1px solid #4a9eff;
+        }
+
+        button.secondary:hover {
+            background-color: #3a3a3a;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .control-label {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #4a9eff;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #4a9eff;
+            cursor: pointer;
+            border: none;
+        }
+
+        select {
+            background-color: #2a2a2a;
+            color: #4a9eff;
+            border: 1px solid #4a9eff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .speed-display {
+            font-size: 12px;
+            color: #4a9eff;
+            min-width: 40px;
+        }
+
+        .message-counter {
+            font-size: 12px;
+            color: #aaa;
+            padding: 4px 8px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .sidebar {
+            width: 320px;
+            background-color: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-title {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            font-weight: bold;
+            color: #4a9eff;
+            font-size: 13px;
+        }
+
+        .scenario-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .scenario-content h3 {
+            color: #4a9eff;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .scenario-content h4 {
+            color: #7ab8ff;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .scenario-content p {
+            color: #bbb;
+            margin-bottom: 6px;
+        }
+
+        .scenario-content ul {
+            margin-left: 16px;
+            color: #aaa;
+            margin-bottom: 6px;
+        }
+
+        .scenario-content li {
+            margin-bottom: 3px;
+        }
+
+        .chat-feed {
+            flex: 1;
+            background-color: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 4px;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            padding: 8px 10px;
+            background-color: #1a1a1a;
+            border-left: 3px solid #4a9eff;
+            border-radius: 2px;
+            font-size: 12px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .message-sender {
+            color: #7ab8ff;
+            font-weight: 600;
+        }
+
+        .message-text {
+            color: #bbb;
+        }
+
+        .message-link {
+            color: #4a9eff;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+            background-color: #1a3a4a;
+            padding: 2px 6px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .message-link:hover {
+            background-color: #2a4a6a;
+            text-decoration: underline;
+        }
+
+        .phase-label {
+            text-align: center;
+            padding: 8px;
+            background-color: #2a2a2a;
+            color: #4a9eff;
+            margin: 6px 0;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 24px;
+            border: 2px solid #4a9eff;
+            border-radius: 4px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            color: #4a9eff;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #7ab8ff;
+        }
+
+        .nato-message {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .nato-header {
+            border-bottom: 1px solid #4a9eff;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            color: #4a9eff;
+            font-weight: bold;
+        }
+
+        .empty-state {
+            color: #666;
+            text-align: center;
+            padding: 24px;
+            font-size: 13px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a9eff;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7ab8ff;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">⚙️ Intel Fusion Test Chat Simulator</div>
+        <div class="header-controls">
+            <div class="control-group">
+                <button id="startBtn" onclick="simulator.start()">▶ Start</button>
+                <button id="stopBtn" onclick="simulator.stop()" disabled>⏹ Stop</button>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="30" value="5" oninput="simulator.updateSpeed(this.value)">
+                <span class="speed-display" id="speedDisplay">5.0s</span>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Phase:</label>
+                <select id="phaseSelect" onchange="simulator.jumpToPhase(this.value)">
+                    <option value="1">Phase 1: Reconnaissance</option>
+                    <option value="2">Phase 2: Advance</option>
+                    <option value="3">Phase 3: Contact</option>
+                    <option value="4">Phase 4: Counterattack</option>
+                </select>
+            </div>
+            <div class="message-counter">
+                <span id="messageCount">0</span> messages
+            </div>
+            <button class="secondary" onclick="simulator.sendAllToIntelFusion()">📤 Send to Intel Fusion</button>
+            <button class="secondary" onclick="openIntelFusion()">🔗 Open Intel Fusion</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-feed" id="chatFeed">
+                <div class="empty-state">Ready to begin. Click "Start" to generate messages.</div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Scenario Brief -->
+        <div class="sidebar">
+            <div class="sidebar-title">📋 Operation NORTHERN SHIELD</div>
+            <div class="scenario-content">
+                <h3>Setting</h3>
+                <p>Estonia, Lääne-Viru County, Spring 2026. NATO eFP Battle Group Estonia (UK-led, with Estonian, French, and Danish contingents) defending against a conventional incursion from the east.</p>
+
+                <h3>Red Force (OPFOR)</h3>
+                <h4>138th Motor Rifle Brigade</h4>
+                <ul>
+                    <li>Main axis: Tallinn-Narva highway (E20)</li>
+                    <li>1st Tank Battalion (T-72B3M, T-80BVM)</li>
+                    <li>2S19 Msta battalion, BM-21 Grad battery</li>
+                    <li>SA-11 Buk, SA-15 Tor air defense</li>
+                    <li>BRDM-2 scouts, Orlan-10 UAV</li>
+                </ul>
+                <p><strong>Objective:</strong> Seize Tapa military base, disrupt NATO logistics.</p>
+
+                <h3>Blue Force (FRIENDLY)</h3>
+                <h4>Battle Group Estonia</h4>
+                <ul>
+                    <li>UK infantry company, Estonian mechanized company</li>
+                    <li>French recon platoon, Danish ISTAR</li>
+                    <li>5 UAVs (Shadow/Puma class)</li>
+                    <li>4 Forward observers, 6 Scout teams</li>
+                    <li>8 Observation posts</li>
+                </ul>
+
+                <h3>Key Terrain (MGRS 35V)</h3>
+                <ul>
+                    <li>Tapa military base: MD 84500 89500</li>
+                    <li>E20 corridor: MD 85000-87000</li>
+                    <li>Auvere border: MD 89000 88000</li>
+                    <li>Jõhvi logistics: MD 87500 89000</li>
+                    <li>Kunda port: MD 83000 91000</li>
+                    <li>Rakvere town: MD 82500 89500</li>
+                </ul>
+
+                <h3>Expected Phases</h3>
+                <h4>Phase 1: Reconnaissance (msg 1-10)</h4>
+                <p>Blue UAVs and scouts detect Red buildup near border. Red recon elements probe forward.</p>
+
+                <h4>Phase 2: Advance (msg 11-25)</h4>
+                <p>Red main body moves west on E20. Blue reports movement, calls for fire.</p>
+
+                <h4>Phase 3: Contact (msg 26-40)</h4>
+                <p>First engagements along defensive line. SPOTREPs, SITREPs, casualties reported.</p>
+
+                <h4>Phase 4: Counterattack (msg 41-50)</h4>
+                <p>Estonian reserve committed. Blue indirect fire. Red force signs of culmination.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NATO Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalBody" class="nato-message"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // CONFIGURATION
+        // ============================================================================
+        const CONFIG = {
+            DEFAULT_SPEED: 5000, // milliseconds between messages
+            MIN_SPEED: 1000,
+            MAX_SPEED: 30000,
+            GRID_ZONE: '35V MD',
+            BROADCAST_CHANNEL_NAME: 'intel-fusion-channel',
+        };
+
+        // ============================================================================
+        // SCENARIO DATA
+        // ============================================================================
+        const SCENARIO = {
+            senders: {
+                uav: ['UAV1', 'UAV2', 'UAV3', 'UAV4', 'UAV5'],
+                scout: ['SCOUT1', 'SCOUT2', 'SCOUT3', 'SCOUT4', 'SCOUT5', 'SCOUT6'],
+                fo: ['FO1', 'FO2', 'FO3', 'FO4'],
+                hq: ['BG-EST S2', 'BG-EST S3', 'BG-EST CMD', '1 INF BDE HQ', 'EST SCOUTS BN'],
+                op: ['OP1', 'OP2', 'OP3', 'OP4', 'OP5', 'OP6', 'OP7', 'OP8'],
+            },
+            redUnits: [
+                '138 MRB', '1 TK BN', '2 MR CO', '3 MR CO',
+                'BN 2S19 ART', 'BM-21 GRAD BTY',
+                'SA-11 BUK BTY', 'SA-15 TOR DET',
+                'BRDM-2 SC PLT', 'Orlan-10 UAV PLT'
+            ],
+            redEquipment: [
+                'T-72B3M', 'T-80BVM', 'BMP-2', 'BMP-3', 'BTR-80',
+                '2S19 Msta', 'BM-21 Grad', '122mm How',
+                'SA-11 Buk', 'SA-15 Tor', 'Pantsir-S1',
+                'BRDM-2', 'Ural Truck', 'Orlan-10'
+            ],
+            blueEquipment: ['Warrior', 'Saxon', 'Fuchs', 'Scimitar', 'Javelin', 'Milan ATGM', 'Puma UAV', 'Shadow UAV'],
+
+            // Realistic grids in the operational area (35V MD, Tallinn-Narva-Tapa region)
+            grids: {
+                phase1: [
+                    '89200 87800', '89100 87900', '88900 88100', '89000 88000',
+                    '88800 88200', '89100 88050', '88950 88150'
+                ],
+                phase2: [
+                    '87500 88800', '87400 88700', '87600 88900', '87300 88600',
+                    '87700 89000', '87200 88500', '87800 89100', '87100 88400'
+                ],
+                phase3: [
+                    '86500 89200', '86400 89100', '86600 89300', '86300 89000',
+                    '86700 89400', '86200 88900', '86800 89500', '86100 88800',
+                    '85800 89600', '85900 89700'
+                ],
+                phase4: [
+                    '85200 89800', '85300 89900', '85100 89700', '85400 90000',
+                    '84900 89500', '85500 90100', '84800 89400', '85600 90200',
+                    '84700 89300', '85700 90300'
+                ],
+                tapa: '84500 89500',
+                johvi: '87500 89000',
+                rakvere: '82500 89500',
+                kunda: '83000 91000',
+            },
+        };
+
+        // ============================================================================
+        // MESSAGE GENERATOR
+        // ============================================================================
+        class MessageGenerator {
+            constructor() {
+                this.messageCount = 0;
+                this.currentPhase = 1;
+                this.generatedMessages = [];
+            }
+
+            generatePhase1() {
+                const messages = [];
+                // Reconnaissance: UAVs and scouts detect Red buildup
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[06:45]',
+                    sender: 'UAV1',
+                    text: `3x BRDM-2 scout vehicles moving west, grid ${CONFIG.GRID_ZONE} 89200 87800, slow movement`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[06:52]',
+                    sender: 'SCOUT3',
+                    text: `Orlan-10 UAV sighted, likely recon for 138 MRB, overhead grid ${CONFIG.GRID_ZONE} 89100 87900`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'spotrep',
+                    time: '[07:08]',
+                    sender: 'BG-EST S2',
+                    text: 'SPOTREP 001',
+                    details: {
+                        fm: 'BG-EST S2',
+                        to: '1 INF BDE HQ',
+                        dtg: '081345ZAPR2026',
+                        subj: 'ENEMY RECONNAISSANCE ACTIVITY',
+                        size: 'SQUAD (4-6 VEH)',
+                        activity: 'RECONNAISSANCE SWEEP',
+                        location: `${CONFIG.GRID_ZONE} 89000 88000`,
+                        unit: 'BRDM-2 SCOUTS, 138 MRB',
+                        equipment: 'BRDM-2',
+                        assessment: 'ENEMY CONDUCTING INITIAL BORDER RECONNAISSANCE. POSSIBLE PRELUDE TO LARGER MOVEMENT.'
+                    }
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[07:15]',
+                    sender: 'OP2',
+                    text: `Dismounts observed near Auvere, grid ${CONFIG.GRID_ZONE} 88950 88150, squad size, digging positions`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[07:34]',
+                    sender: 'FO1',
+                    text: `Enemy SP arty movement detected east of positions, ${CONFIG.GRID_ZONE} 88800 88200, assessed 2S19 Msta`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[07:56]',
+                    sender: 'UAV3',
+                    text: `Confirmed 2x T-72B3M tanks at company assembly area, grid ${CONFIG.GRID_ZONE} 89100 88050, stationary`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[08:12]',
+                    sender: 'SCOUT1',
+                    text: `Company+ of BMP-2 at treeline, grid ${CONFIG.GRID_ZONE} 88900 88100, maintaining readiness posture`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[08:28]',
+                    sender: 'FO3',
+                    text: `SAM site detected! SA-11 Buk battery, grid ${CONFIG.GRID_ZONE} 89200 87800, likely air defense for main body`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'plain',
+                    time: '[08:45]',
+                    sender: 'UAV4',
+                    text: `Large convoy forming rear area, grid ${CONFIG.GRID_ZONE} 88950 87950, 20+ vehicles, supply vehicles identified`
+                });
+                messages.push({
+                    phase: 1,
+                    type: 'spotrep',
+                    time: '[09:02]',
+                    sender: 'BG-EST S2',
+                    text: 'SPOTREP 002',
+                    details: {
+                        fm: 'BG-EST S2',
+                        to: '1 INF BDE HQ',
+                        dtg: '081345ZAPR2026',
+                        subj: 'ENEMY AIR DEFENSE DEPLOYMENT',
+                        size: 'BATTERY (4-6 SYSTEMS)',
+                        activity: 'AIR DEFENSE POSITIONING',
+                        location: `${CONFIG.GRID_ZONE} 89200 87800`,
+                        unit: 'SA-11 BUK BTY, 138 MRB AD',
+                        equipment: 'SA-11 Buk, Radar vehicles',
+                        assessment: 'ENEMY ESTABLISHING AIR DEFENSE UMBRELLA. SUGGESTS MAJOR OFFENSIVE OPERATION PLANNED.'
+                    }
+                });
+                return messages;
+            }
+
+            generatePhase2() {
+                const messages = [];
+                // Advance: Red main body moves west
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[10:30]',
+                    sender: 'UAV2',
+                    text: `Column movement begins! 15x vehicles including T-72/BMP-2 mix, grid ${CONFIG.GRID_ZONE} 87500 88800, moderate speed westbound`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[10:45]',
+                    sender: 'SCOUT4',
+                    text: `Enemy dismounts at grid ${CONFIG.GRID_ZONE} 87400 88700, establishing assault positions, 2-3 platoons`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[11:02]',
+                    sender: 'FO2',
+                    text: `Flash — receiving indirect fire! Impacts grid ${CONFIG.GRID_ZONE} 87600 88900, smoke, 2S19 suspected`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[11:18]',
+                    sender: 'OP4',
+                    text: `Main attack axis confirmed E20 corridor. Tanks advancing line-abreast, grid ${CONFIG.GRID_ZONE} 87300 88600`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[11:34]',
+                    sender: 'UAV5',
+                    text: `BM-21 Grad battery rapid deployment, grid ${CONFIG.GRID_ZONE} 87700 89000, rocket volleys preparing`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'spotrep',
+                    time: '[11:50]',
+                    sender: 'BG-EST S3',
+                    text: 'SPOTREP 005',
+                    details: {
+                        fm: 'BG-EST S3',
+                        to: '1 INF BDE HQ',
+                        dtg: '081150ZAPR2026',
+                        subj: 'ENEMY MAIN BODY ADVANCE',
+                        size: 'PLATOON+ (10-15 VEHICLES)',
+                        activity: 'MOVEMENT WEST ALONG E20 AXIS',
+                        location: `${CONFIG.GRID_ZONE} 87500 88800`,
+                        unit: '1 TK BN / 138 MRB',
+                        equipment: 'T-72B3M, BMP-2, BMP-3',
+                        assessment: 'MAIN ASSAULT COLUMN ADVANCING. ESTIMATED 3-4 HOURS TO REACH TAPA. ARTILLERY SUPPORT ACTIVE.'
+                    }
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[12:06]',
+                    sender: 'SCOUT2',
+                    text: `Flanking force detected! 8x vehicles attempting northern arc around position, grid ${CONFIG.GRID_ZONE} 87200 88500`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[12:22]',
+                    sender: 'OP5',
+                    text: `Contact! One Warrior returning fire on T-72, grid ${CONFIG.GRID_ZONE} 87800 89100, Javelin prepared for engagement`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[12:38]',
+                    sender: 'FO4',
+                    text: `Calling Fire Mission — 8x enemy vehicles, grid ${CONFIG.GRID_ZONE} 87100 88400, recommend HE, WP smoke`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[12:55]',
+                    sender: 'BG-EST CMD',
+                    text: `All call signs this is BG-EST CMD. Consolidate defensive line. Enemy advance 2 km from outer perimeter. Engage at will.`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[13:11]',
+                    sender: 'UAV1',
+                    text: `Second echelon armor observed, 12x T-80BVM in column, grid ${CONFIG.GRID_ZONE} 87300 89200, following main assault force`
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'spotrep',
+                    time: '[13:27]',
+                    sender: 'EST SCOUTS BN',
+                    text: 'SPOTREP 008',
+                    details: {
+                        fm: 'EST SCOUTS BN',
+                        to: '1 INF BDE HQ',
+                        dtg: '081327ZAPR2026',
+                        subj: 'FLANKING FORCE DETECTED',
+                        size: 'COMPANY (8-10 VEHICLES)',
+                        activity: 'MOVEMENT TO FLANK POSITION',
+                        location: `${CONFIG.GRID_ZONE} 87200 88500`,
+                        unit: '2 MR CO, 138 MRB',
+                        equipment: 'BMP-2, BMP-3, BTR-80',
+                        assessment: 'ENEMY ATTEMPTING DOUBLE ENVELOPMENT. NORTHERN FLANK COMPROMISED. REQUEST RESERVE COMMITMENT.'
+                    }
+                });
+                messages.push({
+                    phase: 2,
+                    type: 'plain',
+                    time: '[13:43]',
+                    sender: 'SCOUT5',
+                    text: `SA-15 Tor detachment positioning near Jõhvi, grid ${CONFIG.GRID_ZONE} 87500 89000, threats to our UAVs imminent`
+                });
+                return messages;
+            }
+
+            generatePhase3() {
+                const messages = [];
+                // Contact: First engagements
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[14:05]',
+                    sender: 'OP1',
+                    text: `Engage! T-72 destroyed by Javelin at grid ${CONFIG.GRID_ZONE} 86500 89200, one enemy KIA, continued fire`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[14:23]',
+                    sender: 'FO1',
+                    text: `Casualties reported! Warrior hit, 1 WIA, still combat effective, grid ${CONFIG.GRID_ZONE} 86400 89100`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'sitrep',
+                    time: '[14:38]',
+                    sender: 'BG-EST S2',
+                    text: 'SITREP 001',
+                    details: {
+                        fm: 'BG-EST S2',
+                        to: '1 INF BDE HQ',
+                        dtg: '081438ZAPR2026',
+                        subj: 'CONTACT REPORT — ENEMY ASSAULT',
+                        line1: 'ENEMY: 20+ vehicles in contact, T-72/BMP-2, grid ${CONFIG.GRID_ZONE} 86600 89300',
+                        line2: 'FRIENDLY: 1x Warrior damaged, 1 WIA, ammunition status FULL',
+                        line3: 'CASUALTIES: 1 enemy tank KIA confirmed',
+                        assessment: 'HEAVY CONTACT ONGOING. ENEMY PRESSURE INCREASING. HOLDING DEFENSIVE POSITION.'
+                    }
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[14:54]',
+                    sender: 'UAV3',
+                    text: `BM-21 GRAD volley incoming! 18x rockets, impact grid ${CONFIG.GRID_ZONE} 86300 89000, massive secondary explosions`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[15:10]',
+                    sender: 'OP3',
+                    text: `Defensive line holding. Enemy taking heavy casualties but continuing assault. Grid ${CONFIG.GRID_ZONE} 86700 89400`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[15:26]',
+                    sender: 'SCOUT6',
+                    text: `Three T-72 tanks pinned in defilade, attempting artillery fire support, grid ${CONFIG.GRID_ZONE} 86200 88900, no direct fire possible`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[15:42]',
+                    sender: 'FO2',
+                    text: `Flash! BMP-2 company (8x vehicles) maneuvering for flank attack, grid ${CONFIG.GRID_ZONE} 86800 89500, engaging now`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[15:58]',
+                    sender: 'BG-EST CMD',
+                    text: `All units maintain position. First Reserve Company moving to reinforce northern sector. ETA 15 minutes.`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'spotrep',
+                    time: '[16:14]',
+                    sender: 'FO3',
+                    text: 'SPOTREP 015',
+                    details: {
+                        fm: 'FO3',
+                        to: '1 INF BDE HQ',
+                        dtg: '081614ZAPR2026',
+                        subj: 'ENEMY CASUALTY ASSESSMENT',
+                        size: '3x T-72 DESTROYED, 5x BMP-2 DAMAGED',
+                        activity: 'ASSAULT OPERATIONS CONTINUE',
+                        location: `${CONFIG.GRID_ZONE} 86100 88800`,
+                        unit: '1 TK BN / 138 MRB',
+                        equipment: 'T-72B3M, BMP-2, BMP-3',
+                        assessment: 'ENEMY SUSTAINING HEAVY LOSSES BUT ASSAULT MOMENTUM CONTINUES. RECOMMEND INDIRECT FIRE SUPPORT PRIORITY ON GRID 85800 89600.'
+                    }
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[16:30]',
+                    sender: 'UAV4',
+                    text: `Artillery battery repositioning, 2S19 Msta moving south, grid ${CONFIG.GRID_ZONE} 85800 89600, engaging new position`
+                });
+                messages.push({
+                    phase: 3,
+                    type: 'plain',
+                    time: '[16:46]',
+                    sender: 'SCOUT1',
+                    text: `Enemy consolidating intermediate position. Assessing casualties, regrouping forces, grid ${CONFIG.GRID_ZONE} 85900 89700`
+                });
+                return messages;
+            }
+
+            generatePhase4() {
+                const messages = [];
+                // Counterattack: Reserve committed, Blue offensive action
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[17:15]',
+                    sender: 'EST SCOUTS BN',
+                    text: `Estonian Scout Battalion (25x vehicles) moving to attack enemy right flank, grid ${CONFIG.GRID_ZONE} 85200 89800, assault formation`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[17:31]',
+                    sender: 'FO4',
+                    text: `Preparing fire plan for counterattack. Concentrations requested on grid ${CONFIG.GRID_ZONE} 85300 89900 and 85100 89700`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[17:47]',
+                    sender: 'UAV2',
+                    text: `Enemy reserve hesitating, taking fire, grid ${CONFIG.GRID_ZONE} 85400 90000, coordination breaking down`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'spotrep',
+                    time: '[18:03]',
+                    sender: 'EST SCOUTS BN',
+                    text: 'SPOTREP 022',
+                    details: {
+                        fm: 'EST SCOUTS BN',
+                        to: '1 INF BDE HQ',
+                        dtg: '081803ZAPR2026',
+                        subj: 'COUNTERATTACK CONTACT REPORT',
+                        size: 'COMPANY+ (10-12 VEH ENGAGING)',
+                        activity: 'OFFENSIVE OPERATIONS',
+                        location: `${CONFIG.GRID_ZONE} 85200 89800`,
+                        unit: '3 MR CO, 138 MRB (ENEMY)',
+                        equipment: 'BMP-2, BMP-3, Small Arms',
+                        assessment: 'FRIENDLY COUNTERATTACK GAINING MOMENTUM. ENEMY FORCES FRAGMENTING. 3x BMP-2 DESTROYED. RECOMMEND CONTINUED PRESSURE.'
+                    }
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[18:19]',
+                    sender: 'BG-EST CMD',
+                    text: `Excellent work, all units. Enemy showing signs of culmination. Maintain aggressive posture.`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[18:35]',
+                    sender: 'FO1',
+                    text: `Enemy main body withdrawing eastward! Massed movement, grid ${CONFIG.GRID_ZONE} 84900 89500, estimated battalion strength`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[18:51]',
+                    sender: 'UAV5',
+                    text: `Artillery battery retreating at high speed, 2S19 Msta, grid ${CONFIG.GRID_ZONE} 85500 90100, tail-end of column`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'sitrep',
+                    time: '[19:07]',
+                    sender: 'BG-EST S3',
+                    text: 'SITREP 003',
+                    details: {
+                        fm: 'BG-EST S3',
+                        to: '1 INF BDE HQ',
+                        dtg: '081907ZAPR2026',
+                        subj: 'ENEMY WITHDRAWAL CONFIRMED',
+                        line1: 'ENEMY: MAIN BODY RETREATING EASTWARD, DISORGANIZED, 15+ VEHICLES IN FLIGHT',
+                        line2: 'FRIENDLY: 1x Warrior total loss, 3 WIA, ammunition DEPLETED 30%, morale HIGH',
+                        line3: 'TERRAIN: DEFENSIVE POSITIONS FULLY HELD, NO BREACH ACHIEVED BY OPFOR',
+                        assessment: 'ENEMY ASSAULT REPULSED. 138 MRB WITHDREW AFTER 5+ HOURS OF CONTACT. TAPA FACILITY SECURE. RECOMMEND EXPLOITATION AND PURSUIT.'
+                    }
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[19:23]',
+                    sender: 'SCOUT3',
+                    text: `Counting destroyed equipment: 8x T-72, 12x BMP-2, 2x 2S19 Msta, 1x SA-11 Buk. Total distance 25 km from starting position.`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[19:39]',
+                    sender: 'FO2',
+                    text: `Casualty report: 24 enemy KIA, 17 WIA, 8 POW in nearby sector. Equipment losses catastrophic for 138 MRB.`
+                });
+                messages.push({
+                    phase: 4,
+                    type: 'plain',
+                    time: '[19:55]',
+                    sender: 'BG-EST S2',
+                    text: `Operation NORTHERN SHIELD: Blue Force Victory. Enemy incursion repulsed with heavy losses. NATO eFP holds ground.`
+                });
+                return messages;
+            }
+
+            generateAll() {
+                this.generatedMessages = [];
+                this.generatedMessages.push(...this.generatePhase1());
+                this.generatedMessages.push(...this.generatePhase2());
+                this.generatedMessages.push(...this.generatePhase3());
+                this.generatedMessages.push(...this.generatePhase4());
+                return this.generatedMessages;
+            }
+
+            getNext() {
+                if (this.messageCount < this.generatedMessages.length) {
+                    return this.generatedMessages[this.messageCount++];
+                }
+                return null;
+            }
+
+            reset() {
+                this.messageCount = 0;
+            }
+
+            jumpToPhase(phase) {
+                const phaseMap = {
+                    '1': (msg) => msg.phase === 1,
+                    '2': (msg) => msg.phase === 1 || msg.phase === 2,
+                    '3': (msg) => msg.phase === 1 || msg.phase === 2 || msg.phase === 3,
+                    '4': (msg) => true,
+                };
+
+                const filter = phaseMap[phase];
+                this.messageCount = this.generatedMessages.filter(filter).length;
+                this.currentPhase = parseInt(phase);
+            }
+        }
+
+        // ============================================================================
+        // SIMULATOR ENGINE
+        // ============================================================================
+        class ChatSimulator {
+            constructor() {
+                this.isRunning = false;
+                this.messageGenerator = new MessageGenerator();
+                this.speed = CONFIG.DEFAULT_SPEED;
+                this.currentMessageIndex = 0;
+                this.timeoutId = null;
+                this.broadcastChannel = null;
+
+                // Initialize BroadcastChannel for cross-tab communication
+                try {
+                    this.broadcastChannel = new BroadcastChannel(CONFIG.BROADCAST_CHANNEL_NAME);
+                } catch (e) {
+                    console.log('BroadcastChannel not available:', e);
+                }
+
+                // Generate all messages at startup
+                this.messageGenerator.generateAll();
+            }
+
+            start() {
+                if (this.isRunning) return;
+
+                this.isRunning = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('phaseSelect').disabled = true;
+
+                // Clear chat if restarting
+                if (this.currentMessageIndex === 0) {
+                    document.getElementById('chatFeed').innerHTML = '';
+                }
+
+                this.scheduleNext();
+            }
+
+            stop() {
+                this.isRunning = false;
+                if (this.timeoutId) clearTimeout(this.timeoutId);
+
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('phaseSelect').disabled = false;
+            }
+
+            scheduleNext() {
+                if (!this.isRunning) return;
+
+                const message = this.messageGenerator.getNext();
+                if (!message) {
+                    // Scenario complete
+                    this.stop();
+                    this.addSystemMessage('⚠️ Scenario complete. All 50 messages generated.');
+                    return;
+                }
+
+                this.displayMessage(message);
+
+                this.timeoutId = setTimeout(() => {
+                    this.scheduleNext();
+                }, this.speed);
+            }
+
+            displayMessage(message) {
+                const chatFeed = document.getElementById('chatFeed');
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message';
+
+                if (message.type === 'spotrep' || message.type === 'sitrep') {
+                    // Clickable NATO message
+                    messageEl.innerHTML = `
+                        <span class="message-time">${message.time}</span>
+                        <span class="message-sender">${message.sender}</span>:
+                        <a class="message-link" onclick="showMessage('${message.type}', ${JSON.stringify(message.details).replace(/'/g, '&#39;')})">
+                            📋 ${message.type.toUpperCase()} ${message.text} — Click to view
+                        </a>
+                    `;
+                } else {
+                    // Plain text message
+                    messageEl.innerHTML = `
+                        <span class="message-time">${message.time}</span>
+                        <span class="message-sender">${message.sender}</span>:
+                        <span class="message-text">${message.text}</span>
+                    `;
+                }
+
+                // Clear empty state on first message
+                if (chatFeed.querySelector('.empty-state')) {
+                    chatFeed.innerHTML = '';
+                }
+
+                // Add phase label at phase boundaries
+                if (this.messageGenerator.messageCount > 1) {
+                    const prevMessage = this.messageGenerator.generatedMessages[this.messageGenerator.messageCount - 2];
+                    if (prevMessage && prevMessage.phase !== message.phase) {
+                        const phaseNames = {
+                            1: '🔍 PHASE 1: Reconnaissance',
+                            2: '🚀 PHASE 2: Advance',
+                            3: '⚔️ PHASE 3: Contact',
+                            4: '🔄 PHASE 4: Counterattack'
+                        };
+                        const phaseEl = document.createElement('div');
+                        phaseEl.className = 'phase-label';
+                        phaseEl.textContent = phaseNames[message.phase];
+                        chatFeed.appendChild(phaseEl);
+                    }
+                }
+
+                chatFeed.appendChild(messageEl);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+
+                // Update message counter
+                document.getElementById('messageCount').textContent = this.messageGenerator.messageCount;
+
+                // Send message to Intel Fusion
+                this.sendToIntelFusion(message);
+            }
+
+            addSystemMessage(text) {
+                const chatFeed = document.getElementById('chatFeed');
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message';
+                messageEl.style.borderLeftColor = '#aaa';
+                messageEl.innerHTML = `<span class="message-text" style="color: #aaa;">${text}</span>`;
+                chatFeed.appendChild(messageEl);
+                chatFeed.scrollTop = chatFeed.scrollHeight;
+            }
+
+            sendToIntelFusion(message) {
+                const messageText = `[${message.time.replace(/[\[\]]/g, '')}] ${message.sender}: ${message.text}`;
+
+                // Send via PostMessage to opener
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'INTEL_BATCH',
+                        messages: [messageText]
+                    }, '*');
+                }
+
+                // Send via BroadcastChannel
+                if (this.broadcastChannel) {
+                    this.broadcastChannel.postMessage({
+                        type: 'INTEL_MESSAGE',
+                        payload: messageText,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+
+            updateSpeed(value) {
+                // Speed is 1-30, convert to milliseconds
+                const speedValue = parseFloat(value);
+                this.speed = speedValue * 1000;
+                document.getElementById('speedDisplay').textContent = speedValue.toFixed(1) + 's';
+            }
+
+            jumpToPhase(phase) {
+                this.messageGenerator.jumpToPhase(phase);
+                this.currentMessageIndex = this.messageGenerator.messageCount;
+
+                // Refresh display
+                document.getElementById('chatFeed').innerHTML = '';
+                for (let i = 0; i < this.messageGenerator.messageCount; i++) {
+                    this.displayMessage(this.messageGenerator.generatedMessages[i]);
+                }
+                document.getElementById('messageCount').textContent = this.messageGenerator.messageCount;
+            }
+
+            sendAllToIntelFusion() {
+                const messages = this.messageGenerator.generatedMessages.map(msg =>
+                    `[${msg.time.replace(/[\[\]]/g, '')}] ${msg.sender}: ${msg.text}`
+                );
+
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'INTEL_BATCH',
+                        messages: messages
+                    }, '*');
+                    alert(`Sent ${messages.length} messages to Intel Fusion via PostMessage`);
+                }
+
+                if (this.broadcastChannel) {
+                    this.broadcastChannel.postMessage({
+                        type: 'INTEL_BATCH',
+                        messages: messages,
+                        timestamp: new Date().toISOString()
+                    });
+                    alert(`Sent ${messages.length} messages to Intel Fusion via BroadcastChannel`);
+                }
+            }
+        }
+
+        // ============================================================================
+        // GLOBAL FUNCTIONS
+        // ============================================================================
+        const simulator = new ChatSimulator();
+
+        function showMessage(type, details) {
+            const modal = document.getElementById('messageModal');
+            const modalBody = document.getElementById('modalBody');
+
+            let html = '';
+
+            if (type === 'spotrep') {
+                html = `
+<div class="nato-header">SPOT REPORT (SPOTREP)</div>
+FM: ${details.fm}
+TO: ${details.to}
+DTG: ${details.dtg}
+SUBJ: ${details.subj}
+
+1. SIZE: ${details.size}
+2. ACTIVITY: ${details.activity}
+3. LOCATION: ${details.location}
+4. UNIT: ${details.unit}
+5. EQUIPMENT: ${details.equipment}
+6. TIME: ${details.dtg}
+
+ASSESSMENT: ${details.assessment}
+`;
+            } else if (type === 'sitrep') {
+                html = `
+<div class="nato-header">SITUATION REPORT (SITREP)</div>
+FM: ${details.fm}
+TO: ${details.to}
+DTG: ${details.dtg}
+SUBJ: ${details.subj}
+
+ENEMY: ${details.line1}
+FRIENDLY: ${details.line2}
+OTHER: ${details.line3}
+
+ASSESSMENT: ${details.assessment}
+`;
+            }
+
+            modalBody.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('messageModal').style.display = 'none';
+        }
+
+        function openIntelFusion() {
+            window.open('intel_fusion.html', 'IntelFusion', 'width=1400,height=900,left=100,top=100');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('messageModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Handle window unload to clean up BroadcastChannel
+        window.addEventListener('beforeunload', () => {
+            if (simulator.broadcastChannel) {
+                simulator.broadcastChannel.close();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -67,6 +67,7 @@ This tool was built for use on **air-gapped and classified networks**. Security 
 ```
 intel-fusion/
   intel_fusion.html          # The application (single file, open in browser)
+  test_chat_simulator.html   # Battle scenario chat simulator for testing
   README.md                  # This file
   docs/
     QUICK_START.txt           # Getting started in 1 minute
@@ -102,6 +103,7 @@ The `brain/` folder contains the reference documents used to build and validate 
 
 | Version | Date | Changes |
 |---------|------|---------|
+| v2.1 | April 2026 | Auto-scan scheduler with BroadcastChannel, JSON save/load, NATO report generation (INTSUM/SPOTREP/SITREP), SharePoint XLS export, battle scenario test simulator, EST/ENG language toggle, equipment reference links |
 | v2.0 | April 2026 | Security hardening (XSS, CSP, formula injection, PostMessage validation), decimal coordinate support, proper DTG month, DJB2 hashing, IIFE encapsulation, keyboard accessibility, toast notifications, copy-to-clipboard |
 | v1.0 | January 2026 | Initial release |
 

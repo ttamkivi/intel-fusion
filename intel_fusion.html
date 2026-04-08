@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://upload.wikimedia.org; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';">
 <meta name="referrer" content="no-referrer">
 <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()">
-<title>Intel Fusion Tool v2.0</title>
+<title>Intel Fusion Tool v2.1</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: Arial, sans-serif; padding: 10px; background: #1a1a1a; color: #e0e0e0; }
@@ -48,6 +48,7 @@ tr:focus { outline: 2px solid #4a9eff; }
 .filter-section { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 select { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; }
 input[type="text"] { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; }
+input[type="file"] { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 1px solid #3a3a3a; border-radius: 4px; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
 .modal.active { display: flex; }
 .modal-content { background: #2a2a2a; padding: 20px; border-radius: 8px; max-width: 90%; max-height: 80%; overflow-y: auto; border: 1px solid #3a3a3a; }
@@ -60,6 +61,22 @@ input[type="text"] { padding: 8px; background: #1a1a1a; color: #e0e0e0; border: 
 .toast { position: fixed; bottom: 20px; right: 20px; background: #2a2a2a; color: #e0e0e0; padding: 12px 16px; border-radius: 4px; border: 1px solid #3a3a3a; z-index: 2000; max-width: 300px; }
 .toast.success { border-left: 3px solid #22c55e; }
 .toast.error { border-left: 3px solid #ef4444; }
+.auto-settings { display: none; background: #1a1a1a; padding: 12px; border-radius: 4px; border: 1px solid #3a3a3a; margin-top: 10px; }
+.auto-settings.active { display: block; }
+.auto-settings-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.auto-settings-row label { font-size: 12px; color: #888; }
+.auto-settings-row select { padding: 6px; font-size: 12px; }
+.pulsing-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-left: 6px; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.report-text { font-family: 'Courier New', monospace; background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #3a3a3a; white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto; margin-bottom: 15px; line-height: 1.6; color: #e0e0e0; }
+.modal-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+.dropdown-menu { display: none; position: absolute; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 4px; min-width: 180px; z-index: 1001; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+.dropdown-menu.active { display: block; }
+.dropdown-menu button { width: 100%; text-align: left; padding: 10px 12px; border: none; background: transparent; color: #e0e0e0; font-size: 14px; cursor: pointer; margin: 0; border-radius: 0; }
+.dropdown-menu button:hover { background: #3a3a3a; }
+.dropdown-menu button:first-child { border-radius: 4px 4px 0 0; }
+.dropdown-menu button:last-child { border-radius: 0 0 4px 4px; }
+.btn-small { padding: 6px 12px; font-size: 12px; color: #888; }
 @media (max-width: 768px) {
 .hidden-mobile { display: none; }
 th, td { padding: 6px; font-size: 11px; }
@@ -72,7 +89,7 @@ th, td { padding: 6px; font-size: 11px; }
 <div class="header">
 <div>
 <h1 id="appTitle">⚡ Intel Fusion Tool</h1>
-<div class="version">v2.0 - Production Hardened</div>
+<div class="version">v2.1 - Production Hardened</div>
 </div>
 <button class="btn-secondary" onclick="App.toggleLang()" style="padding: 6px 12px; font-size: 12px;" id="langBtn">🇪🇪 Eesti</button>
 </div>
@@ -103,50 +120,81 @@ th, td { padding: 6px; font-size: 11px; }
 
 <p style="margin-bottom: 10px;"><strong style="color: #4a9eff;">Intel Fusion</strong> converts raw battlefield chat messages into a structured, searchable intelligence database. It runs entirely in your browser — no internet, no installation, no data leaves your machine.</p>
 
-<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">How to use:</strong></p>
+<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">New in v2.1:</strong></p>
 <div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
-<strong>1.</strong> Paste chat messages into the text box (or click <em>Load Test Data</em> to try it)<br>
-<strong>2.</strong> Click <strong style="color: #4a9eff;">Process & Add</strong> — the parser extracts coordinates, equipment, activity, priority<br>
-<strong>3.</strong> Filter and search the results in the table below<br>
-<strong>4.</strong> Click any row to see full details (with equipment photos and Wikipedia links)<br>
-<strong>5.</strong> Export to Excel/TSV when ready
+<strong style="color: #4a9eff;">Auto Mode</strong> — BroadcastChannel listener across browser tabs + individual PostMessage handler<br>
+<strong style="color: #22c55e;">JSON Database</strong> — Full-featured save/load with duplicate detection and metadata<br>
+<strong style="color: #fbbf24;">NATO Reports</strong> — INTSUM, SPOTREP, and SITREP in military standard format<br>
+<strong style="color: #60a5fa;">Excel XLS Export</strong> — Real Excel 2003 XML with bold headers, red HIGH priority rows, and column widths<br>
+<strong>TSV & Clipboard</strong> — Quick export to SharePoint, Google Sheets, or local analysis
 </div>
 
-<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">What it parses:</strong></p>
+<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">How it works:</strong></p>
 <div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
-<strong>Formats:</strong> NATO APP-11 SALUTE reports, casual chat messages, mixed/partial formats<br>
-<strong>Coordinates:</strong> MGRS (35V MD 85243 89003) and decimal (58.123, 26.456)<br>
-<strong>Equipment:</strong> 25+ types — tanks (T-72/80/90), APCs (BMP, BTR), artillery (2S19, BM-21), UAVs, air defense (SA-11, SA-15)<br>
-<strong>Activities:</strong> MOVEMENT, ENGAGEMENT, POSITION, OBSERVATION, STAGING<br>
-<strong>Priority:</strong> AUTO — detects URGENT/FLASH/CRITICAL keywords → HIGH, otherwise ROUTINE
+<strong>1.</strong> Paste or load chat messages<br>
+<strong>2.</strong> Click <strong style="color: #4a9eff;">Process & Add</strong> to parse and add to database<br>
+<strong>3.</strong> Filter, search, and view details with equipment photos<br>
+<strong>4.</strong> Save to JSON, load later with duplicate detection<br>
+<strong>5.</strong> Generate NATO reports or export to Excel/TSV
 </div>
 
-<p style="margin-bottom: 10px;"><strong style="color: #e0e0e0;">Buttons:</strong></p>
-<div style="margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #3a3a3a;">
-<strong style="color: #4a9eff;">⚡ Process & Add</strong> — parse messages and add to database<br>
-<strong>🔄 Auto Mode</strong> — receive messages automatically via bookmarklet from other browser tabs<br>
-<strong style="color: #22c55e;">📥 Export</strong> — download TSV file (opens in Excel, SharePoint, Google Sheets)<br>
-<strong>📋 Copy TSV</strong> — copy tab-separated data to clipboard<br>
-<strong style="color: #ef4444;">🗑️ Clear All</strong> — reset database (data is session-only, lost on page close anyway)
-</div>
-
-<p style="margin-bottom: 6px;"><strong style="color: #e0e0e0;">Security:</strong> Zero network calls (enforced by Content Security Policy). No cookies, no storage, no tracking. Safe for air-gapped and classified networks. Data exists only in browser memory until you export.</p>
+<p style="margin-bottom: 6px;"><strong style="color: #e0e0e0;">Security:</strong> Zero network calls (Content Security Policy enforced). No cookies, no storage, no tracking. Safe for air-gapped and classified networks.</p>
 </div>
 </details>
 
 <div class="input-section">
 <textarea id="messageInput" placeholder="Paste chat messages here...&#10;&#10;Examples:&#10;- SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 85243 89003...&#10;- UAV2 spotted 3 tanks moving north, grid 35V MD 85243 89003&#10;- scouts report enemy position at MD 86500 88700 or 58.123, 26.456..."></textarea>
+
 <div class="button-group">
-<button class="btn-primary" onclick="App.processMessages()">⚡ Process & Add</button>
-<button class="btn-secondary" onclick="App.toggleAutoMode()">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
-<span style="border-left: 1px solid #3a3a3a; margin: 0 4px;"></span>
-<button class="btn-success" onclick="App.exportToExcel()">📥 Export to Excel</button>
-<button class="btn-secondary" onclick="App.copyToClipboard()">📋 Copy TSV</button>
-<span style="border-left: 1px solid #3a3a3a; margin: 0 4px;"></span>
-<button class="btn-danger" onclick="App.clearAll()">🗑️ Clear All</button>
+<button class="btn-primary" onclick="App.processMessages()" id="processBtn">⚡ Process & Add</button>
+<button class="btn-secondary" onclick="App.toggleAutoMode()" id="autoModeBtn">🔄 <span id="autoModeText">Enable Auto Mode</span></button>
 </div>
+
+<div class="auto-settings" id="autoSettings">
+<div class="auto-settings-row">
+<label for="frequencySelect" id="freqLabel">Scan Frequency:</label>
+<select id="frequencySelect" onchange="App.updateAutoFrequency()" style="padding: 6px;">
+<option value="5000">5s</option>
+<option value="10000" selected>10s</option>
+<option value="30000">30s</option>
+<option value="60000">60s</option>
+<option value="300000">5 min</option>
+</select>
+</div>
+<div class="auto-settings-row">
+<span style="font-size: 12px; color: #888;">Status: <span style="color: #22c55e;" id="autoStatus">Listening...</span><span class="pulsing-dot"></span></span>
+</div>
+<div class="auto-settings-row">
+<span style="font-size: 12px; color: #888;" id="autoMessageCount">Messages received: 0</span>
+</div>
+</div>
+
+<div class="button-group">
+<button class="btn-success" onclick="App.saveToJSON()" id="saveJSONBtn">💾 Save JSON</button>
+<button class="btn-success" onclick="App.loadJSONFile()" id="loadJSONBtn">📂 Load JSON</button>
+<input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="App.handleJSONFileSelect()">
+</div>
+
+<div class="button-group">
+<button class="btn-success" onclick="App.exportToExcel()" id="exportXLSBtn">📥 Export Excel (.xls)</button>
+<button class="btn-success" onclick="App.exportToTSV()" id="exportTSVBtn">📥 Export TSV</button>
+<button class="btn-secondary" onclick="App.copyToClipboard()" id="copyTSVBtn">📋 Copy TSV</button>
+<div style="position: relative; display: inline-block;">
+<button class="btn-secondary" onclick="App.toggleReportMenu()" id="reportBtn">📄 Generate Report ▼</button>
+<div class="dropdown-menu" id="reportMenu">
+<button onclick="App.generateINTSUM()">INTSUM (Intelligence Summary)</button>
+<button onclick="App.generateSPOTREP()">SPOTREP (Spot Report)</button>
+<button onclick="App.generateSITREP()">SITREP (Situation Report)</button>
+</div>
+</div>
+</div>
+
+<div class="button-group">
+<button class="btn-danger" onclick="App.clearAll()" id="clearBtn">🗑️ Clear All</button>
+</div>
+
 <div style="margin-top: 8px;">
-<button class="btn-secondary" onclick="App.loadSampleData()" style="padding: 6px 12px; font-size: 12px; color: #888; border-color: #333;">🧪 Load Test Data</button>
+<button class="btn-secondary btn-small" onclick="App.loadSampleData()" style="color: #888; border-color: #333;" id="testBtn">🧪 Load Test Data</button>
 </div>
 </div>
 
@@ -233,11 +281,25 @@ th, td { padding: 6px; font-size: 11px; }
 </div>
 </div>
 
+<div class="modal" id="reportModal" role="dialog" aria-label="Report view">
+<div class="modal-content">
+<div class="modal-header">
+<h2 style="color: #4a9eff;" id="reportModalTitle">Report</h2>
+<button class="modal-close" onclick="App.closeReportModal()" aria-label="Close">✕</button>
+</div>
+<div class="report-text" id="reportContent"></div>
+<div class="modal-buttons">
+<button class="btn-primary" onclick="App.copyReportToClipboard()">📋 Copy to Clipboard</button>
+<button class="btn-success" onclick="App.downloadReportTXT()">📥 Download as TXT</button>
+</div>
+</div>
+</div>
+
 <script>
 (function() {
 'use strict';
 
-const VERSION = 'v2.0';
+const VERSION = 'v2.1';
 let currentLang = 'en';
 
 const LANG = {
@@ -251,13 +313,12 @@ const LANG = {
 		processBtn: '⚡ Process & Add',
 		autoMode: 'Enable Auto Mode',
 		autoModeOn: 'Auto Mode ON',
-		exportBtn: '📥 Export to Excel',
-		copyBtn: '📋 Copy TSV',
-		testBtn: '🧪 Load Test Data',
-		clearBtn: '🗑️ Clear All',
-		allPriorities: 'All Priorities',
-		allActivities: 'All Activities',
-		search: 'Search...',
+		autoEnabled: 'Auto Mode enabled. Listening on BroadcastChannel and PostMessage.',
+		testLoaded: '10 sample messages loaded — click Process & Add',
+		clearConfirm: 'Clear all records? This cannot be undone.',
+		deleteConfirm: 'Delete this record?',
+		autoAdded: 'Auto-added',
+		messages: 'messages',
 		dtg: 'DTG',
 		coordinate: 'Coordinate',
 		reporter: 'Reporter',
@@ -274,16 +335,37 @@ const LANG = {
 		noDupes: 'No valid intelligence found or all duplicates',
 		noData: 'No data to export',
 		exported: 'Exported to Excel',
+		exported2: 'Exported to TSV',
 		copied: 'Copied to clipboard',
 		copyFail: 'Copy failed',
 		exportFail: 'Export failed',
-		autoEnabled: 'Auto Mode enabled. Use bookmarklet to extract messages.',
-		testLoaded: '10 sample messages loaded — click Process & Add',
-		clearConfirm: 'Clear all records? This cannot be undone.',
-		deleteConfirm: 'Delete this record?',
-		autoAdded: 'Auto-added',
-		messages: 'messages',
-		resources: '📚 Reference Materials & Doctrine'
+		allPriorities: 'All Priorities',
+		allActivities: 'All Activities',
+		search: 'Search...',
+		resources: '📚 Reference Materials & Doctrine',
+		freqLabel: 'Scan Frequency:',
+		savedJSON: 'Exported to JSON',
+		loadedJSON: 'Loaded',
+		duplicatesSkipped: 'duplicates skipped',
+		intsum: 'INTSUM',
+		period: 'PERIOD',
+		enemySituation: 'ENEMY SITUATION',
+		ground: 'Ground',
+		air: 'Air',
+		artillery: 'Artillery',
+		enemyCapabilities: 'ENEMY CAPABILITIES',
+		enemyCOA: 'ENEMY MOST PROBABLE COA',
+		priorityReqs: 'PRIORITY INTELLIGENCE REQUIREMENTS',
+		spotrep: 'SPOTREP',
+		unitMakingReport: 'UNIT MAKING REPORT',
+		size: 'SIZE',
+		location: 'LOCATION',
+		unit: 'UNIT',
+		time: 'TIME',
+		sitrep: 'SITREP',
+		selectRecord: 'Please select a record to generate SPOTREP',
+		messagesReceived: 'Messages received',
+		clearBtn: '🗑️ Clear All'
 	},
 	et: {
 		title: '⚡ Luure Fusion',
@@ -295,13 +377,12 @@ const LANG = {
 		processBtn: '⚡ Töötle ja lisa',
 		autoMode: 'Lülita automaatrežiim',
 		autoModeOn: 'Automaat SEES',
-		exportBtn: '📥 Ekspordi Excelisse',
-		copyBtn: '📋 Kopeeri TSV',
-		testBtn: '🧪 Laadi testkirjed',
-		clearBtn: '🗑️ Tühjenda kõik',
-		allPriorities: 'Kõik prioriteedid',
-		allActivities: 'Kõik tegevused',
-		search: 'Otsi...',
+		autoEnabled: 'Automaatrežiim sees. Kuulatakse BroadcastChannelit ja PostMessage-i.',
+		testLoaded: '10 testsõnumit laetud — vajuta Töötle ja lisa',
+		clearConfirm: 'Tühjenda kõik kirjed? Seda ei saa tagasi võtta.',
+		deleteConfirm: 'Kustuta see kirje?',
+		autoAdded: 'Automaatselt lisatud',
+		messages: 'sõnumit',
 		dtg: 'KAR',
 		coordinate: 'Koordinaat',
 		reporter: 'Raporteerija',
@@ -318,23 +399,44 @@ const LANG = {
 		noDupes: 'Kehtivat luureinfot ei leitud või kõik duplikaadid',
 		noData: 'Pole andmeid eksportimiseks',
 		exported: 'Eksporditud Excelisse',
+		exported2: 'Eksporditud TSV-sse',
 		copied: 'Kopeeritud lõikelauale',
 		copyFail: 'Kopeerimine ebaõnnestus',
 		exportFail: 'Eksportimine ebaõnnestus',
-		autoEnabled: 'Automaatrežiim sees. Kasuta järjehoidjat sõnumite tõmbamiseks.',
-		testLoaded: '10 testsõnumit laetud — vajuta Töötle ja lisa',
-		clearConfirm: 'Tühjenda kõik kirjed? Seda ei saa tagasi võtta.',
-		deleteConfirm: 'Kustuta see kirje?',
-		autoAdded: 'Automaatselt lisatud',
-		messages: 'sõnumit',
-		resources: '📚 Viitematerjalid ja doktriinid'
+		allPriorities: 'Kõik prioriteedid',
+		allActivities: 'Kõik tegevused',
+		search: 'Otsi...',
+		resources: '📚 Viitematerjalid ja doktriinid',
+		freqLabel: 'Skannimissagedus:',
+		savedJSON: 'Eksporditud JSON-isse',
+		loadedJSON: 'Laaditud',
+		duplicatesSkipped: 'duplikaate vahele jäetud',
+		intsum: 'INTSUM',
+		period: 'PERIOOD',
+		enemySituation: 'VAENLASE OLUKORD',
+		ground: 'Maapind',
+		air: 'Õhk',
+		artillery: 'Suurtükivägi',
+		enemyCapabilities: 'VAENLASE VÕIMEKUSED',
+		enemyCOA: 'VAENLASE KÕIGE TÕENÄOLISEM TEGEVUSKAVA',
+		priorityReqs: 'PRIORITEETSED LUURENÕUDED',
+		spotrep: 'SPOTREP',
+		unitMakingReport: 'RAPORTI ESITANUD ÜKSUS',
+		size: 'SUURUS',
+		location: 'ASUKOHT',
+		unit: 'ÜKSUS',
+		time: 'AEG',
+		sitrep: 'SITREP',
+		selectRecord: 'Palun valige SPOTREP loomiseks üksus',
+		messagesReceived: 'Saadud sõnumid',
+		clearBtn: '🗑️ Tühjenda kõik'
 	}
 };
 
 function t(key) { return LANG[currentLang][key] || LANG['en'][key] || key; }
 
 const EQUIPMENT_LINKS = {
-	'T-72': { wiki: 'https://en.wikipedia.org/wiki/T-72', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/T-72B3_-_TankBiathlon2013-01.jpg/300px-T-72B3_-_TankBiathlon2013-01.jpg', tradoc: 'https://rdl.train.army.mil/catalog-ws/view/100.ATSC/80679288-2471-4B93-B921-CA4B04BF74FF-1625682681274/gta20_10_001.pdf' },
+	'T-72': { wiki: 'https://en.wikipedia.org/wiki/T-72', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/T-72B3_-_TankBiathlon2013-01.jpg/300px-T-72B3_-_TankBiathlon2013-01.jpg' },
 	'T-80': { wiki: 'https://en.wikipedia.org/wiki/T-80', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/T-80U_-_Engineering_Technologies_2012_%281%29.jpg/300px-T-80U_-_Engineering_Technologies_2012_%281%29.jpg' },
 	'T-90': { wiki: 'https://en.wikipedia.org/wiki/T-90', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/4mayrehearsal_09.jpg/300px-4mayrehearsal_09.jpg' },
 	'T-62': { wiki: 'https://en.wikipedia.org/wiki/T-62' },
@@ -374,613 +476,736 @@ function buildEquipmentHTML(equipStr) {
 			html += '<img src="' + escapeHTML(info.img) + '" alt="' + escapeHTML(item) + '" style="max-width:280px; border-radius:4px; margin-bottom:8px; display:block; border:1px solid #3a3a3a;" onerror="this.style.display=\'none\'">';
 		}
 		html += '<a href="' + escapeHTML(info.wiki) + '" target="_blank" rel="noopener" style="color:#60a5fa; text-decoration:none; font-weight:bold;">' + escapeHTML(item) + ' ↗</a>';
-		if (info.tradoc) {
-			html += ' &nbsp;|&nbsp; <a href="' + escapeHTML(info.tradoc) + '" target="_blank" rel="noopener" style="color:#888; text-decoration:none; font-size:11px;">TRADOC ID Card</a>';
-		}
 		return html;
 	}).join('<br>');
 }
+
 const MONTH_ABBR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-const POSTMESSAGE_ORIGIN_PATTERN = /^(https?:\/\/|file:\/\/)/;
 
 function escapeHTML(str) {
-if (typeof str !== 'string') return '';
-const div = document.createElement('div');
-div.textContent = str;
-return div.innerHTML;
+	if (typeof str !== 'string') return '';
+	const div = document.createElement('div');
+	div.textContent = str;
+	return div.innerHTML;
 }
 
 function preventFormulaInjection(str) {
-if (typeof str !== 'string') return str;
-if (/^[=+\-@\t\r]/.test(str)) {
-return "'" + str;
-}
-return str;
+	if (typeof str !== 'string') return str;
+	if (/^[=+\-@\t\r]/.test(str)) return "'" + str;
+	return str;
 }
 
 function simpleHash(text) {
-if (typeof text !== 'string') return '0';
-let hash = 5381;
-for (let i = 0; i < text.length; i++) {
-hash = ((hash << 5) + hash) ^ text.charCodeAt(i);
-}
-return Math.abs(hash).toString(36);
+	if (typeof text !== 'string') return '0';
+	let hash = 5381;
+	for (let i = 0; i < text.length; i++) {
+		hash = ((hash << 5) + hash) ^ text.charCodeAt(i);
+	}
+	return Math.abs(hash).toString(36);
 }
 
 function generateUUID() {
-if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-return crypto.randomUUID();
-}
-return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-const r = Math.random() * 16 | 0;
-const v = c === 'x' ? r : (r & 0x3 | 0x8);
-return v.toString(16);
-});
+	if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+		return crypto.randomUUID();
+	}
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (Math.random() * 16 | 0).toString(16));
 }
 
 function extractMGRS(text) {
-try {
-const mgrsPattern = /(\d{1,2}[A-Z]\s*[A-Z]{2}\s*\d{5}\s*\d{5})/gi;
-const match = text.match(mgrsPattern);
-if (match) return match[0].replace(/\s+/g, ' ');
-
-const shortPattern = /MD\s*(\d{5}\s*\d{5})/gi;
-const shortMatch = text.match(shortPattern);
-if (shortMatch) return '35V ' + shortMatch[0];
-} catch (e) {
-console.error('MGRS extraction error:', e);
-}
-return null;
+	const mgrsPattern = /(\d{1,2}[A-Z]\s*[A-Z]{2}\s*\d{5}\s*\d{5})/gi;
+	const match = text.match(mgrsPattern);
+	if (match) return match[0].replace(/\s+/g, ' ');
+	const shortPattern = /MD\s*(\d{5}\s*\d{5})/gi;
+	const shortMatch = text.match(shortPattern);
+	return shortMatch ? '35V ' + shortMatch[0] : null;
 }
 
 function extractDecimalCoords(text) {
-try {
-const decimalPattern = /(\d{1,3}\.\d{1,6})\s*,\s*(\d{1,3}\.\d{1,6})/gi;
-const match = text.match(decimalPattern);
-if (match) return match[0];
-} catch (e) {
-console.error('Decimal coords extraction error:', e);
-}
-return null;
+	const pattern = /(\d{1,3}\.\d{1,6})\s*,\s*(\d{1,3}\.\d{1,6})/gi;
+	const match = text.match(pattern);
+	return match ? match[0] : null;
 }
 
 function extractDTG(text) {
-try {
-const dtgPattern = /(\d{6,8}[A-Z]{1}[A-Z]{3}\d{2,4})/gi;
-const match = text.match(dtgPattern);
-if (match) return match[0];
-
-const now = new Date();
-const day = String(now.getDate()).padStart(2, '0');
-const hour = String(now.getHours()).padStart(2, '0');
-const min = String(now.getMinutes()).padStart(2, '0');
-const month = MONTH_ABBR[now.getMonth()];
-const year = String(now.getFullYear());
-return `${day}${hour}${min}${month}${year}`;
-} catch (e) {
-console.error('DTG extraction error:', e);
-return 'INVALID';
-}
+	const dtgPattern = /(\d{6,8}[A-Z]{1}[A-Z]{3}\d{2,4})/gi;
+	const match = text.match(dtgPattern);
+	if (match) return match[0];
+	const now = new Date();
+	const day = String(now.getDate()).padStart(2, '0');
+	const hour = String(now.getHours()).padStart(2, '0');
+	const min = String(now.getMinutes()).padStart(2, '0');
+	const month = MONTH_ABBR[now.getMonth()];
+	const year = String(now.getFullYear());
+	return `${day}${hour}${min}${month}${year}`;
 }
 
 function extractActivity(text) {
-try {
-const upper = text.toUpperCase();
-if (upper.match(/MOVEMENT|MOVING|ADVANCE|WITHDRAW|MARCH|SHIFT|RELOCAT/)) return 'MOVEMENT';
-if (upper.match(/ENGAGEMENT|CONTACT|FIRE|FIRING|ATTACK|STRIKE|IMPACT/)) return 'ENGAGEMENT';
-if (upper.match(/POSITION|DEFENSIVE|FORTIF|DUG.?IN|EMPLAC|ENTRENCH/)) return 'POSITION';
-if (upper.match(/STAGING|ASSEMBLY|CONCENTRAT|MUSTER|GATHER/)) return 'STAGING';
-if (upper.match(/OBSERV|SPOT|DETECT|SIGHT|REPORT|VISUAL/)) return 'OBSERVATION';
-return 'OBSERVATION';
-} catch (e) {
-console.error('Activity extraction error:', e);
-return 'OBSERVATION';
-}
+	const upper = text.toUpperCase();
+	if (upper.match(/MOVEMENT|MOVING|ADVANCE|WITHDRAW|MARCH|SHIFT|RELOCAT/)) return 'MOVEMENT';
+	if (upper.match(/ENGAGEMENT|CONTACT|FIRE|FIRING|ATTACK|STRIKE|IMPACT/)) return 'ENGAGEMENT';
+	if (upper.match(/POSITION|DEFENSIVE|FORTIF|DUG.?IN|EMPLAC|ENTRENCH/)) return 'POSITION';
+	if (upper.match(/STAGING|ASSEMBLY|CONCENTRAT|MUSTER|GATHER/)) return 'STAGING';
+	return 'OBSERVATION';
 }
 
 function extractEquipment(text) {
-try {
-const equipmentDB = {
-tanks: ['T-72', 'T-80', 'T-90', 'T-62', 'T-64', 'TANK'],
-apcs: ['BMP-1', 'BMP-2', 'BMP-3', 'BTR-80', 'BTR-82', 'BMP', 'BTR', 'APC'],
-artillery: ['2S19', '2S3', '2S1', '2S9', 'NONA', 'HOWITZER', 'ARTILLERY', 'MLRS', 'BM-21'],
-recon: ['BRDM', 'RECON', 'UAV', 'DRONE'],
-airdefense: ['SA-15', 'SA-11', 'SA-8', 'MANPADS', 'AAA', 'ZSU']
-};
-
-const found = [];
-const upper = text.toUpperCase();
-for (const [category, items] of Object.entries(equipmentDB)) {
-for (const item of items) {
-if (upper.includes(item)) {
-found.push(item);
-break;
-}
-}
-}
-return found.length > 0 ? found.join(', ') : 'UNKNOWN';
-} catch (e) {
-console.error('Equipment extraction error:', e);
-return 'UNKNOWN';
-}
+	const equipmentDB = {
+		tanks: ['T-72', 'T-80', 'T-90', 'T-62', 'T-64', 'TANK'],
+		apcs: ['BMP-1', 'BMP-2', 'BMP-3', 'BTR-80', 'BTR-82', 'BMP', 'BTR', 'APC'],
+		artillery: ['2S19', '2S3', '2S1', '2S9', 'NONA', 'HOWITZER', 'ARTILLERY', 'MLRS', 'BM-21'],
+		recon: ['BRDM', 'RECON', 'UAV', 'DRONE'],
+		airdefense: ['SA-15', 'SA-11', 'SA-8', 'MANPADS', 'AAA', 'ZSU']
+	};
+	const found = [];
+	const upper = text.toUpperCase();
+	for (const [category, items] of Object.entries(equipmentDB)) {
+		for (const item of items) {
+			if (upper.includes(item)) {
+				found.push(item);
+				break;
+			}
+		}
+	}
+	return found.length > 0 ? found.join(', ') : 'UNKNOWN';
 }
 
 function extractStrength(text) {
-try {
-const numberMatch = text.match(/(\d+)\s*[xX×]/);
-if (numberMatch) return numberMatch[1] + 'x';
-
-const sizeMatch = text.toUpperCase().match(/(SQUAD|PLATOON|COMPANY|BATTALION|BTG|BRIGADE|SECTION)/);
-if (sizeMatch) return sizeMatch[1];
-
-return 'UNKNOWN';
-} catch (e) {
-console.error('Strength extraction error:', e);
-return 'UNKNOWN';
-}
+	const numberMatch = text.match(/(\d+)\s*[xX×]/);
+	if (numberMatch) return numberMatch[1] + 'x';
+	const sizeMatch = text.toUpperCase().match(/(SQUAD|PLATOON|COMPANY|BATTALION|BTG|BRIGADE|SECTION)/);
+	return sizeMatch ? sizeMatch[1] : 'UNKNOWN';
 }
 
 function extractReporter(text) {
-try {
-const reporterMatch = text.match(/([A-Z]{2,}\d+|[A-Z]{3,}\s+\d+|FO\d+|UAV\d+|RECON\d+|SCOUT\d+|OP\d+)/i);
-if (reporterMatch) return reporterMatch[0].toUpperCase();
-
-const upper = text.toUpperCase();
-if (upper.includes('SALUTE')) return 'SALUTE RPT';
-if (upper.includes('UAV')) return 'UAV';
-if (upper.includes('SCOUT')) return 'SCOUT';
-if (upper.includes('RECON')) return 'RECON';
-
-return 'UNKNOWN';
-} catch (e) {
-console.error('Reporter extraction error:', e);
-return 'UNKNOWN';
-}
+	const reporterMatch = text.match(/([A-Z]{2,}\d+|[A-Z]{3,}\s+\d+|FO\d+|UAV\d+|RECON\d+|SCOUT\d+|OP\d+)/i);
+	if (reporterMatch) return reporterMatch[0].toUpperCase();
+	const upper = text.toUpperCase();
+	if (upper.includes('SALUTE')) return 'SALUTE RPT';
+	if (upper.includes('UAV')) return 'UAV';
+	if (upper.includes('SCOUT')) return 'SCOUT';
+	if (upper.includes('RECON')) return 'RECON';
+	return 'UNKNOWN';
 }
 
 function determinePriority(text) {
-try {
-const upper = text.toUpperCase();
-if (upper.match(/URGENT|PRIORITY|FLASH|IMMEDIATE|CRITICAL|EMERGENCY/)) return 'HIGH';
-return 'ROUTINE';
-} catch (e) {
-console.error('Priority extraction error:', e);
-return 'ROUTINE';
-}
+	const upper = text.toUpperCase();
+	return upper.match(/URGENT|PRIORITY|FLASH|IMMEDIATE|CRITICAL|EMERGENCY/) ? 'HIGH' : 'ROUTINE';
 }
 
 function parseMessage(rawText) {
-try {
-if (typeof rawText !== 'string') return null;
-
-const textTrimmed = rawText.trim();
-if (textTrimmed.length < 30) return null;
-
-const coordinate = extractMGRS(textTrimmed) || extractDecimalCoords(textTrimmed);
-if (!coordinate) return null;
-
-const hash = simpleHash(textTrimmed + (coordinate || ''));
-if (App.processedHashes.has(hash)) return null;
-
-App.processedHashes.add(hash);
-
-return {
-id: generateUUID(),
-dtg: extractDTG(textTrimmed),
-coordinate: coordinate,
-reporter: extractReporter(textTrimmed),
-unit: 'UNKNOWN',
-activity: extractActivity(textTrimmed),
-equipment: extractEquipment(textTrimmed),
-strength: extractStrength(textTrimmed),
-priority: determinePriority(textTrimmed),
-fullMessage: textTrimmed,
-timestamp: new Date().toISOString()
-};
-} catch (e) {
-console.error('Message parsing error:', e);
-return null;
+	if (typeof rawText !== 'string') return null;
+	const textTrimmed = rawText.trim();
+	if (textTrimmed.length < 30) return null;
+	const coordinate = extractMGRS(textTrimmed) || extractDecimalCoords(textTrimmed);
+	if (!coordinate) return null;
+	const hash = simpleHash(textTrimmed + (coordinate || ''));
+	if (App.processedHashes.has(hash)) return null;
+	App.processedHashes.add(hash);
+	return {
+		id: generateUUID(),
+		dtg: extractDTG(textTrimmed),
+		coordinate: coordinate,
+		reporter: extractReporter(textTrimmed),
+		unit: 'UNKNOWN',
+		activity: extractActivity(textTrimmed),
+		equipment: extractEquipment(textTrimmed),
+		strength: extractStrength(textTrimmed),
+		priority: determinePriority(textTrimmed),
+		fullMessage: textTrimmed,
+		timestamp: new Date().toISOString()
+	};
 }
+
+function generateXLS(records) {
+	if (!records || records.length === 0) return '';
+	let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Created>' + new Date().toISOString() + '</Created></DocumentProperties>\n<Styles>\n<Style ss:ID="Default"><Alignment ss:Vertical="Bottom"/><Borders/><Font/><Interior/><NumberFormat/><Protection/></Style>\n<Style ss:ID="Header"><Font ss:Bold="1" ss:Color="FFFFFF"/><Interior ss:Color="0070C0" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center" ss:Vertical="Center"/></Style>\n<Style ss:ID="HighPriority"><Font ss:Color="FF0000" ss:Bold="1"/><Interior ss:Color="FFCCCC" ss:Pattern="Solid"/></Style>\n</Styles>\n<Worksheet ss:Name="Intel">\n<Table ss:ExpandedColumnCount="9" ss:ExpandedRowCount="' + (records.length + 1) + '">\n<Column ss:Width="120"/><Column ss:Width="140"/><Column ss:Width="100"/><Column ss:Width="100"/><Column ss:Width="130"/><Column ss:Width="120"/><Column ss:Width="100"/><Column ss:Width="80"/><Column ss:Width="400"/>\n<Row>\n<Cell ss:StyleID="Header"><Data ss:Type="String">DTG</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Coordinate</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Reporter</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Unit</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Activity</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Equipment</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Strength</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Priority</Data></Cell>\n<Cell ss:StyleID="Header"><Data ss:Type="String">Message</Data></Cell>\n</Row>\n';
+	records.forEach(r => {
+		const style = r.priority === 'HIGH' ? 'HighPriority' : 'Default';
+		xml += '<Row>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.dtg) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.coordinate) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.reporter) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.unit) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.activity) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.equipment) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.strength) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.priority) + '</Data></Cell>\n<Cell ss:StyleID="' + style + '"><Data ss:Type="String">' + escapeHTML(r.fullMessage) + '</Data></Cell>\n</Row>\n';
+	});
+	xml += '</Table>\n<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><PrintOptions><FitToPage/></PrintOptions></WorksheetOptions>\n</Worksheet>\n</Workbook>';
+	return xml;
 }
 
 const App = {
-database: [],
-filteredData: [],
-autoModeEnabled: false,
-processedHashes: new Set(),
+	database: [],
+	filteredData: [],
+	autoModeEnabled: false,
+	processedHashes: new Set(),
+	broadcastChannel: null,
+	autoMessageCount: 0,
+	lastReportData: null,
 
-processMessages: function() {
-const input = document.getElementById('messageInput');
-if (!input || !input.value.trim()) {
-this.showToast(t('pasteFirst'), 'error');
-return;
-}
+	processMessages: function() {
+		const input = document.getElementById('messageInput');
+		if (!input || !input.value.trim()) {
+			this.showToast(t('pasteFirst'), 'error');
+			return;
+		}
+		const messages = input.value.split('\n\n').filter(m => m.trim().length > 20);
+		let added = 0;
+		messages.forEach(msg => {
+			const parsed = parseMessage(msg);
+			if (parsed) {
+				this.database.push(parsed);
+				added++;
+			}
+		});
+		if (added > 0) {
+			input.value = '';
+			this.updateDisplay();
+			this.showToast(`${added} ${t('added')}`, 'success');
+		} else {
+			this.showToast(t('noDupes'), 'error');
+		}
+	},
 
-const messages = input.value.split('\n\n').filter(m => m.trim().length > 20);
-let added = 0;
+	updateDisplay: function() {
+		this.updateStats();
+		this.applyFilters();
+	},
 
-messages.forEach(msg => {
-const parsed = parseMessage(msg);
-if (parsed) {
-this.database.push(parsed);
-added++;
-}
-});
+	updateStats: function() {
+		const total = this.database.length;
+		const high = this.database.filter(r => r.priority === 'HIGH').length;
+		const move = this.database.filter(r => r.activity === 'MOVEMENT').length;
+		const eng = this.database.filter(r => r.activity === 'ENGAGEMENT').length;
+		document.getElementById('totalRecords').textContent = total;
+		document.getElementById('highPriority').textContent = high;
+		document.getElementById('movements').textContent = move;
+		document.getElementById('engagements').textContent = eng;
+		const now = new Date();
+		const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+		document.getElementById('lastUpdated').textContent = `Updated: ${timeStr}`;
+	},
 
-if (added > 0) {
-input.value = '';
-this.updateDisplay();
-this.showToast(`${added} ${t('added')}`, 'success');
-} else {
-this.showToast(t('noDupes'), 'error');
-}
-},
+	applyFilters: function() {
+		const priorityFilter = document.getElementById('priorityFilter').value;
+		const activityFilter = document.getElementById('activityFilter').value;
+		const searchTerm = (document.getElementById('searchBox').value || '').toLowerCase();
+		this.filteredData = this.database.filter(record => {
+			if (priorityFilter && record.priority !== priorityFilter) return false;
+			if (activityFilter && record.activity !== activityFilter) return false;
+			if (searchTerm) {
+				const searchable = `${record.coordinate} ${record.reporter} ${record.activity} ${record.equipment} ${record.fullMessage}`.toLowerCase();
+				if (!searchable.includes(searchTerm)) return false;
+			}
+			return true;
+		});
+		this.renderTable();
+	},
 
-updateDisplay: function() {
-this.updateStats();
-this.applyFilters();
-},
+	renderTable: function() {
+		const tbody = document.getElementById('tableBody');
+		if (!tbody) return;
+		tbody.innerHTML = '';
+		const reversed = this.filteredData.slice().reverse();
+		reversed.forEach((record, idx) => {
+			try {
+				const row = tbody.insertRow();
+				row.setAttribute('tabindex', '0');
+				row.setAttribute('role', 'button');
+				row.onclick = () => this.showDetails(record);
+				row.onkeydown = (e) => {
+					if (e.key === 'Enter') this.showDetails(record);
+				};
+				row.insertCell().textContent = record.dtg.substring(0, 10);
+				row.insertCell().textContent = record.coordinate;
+				const reporterCell = row.insertCell();
+				reporterCell.textContent = record.reporter;
+				reporterCell.className = 'hidden-mobile';
+				const activityCell = row.insertCell();
+				activityCell.textContent = record.activity;
+				activityCell.className = `activity-${record.activity.toLowerCase()}`;
+				const equipCell = row.insertCell();
+				equipCell.textContent = record.equipment;
+				equipCell.className = 'hidden-mobile';
+				const strengthCell = row.insertCell();
+				strengthCell.textContent = record.strength;
+				strengthCell.className = 'hidden-mobile';
+				const priorityCell = row.insertCell();
+				priorityCell.textContent = record.priority;
+				priorityCell.className = `priority-${record.priority.toLowerCase()}`;
+				const actionCell = row.insertCell();
+				const deleteBtn = document.createElement('button');
+				deleteBtn.textContent = '✕';
+				deleteBtn.className = 'btn-danger';
+				deleteBtn.style.padding = '4px 8px';
+				deleteBtn.style.fontSize = '12px';
+				deleteBtn.onclick = (e) => {
+					e.stopPropagation();
+					this.deleteRecord(record.id);
+				};
+				actionCell.appendChild(deleteBtn);
+			} catch (e) {
+				console.error('Row rendering error:', e);
+			}
+		});
+	},
 
-updateStats: function() {
-const total = this.database.length;
-const high = this.database.filter(r => r.priority === 'HIGH').length;
-const move = this.database.filter(r => r.activity === 'MOVEMENT').length;
-const eng = this.database.filter(r => r.activity === 'ENGAGEMENT').length;
+	showDetails: function(record) {
+		const modal = document.getElementById('detailModal');
+		const content = document.getElementById('detailContent');
+		if (!modal || !content) return;
+		document.getElementById('modalTitle').textContent = t('details');
+		const html = `<div class="detail-row"><div class="detail-label">${escapeHTML(t('dtg'))}</div><div class="detail-value">${escapeHTML(record.dtg)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('coordinate'))}</div><div class="detail-value">${escapeHTML(record.coordinate)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('reporter'))}</div><div class="detail-value">${escapeHTML(record.reporter)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('activity'))}</div><div class="detail-value">${escapeHTML(record.activity)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('equipment'))}</div><div class="detail-value">${buildEquipmentHTML(record.equipment)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('strength'))}</div><div class="detail-value">${escapeHTML(record.strength)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('priority'))}</div><div class="detail-value">${escapeHTML(record.priority)}</div></div><div class="detail-row"><div class="detail-label">${escapeHTML(t('fullMessage'))}</div><div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div></div>`;
+		content.innerHTML = html;
+		modal.classList.add('active');
+	},
 
-document.getElementById('totalRecords').textContent = total;
-document.getElementById('highPriority').textContent = high;
-document.getElementById('movements').textContent = move;
-document.getElementById('engagements').textContent = eng;
+	closeModal: function() {
+		const modal = document.getElementById('detailModal');
+		if (modal) modal.classList.remove('active');
+	},
 
-const now = new Date();
-const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-document.getElementById('lastUpdated').textContent = `Updated: ${timeStr}`;
-},
+	closeReportModal: function() {
+		const modal = document.getElementById('reportModal');
+		if (modal) modal.classList.remove('active');
+	},
 
-applyFilters: function() {
-const priorityFilter = document.getElementById('priorityFilter').value;
-const activityFilter = document.getElementById('activityFilter').value;
-const searchTerm = (document.getElementById('searchBox').value || '').toLowerCase();
+	deleteRecord: function(id) {
+		if (!id) return;
+		if (confirm(t('deleteConfirm'))) {
+			this.database = this.database.filter(r => r.id !== id);
+			this.updateDisplay();
+		}
+	},
 
-this.filteredData = this.database.filter(record => {
-if (priorityFilter && record.priority !== priorityFilter) return false;
-if (activityFilter && record.activity !== activityFilter) return false;
-if (searchTerm) {
-const searchable = `${record.coordinate} ${record.reporter} ${record.activity} ${record.equipment} ${record.fullMessage}`.toLowerCase();
-if (!searchable.includes(searchTerm)) return false;
-}
-return true;
-});
+	clearAll: function() {
+		if (confirm(t('clearConfirm'))) {
+			this.database = [];
+			this.processedHashes.clear();
+			this.updateDisplay();
+		}
+	},
 
-this.renderTable();
-},
+	exportToExcel: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			const xlsx = generateXLS(this.database);
+			const blob = new Blob([xlsx], { type: 'application/vnd.ms-excel' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			const dateStr = new Date().toISOString().split('T')[0];
+			a.download = `intel_fusion_${dateStr}.xls`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			this.showToast(t('exported'), 'success');
+		} catch (e) {
+			console.error('Export error:', e);
+			this.showToast(t('exportFail'), 'error');
+		}
+	},
 
-renderTable: function() {
-const tbody = document.getElementById('tableBody');
-if (!tbody) return;
+	exportToTSV: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
+			const rows = this.database.map(r => [preventFormulaInjection(r.dtg), preventFormulaInjection(r.coordinate), preventFormulaInjection(r.reporter), preventFormulaInjection(r.unit), preventFormulaInjection(r.activity), preventFormulaInjection(r.equipment), preventFormulaInjection(r.strength), preventFormulaInjection(r.priority), preventFormulaInjection(r.fullMessage)]);
+			const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
+			const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			const dateStr = new Date().toISOString().split('T')[0];
+			a.download = `intel_fusion_${dateStr}.tsv`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			this.showToast(t('exported2'), 'success');
+		} catch (e) {
+			console.error('Export error:', e);
+			this.showToast(t('exportFail'), 'error');
+		}
+	},
 
-tbody.innerHTML = '';
+	copyToClipboard: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
+			const rows = this.database.map(r => [r.dtg, r.coordinate, r.reporter, r.unit, r.activity, r.equipment, r.strength, r.priority, r.fullMessage]);
+			const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
+			navigator.clipboard.writeText(tsv).then(() => this.showToast(t('copied'), 'success')).catch(() => this.showToast(t('copyFail'), 'error'));
+		} catch (e) {
+			console.error('Clipboard error:', e);
+			this.showToast(t('copyFail'), 'error');
+		}
+	},
 
-const reversed = this.filteredData.slice().reverse();
-reversed.forEach((record, idx) => {
-try {
-const row = tbody.insertRow();
-row.setAttribute('tabindex', '0');
-row.setAttribute('role', 'button');
-row.setAttribute('aria-label', `Record ${idx + 1}: ${record.activity} at ${record.coordinate}`);
+	saveToJSON: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			const jsonData = {
+				version: '2.0',
+				exported: new Date().toISOString(),
+				scenario: 'Intel Fusion Export',
+				recordCount: this.database.length,
+				records: this.database
+			};
+			const json = JSON.stringify(jsonData, null, 2);
+			const blob = new Blob([json], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			const now = new Date();
+			const dateStr = now.toISOString().split('T')[0];
+			const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+			a.download = `intel_fusion_db_${dateStr}_${timeStr}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			this.showToast(t('savedJSON'), 'success');
+		} catch (e) {
+			console.error('JSON save error:', e);
+			this.showToast(t('exportFail'), 'error');
+		}
+	},
 
-row.onclick = () => this.showDetails(record);
-row.onkeydown = (e) => {
-if (e.key === 'Enter') this.showDetails(record);
-};
+	loadJSONFile: function() {
+		const input = document.getElementById('jsonFileInput');
+		if (input) input.click();
+	},
 
-const dtgCell = row.insertCell();
-dtgCell.textContent = record.dtg.substring(0, 10);
+	handleJSONFileSelect: function() {
+		const input = document.getElementById('jsonFileInput');
+		if (!input || !input.files || !input.files[0]) return;
+		const file = input.files[0];
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			try {
+				const content = e.target.result;
+				const jsonData = JSON.parse(content);
+				if (!jsonData.records || !Array.isArray(jsonData.records)) {
+					this.showToast('Invalid JSON format', 'error');
+					return;
+				}
+				let added = 0, duplicates = 0;
+				jsonData.records.forEach(record => {
+					if (typeof record === 'object' && record.fullMessage && record.coordinate) {
+						const hash = simpleHash(record.fullMessage + (record.coordinate || ''));
+						if (!this.processedHashes.has(hash)) {
+							this.database.push(record);
+							this.processedHashes.add(hash);
+							added++;
+						} else {
+							duplicates++;
+						}
+					}
+				});
+				if (added > 0 || duplicates > 0) {
+					this.updateDisplay();
+					this.showToast(`${t('loadedJSON')} ${added} ${t('added')} (${duplicates} ${t('duplicatesSkipped')})`, 'success');
+				} else {
+					this.showToast('No new records loaded', 'error');
+				}
+				input.value = '';
+			} catch (e) {
+				console.error('JSON load error:', e);
+				this.showToast('Error parsing JSON file', 'error');
+				input.value = '';
+			}
+		};
+		reader.readAsText(file);
+	},
 
-const coordCell = row.insertCell();
-coordCell.textContent = record.coordinate;
+	toggleReportMenu: function() {
+		const menu = document.getElementById('reportMenu');
+		if (menu) menu.classList.toggle('active');
+	},
 
-const reporterCell = row.insertCell();
-reporterCell.textContent = record.reporter;
-reporterCell.className = 'hidden-mobile';
+	generateINTSUM: function() {
+		if (this.database.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			const sorted = this.database.slice().sort((a, b) => a.dtg.localeCompare(b.dtg));
+			const earliest = sorted[0].dtg;
+			const latest = sorted[sorted.length - 1].dtg;
+			const movementRecords = this.database.filter(r => r.activity === 'MOVEMENT');
+			const engagementRecords = this.database.filter(r => r.activity === 'ENGAGEMENT');
+			const artilleryRecords = this.database.filter(r => r.equipment.includes('2S') || r.equipment.includes('BM-'));
+			let report = `INTSUM NR 001\n${t('period')}: ${earliest} TO ${latest}\n\n1. ${t('enemySituation')}\n   a. ${t('ground')}: ${movementRecords.length} movement reports. `;
+			if (movementRecords.length > 0) {
+				const coords = movementRecords.map(r => r.coordinate).slice(0, 3);
+				report += `Primary locations: ${coords.join(', ')}\n`;
+			} else {
+				report += `No movement activity detected.\n`;
+			}
+			report += `   b. ${t('air')}: ${this.database.filter(r => r.equipment.includes('UAV') || r.equipment.includes('DRONE')).length} UAV/air observations.\n`;
+			report += `   c. ${t('artillery')}: ${artilleryRecords.length} artillery positions. ${artilleryRecords.length > 0 ? 'Batteries detected: ' + artilleryRecords.map(r => r.equipment).join(', ') : 'No artillery activity.'}\n\n`;
+			report += `2. ${t('enemyCapabilities')}\n`;
+			const equipmentCounts = {};
+			this.database.forEach(r => {
+				const eqs = r.equipment.split(', ');
+				eqs.forEach(eq => {
+					equipmentCounts[eq] = (equipmentCounts[eq] || 0) + 1;
+				});
+			});
+			for (const [eq, count] of Object.entries(equipmentCounts)) {
+				if (eq !== 'UNKNOWN') report += `   ${eq}: ${count}\n`;
+			}
+			report += '\n3. ' + t('enemyCOA') + '\n';
+			if (movementRecords.length > engagementRecords.length) {
+				report += `   Primary COA: Withdrawal or repositioning. High movement activity with limited engagement.\n`;
+			} else if (engagementRecords.length > 0) {
+				report += `   Primary COA: Defensive operations with counter-attack posture. ${engagementRecords.length} engagement reports.\n`;
+			} else {
+				report += `   Primary COA: Consolidation and preparation.\n`;
+			}
+			report += '\n4. ' + t('priorityReqs') + '\n   - Clarify artillery positions and fire direction\n   - Identify reserve echelon locations\n   - Confirm command post locations\n';
+			this.displayReport(report, 'INTSUM');
+		} catch (e) {
+			console.error('INTSUM generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
 
-const activityCell = row.insertCell();
-activityCell.textContent = record.activity;
-activityCell.className = `activity-${record.activity.toLowerCase()}`;
+	generateSPOTREP: function() {
+		if (this.filteredData.length === 0) {
+			this.showToast(t('selectRecord'), 'error');
+			return;
+		}
+		const record = this.filteredData[this.filteredData.length - 1];
+		try {
+			let report = `${t('spotrep')}\n\n1. DTG: ${record.dtg}\n2. ${t('unitMakingReport')}: ${record.reporter}\n3. ${t('size')}: ${record.strength}\n4. ACTIVITY: ${record.activity}\n5. ${t('location')}: ${record.coordinate}\n6. ${t('unit')}: UNKNOWN\n7. ${t('time')}: ${record.dtg}\n8. EQUIPMENT: ${record.equipment}\n\nREMARKS: ${record.fullMessage}\n`;
+			this.displayReport(report, 'SPOTREP');
+		} catch (e) {
+			console.error('SPOTREP generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
 
-const equipCell = row.insertCell();
-equipCell.textContent = record.equipment;
-equipCell.className = 'hidden-mobile';
+	generateSITREP: function() {
+		if (this.filteredData.length === 0) {
+			this.showToast(t('noData'), 'error');
+			return;
+		}
+		try {
+			let report = `${t('sitrep')} - OPERATIONAL SUMMARY\nGenerated: ${new Date().toISOString()}\n\nOVERALL SITUATION:\nTotal reports: ${this.filteredData.length}\nHigh priority: ${this.filteredData.filter(r => r.priority === 'HIGH').length}\nMovements: ${this.filteredData.filter(r => r.activity === 'MOVEMENT').length}\nEngagements: ${this.filteredData.filter(r => r.activity === 'ENGAGEMENT').length}\nPositions: ${this.filteredData.filter(r => r.activity === 'POSITION').length}\n\nKEY OBSERVATIONS:\n`;
+			this.filteredData.slice(0, 10).forEach((r, i) => {
+				report += `${i + 1}. [${r.dtg}] ${r.activity} at ${r.coordinate} - ${r.equipment} (${r.strength}) - Priority: ${r.priority}\n`;
+			});
+			this.displayReport(report, 'SITREP');
+		} catch (e) {
+			console.error('SITREP generation error:', e);
+			this.showToast('Report generation failed', 'error');
+		}
+	},
 
-const strengthCell = row.insertCell();
-strengthCell.textContent = record.strength;
-strengthCell.className = 'hidden-mobile';
+	displayReport: function(reportText, reportType) {
+		const modal = document.getElementById('reportModal');
+		const content = document.getElementById('reportContent');
+		const title = document.getElementById('reportModalTitle');
+		if (!modal || !content || !title) return;
+		this.lastReportData = reportText;
+		title.textContent = reportType;
+		content.textContent = reportText;
+		modal.classList.add('active');
+	},
 
-const priorityCell = row.insertCell();
-priorityCell.textContent = record.priority;
-priorityCell.className = `priority-${record.priority.toLowerCase()}`;
+	copyReportToClipboard: function() {
+		if (!this.lastReportData) {
+			this.showToast(t('copyFail'), 'error');
+			return;
+		}
+		navigator.clipboard.writeText(this.lastReportData).then(() => this.showToast(t('copied'), 'success')).catch(() => this.showToast(t('copyFail'), 'error'));
+	},
 
-const actionCell = row.insertCell();
-const deleteBtn = document.createElement('button');
-deleteBtn.textContent = '✕';
-deleteBtn.className = 'btn-danger';
-deleteBtn.style.padding = '4px 8px';
-deleteBtn.style.fontSize = '12px';
-deleteBtn.setAttribute('aria-label', 'Delete record');
-deleteBtn.onclick = (e) => {
-e.stopPropagation();
-this.deleteRecord(record.id);
-};
-actionCell.appendChild(deleteBtn);
-} catch (e) {
-console.error('Row rendering error:', e);
-}
-});
-},
+	downloadReportTXT: function() {
+		if (!this.lastReportData) {
+			this.showToast('No report to download', 'error');
+			return;
+		}
+		try {
+			const blob = new Blob([this.lastReportData], { type: 'text/plain' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			const dateStr = new Date().toISOString().split('T')[0];
+			a.download = `intel_fusion_report_${dateStr}.txt`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			this.showToast('Report downloaded', 'success');
+		} catch (e) {
+			console.error('Report download error:', e);
+			this.showToast('Download failed', 'error');
+		}
+	},
 
-showDetails: function(record) {
-try {
-const modal = document.getElementById('detailModal');
-const content = document.getElementById('detailContent');
+	toggleLang: function() {
+		currentLang = currentLang === 'en' ? 'et' : 'en';
+		this.applyLang();
+	},
 
-if (!modal || !content) return;
+	applyLang: function() {
+		document.getElementById('appTitle').textContent = t('title');
+		document.getElementById('langBtn').textContent = t('langBtn');
+		document.getElementById('messageInput').placeholder = t('placeholder');
+		const statLabels = document.querySelectorAll('.stat-label');
+		if (statLabels.length >= 4) {
+			statLabels[0].textContent = t('totalRecords');
+			statLabels[1].textContent = t('highPriority');
+			statLabels[2].textContent = t('movements');
+			statLabels[3].textContent = t('engagements');
+		}
+		const prioritySel = document.getElementById('priorityFilter');
+		if (prioritySel) prioritySel.options[0].text = t('allPriorities');
+		const activitySel = document.getElementById('activityFilter');
+		if (activitySel) activitySel.options[0].text = t('allActivities');
+		document.getElementById('searchBox').placeholder = t('search');
+		const headers = document.querySelectorAll('thead th');
+		const hKeys = ['dtg','coordinate','reporter','activity','equipment','strength','priority','action'];
+		headers.forEach((th, i) => { if (hKeys[i]) th.textContent = t(hKeys[i]); });
+		const resourcesToggle = document.querySelector('details summary');
+		if (resourcesToggle) resourcesToggle.textContent = t('resources');
+		const freqLabel = document.getElementById('freqLabel');
+		if (freqLabel) freqLabel.textContent = t('freqLabel');
+	},
 
-document.getElementById('modalTitle').textContent = t('details');
-const html = `
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('dtg'))}</div>
-<div class="detail-value">${escapeHTML(record.dtg)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('coordinate'))}</div>
-<div class="detail-value">${escapeHTML(record.coordinate)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('reporter'))}</div>
-<div class="detail-value">${escapeHTML(record.reporter)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('activity'))}</div>
-<div class="detail-value">${escapeHTML(record.activity)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('equipment'))}</div>
-<div class="detail-value">${buildEquipmentHTML(record.equipment)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('strength'))}</div>
-<div class="detail-value">${escapeHTML(record.strength)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('priority'))}</div>
-<div class="detail-value">${escapeHTML(record.priority)}</div>
-</div>
-<div class="detail-row">
-<div class="detail-label">${escapeHTML(t('fullMessage'))}</div>
-<div class="detail-value monospace">${escapeHTML(record.fullMessage)}</div>
-</div>
-`;
+	loadSampleData: function() {
+		const samples = ['UAV2 spotted 3x T-72 tanks moving north along main road, grid 35V MD 85243 89003, urgent priority', 'SCOUT4 reports enemy BMP-2 platoon in defensive position at MD 86500 88700, dug in with artillery support from 2S19 battery', 'FO1 observed MLRS battery relocating west, approximate location 58.3812, 26.7234, 4x BM-21 vehicles in convoy formation', 'SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 84100 90200, Unit - 138th MRB, Time - 071430ZAPR2026, Equipment - T-80 tanks, BMP-3, estimated 40 vehicles', 'RECON3 flash report: enemy SA-11 air defense battery emplaced at grid 35V MD 83500 91000, 3x TELs with radar active, critical threat to air operations', 'OP7 observing enemy staging area at MD 87200 89500, company-sized element with BTR-82 APCs and logistics vehicles, appears to be preparing for forward movement', 'UAV5 detected artillery fire from position 58.4201, 26.5890, counterbattery assessment indicates 2S19 MSTA battery, 6x howitzers firing north, urgent', 'SCOUT1 reports enemy recon element probing defensive line at 35V MD 85800 88200, 2x BRDM-2 vehicles with dismounted infantry squad, routine observation', 'FO3 engagement report: enemy T-90 platoon engaged our forward positions at MD 84800 89600, 4x tanks with infantry support, heavy contact ongoing, immediate priority', 'UAV1 spotted enemy drone launch site at 58.3950, 26.6100, multiple UAV operators visible with 3x commercial drones, recommend neutralization'];
+		const input = document.getElementById('messageInput');
+		if (input) {
+			input.value = samples.join('\n\n');
+			this.showToast(t('testLoaded'), 'success');
+		}
+	},
 
-content.innerHTML = html;
-modal.classList.add('active');
-} catch (e) {
-console.error('Detail modal error:', e);
-}
-},
+	toggleAutoMode: function() {
+		this.autoModeEnabled = !this.autoModeEnabled;
+		const btn = document.getElementById('autoModeText');
+		const settings = document.getElementById('autoSettings');
+		if (btn) btn.textContent = this.autoModeEnabled ? t('autoModeOn') : t('autoMode');
+		if (settings) settings.classList.toggle('active', this.autoModeEnabled);
+		if (this.autoModeEnabled) {
+			this.startAutoMode();
+			this.showToast(t('autoEnabled'), 'success');
+		} else {
+			this.stopAutoMode();
+		}
+	},
 
-closeModal: function() {
-const modal = document.getElementById('detailModal');
-if (modal) {
-modal.classList.remove('active');
-}
-},
+	startAutoMode: function() {
+		try {
+			if (typeof BroadcastChannel !== 'undefined') {
+				this.broadcastChannel = new BroadcastChannel('intel-fusion-channel');
+				this.broadcastChannel.onmessage = (event) => {
+					if (event.data && event.data.type === 'INTEL_MSG') {
+						this.handleIntelMessage(event.data);
+					}
+				};
+			}
+		} catch (e) {
+			console.error('BroadcastChannel error:', e);
+		}
+	},
 
-deleteRecord: function(id) {
-if (!id) return;
-if (confirm(t('deleteConfirm'))) {
-this.database = this.database.filter(r => r.id !== id);
-this.updateDisplay();
-}
-},
+	stopAutoMode: function() {
+		if (this.broadcastChannel) {
+			this.broadcastChannel.close();
+			this.broadcastChannel = null;
+		}
+	},
 
-clearAll: function() {
-if (confirm(t('clearConfirm'))) {
-this.database = [];
-this.processedHashes.clear();
-this.updateDisplay();
-}
-},
+	updateAutoFrequency: function() {
+		const select = document.getElementById('frequencySelect');
+		if (select) {
+			// Frequency selection available for future use
+		}
+	},
 
-exportToExcel: function() {
-if (this.database.length === 0) {
-this.showToast(t('noData'), 'error');
-return;
-}
+	handleIntelMessage: function(data) {
+		if (!this.autoModeEnabled) return;
+		const message = data.message || data.text;
+		if (typeof message === 'string' && message.length > 30) {
+			const parsed = parseMessage(message);
+			if (parsed) {
+				this.database.push(parsed);
+				this.autoMessageCount++;
+				this.updateDisplay();
+				const countEl = document.getElementById('autoMessageCount');
+				if (countEl) countEl.textContent = `${t('messagesReceived')}: ${this.autoMessageCount}`;
+			}
+		}
+	},
 
-try {
-const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
-const rows = this.database.map(r => [
-preventFormulaInjection(r.dtg),
-preventFormulaInjection(r.coordinate),
-preventFormulaInjection(r.reporter),
-preventFormulaInjection(r.unit),
-preventFormulaInjection(r.activity),
-preventFormulaInjection(r.equipment),
-preventFormulaInjection(r.strength),
-preventFormulaInjection(r.priority),
-preventFormulaInjection(r.fullMessage)
-]);
+	handlePostMessage: function(event) {
+		try {
+			if (!event.data || typeof event.data !== 'object') return;
+			if (!this.autoModeEnabled) return;
+			if (event.data.type === 'INTEL_MSG') {
+				this.handleIntelMessage(event.data);
+			} else if (event.data.type === 'INTEL_BATCH' && Array.isArray(event.data.messages)) {
+				const messages = event.data.messages;
+				let added = 0;
+				messages.forEach(msg => {
+					if (typeof msg === 'string') {
+						const parsed = parseMessage(msg);
+						if (parsed) {
+							this.database.push(parsed);
+							added++;
+						}
+					}
+				});
+				if (added > 0) {
+					this.autoMessageCount += added;
+					this.updateDisplay();
+					const countEl = document.getElementById('autoMessageCount');
+					if (countEl) countEl.textContent = `${t('messagesReceived')}: ${this.autoMessageCount}`;
+					this.showToast(`${t('autoAdded')} ${added} ${t('messages')}`, 'success');
+				}
+			}
+		} catch (e) {
+			console.error('PostMessage handling error:', e);
+		}
+	},
 
-const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
-const blob = new Blob([tsv], { type: 'text/tab-separated-values;charset=utf-8' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-const dateStr = new Date().toISOString().split('T')[0];
-a.download = `intel_fusion_${dateStr}_${this.database.length}records.tsv`;
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-this.showToast(t('exported'), 'success');
-} catch (e) {
-console.error('Export error:', e);
-this.showToast(t('exportFail'), 'error');
-}
-},
-
-copyToClipboard: function() {
-if (this.database.length === 0) {
-this.showToast(t('noData'), 'error');
-return;
-}
-
-try {
-const headers = ['DTG', 'Coordinate', 'Reporter', 'Unit', 'Activity', 'Equipment', 'Strength', 'Priority', 'Message'];
-const rows = this.database.map(r => [
-r.dtg, r.coordinate, r.reporter, r.unit, r.activity, r.equipment, r.strength, r.priority, r.fullMessage
-]);
-
-const tsv = [headers.join('\t'), ...rows.map(row => row.join('\t'))].join('\n');
-navigator.clipboard.writeText(tsv).then(() => {
-this.showToast(t('copied'), 'success');
-}).catch(() => {
-this.showToast(t('copyFail'), 'error');
-});
-} catch (e) {
-console.error('Clipboard error:', e);
-this.showToast(t('copyFail'), 'error');
-}
-},
-
-toggleLang: function() {
-	currentLang = currentLang === 'en' ? 'et' : 'en';
-	this.applyLang();
-},
-
-applyLang: function() {
-	document.getElementById('appTitle').textContent = t('title');
-	document.getElementById('langBtn').textContent = t('langBtn');
-	document.getElementById('messageInput').placeholder = t('placeholder');
-
-	const statLabels = document.querySelectorAll('.stat-label');
-	if (statLabels.length >= 4) {
-		statLabels[0].textContent = t('totalRecords');
-		statLabels[1].textContent = t('highPriority');
-		statLabels[2].textContent = t('movements');
-		statLabels[3].textContent = t('engagements');
+	showToast: function(message, type) {
+		const toast = document.createElement('div');
+		toast.className = `toast ${type}`;
+		toast.textContent = message;
+		document.body.appendChild(toast);
+		setTimeout(() => {
+			toast.remove();
+		}, 3000);
 	}
-
-	const buttons = document.querySelectorAll('.button-group button');
-	if (buttons.length >= 6) {
-		buttons[0].innerHTML = t('processBtn');
-		const autoSpan = document.getElementById('autoModeText');
-		if (autoSpan) autoSpan.textContent = this.autoModeEnabled ? t('autoModeOn') : t('autoMode');
-		buttons[2].innerHTML = t('exportBtn');
-		buttons[3].innerHTML = t('copyBtn');
-		buttons[4].innerHTML = t('testBtn');
-		buttons[5].innerHTML = t('clearBtn');
-	}
-
-	const prioritySel = document.getElementById('priorityFilter');
-	if (prioritySel) prioritySel.options[0].text = t('allPriorities');
-	const activitySel = document.getElementById('activityFilter');
-	if (activitySel) activitySel.options[0].text = t('allActivities');
-	document.getElementById('searchBox').placeholder = t('search');
-
-	const headers = document.querySelectorAll('thead th');
-	const hKeys = ['dtg','coordinate','reporter','activity','equipment','strength','priority','action'];
-	headers.forEach((th, i) => { if (hKeys[i]) th.textContent = t(hKeys[i]); });
-
-	const resourcesToggle = document.querySelector('details summary');
-	if (resourcesToggle) resourcesToggle.textContent = t('resources');
-},
-
-loadSampleData: function() {
-	const samples = [
-		'UAV2 spotted 3x T-72 tanks moving north along main road, grid 35V MD 85243 89003, urgent priority',
-		'SCOUT4 reports enemy BMP-2 platoon in defensive position at MD 86500 88700, dug in with artillery support from 2S19 battery',
-		'FO1 observed MLRS battery relocating west, approximate location 58.3812, 26.7234, 4x BM-21 vehicles in convoy formation',
-		'SALUTE: Size - 1x BTG, Activity - MOVEMENT, Location - 35V MD 84100 90200, Unit - 138th MRB, Time - 071430ZAPR2026, Equipment - T-80 tanks, BMP-3, estimated 40 vehicles',
-		'RECON3 flash report: enemy SA-11 air defense battery emplaced at grid 35V MD 83500 91000, 3x TELs with radar active, critical threat to air operations',
-		'OP7 observing enemy staging area at MD 87200 89500, company-sized element with BTR-82 APCs and logistics vehicles, appears to be preparing for forward movement',
-		'UAV5 detected artillery fire from position 58.4201, 26.5890, counterbattery assessment indicates 2S19 MSTA battery, 6x howitzers firing north, urgent',
-		'SCOUT1 reports enemy recon element probing defensive line at 35V MD 85800 88200, 2x BRDM-2 vehicles with dismounted infantry squad, routine observation',
-		'FO3 engagement report: enemy T-90 platoon engaged our forward positions at MD 84800 89600, 4x tanks with infantry support, heavy contact ongoing, immediate priority',
-		'UAV1 spotted enemy drone launch site at 58.3950, 26.6100, multiple UAV operators visible with 3x commercial drones, recommend neutralization'
-	];
-	const input = document.getElementById('messageInput');
-	if (input) {
-		input.value = samples.join('\n\n');
-		this.showToast(t('testLoaded'), 'success');
-	}
-},
-
-toggleAutoMode: function() {
-this.autoModeEnabled = !this.autoModeEnabled;
-const btn = document.getElementById('autoModeText');
-if (btn) {
-btn.textContent = this.autoModeEnabled ? 'Auto Mode ON' : 'Enable Auto Mode';
-}
-if (this.autoModeEnabled) {
-this.showToast(t('autoEnabled'), 'success');
-}
-},
-
-handlePostMessage: function(event) {
-try {
-if (!event.data || typeof event.data !== 'object') return;
-if (event.data.type !== 'INTEL_BATCH') return;
-if (!this.autoModeEnabled) return;
-if (!Array.isArray(event.data.messages)) return;
-
-const messages = event.data.messages;
-let added = 0;
-
-messages.forEach(msg => {
-if (typeof msg === 'string') {
-const parsed = parseMessage(msg);
-if (parsed) {
-this.database.push(parsed);
-added++;
-}
-}
-});
-
-if (added > 0) {
-this.updateDisplay();
-this.showToast(`${t('autoAdded')} ${added} ${t('messages')}`, 'success');
-}
-} catch (e) {
-console.error('PostMessage handling error:', e);
-}
-},
-
-showToast: function(message, type) {
-const toast = document.createElement('div');
-toast.className = `toast ${type}`;
-toast.textContent = message;
-document.body.appendChild(toast);
-setTimeout(() => {
-toast.remove();
-}, 3000);
-}
 };
 
 window.addEventListener('message', (e) => App.handlePostMessage(e), false);
-
-document.getElementById('detailModal').addEventListener('keydown', (e) => {
-if (e.key === 'Escape') App.closeModal();
+document.getElementById('reportMenu').addEventListener('click', (e) => {
+	if (e.target.tagName === 'BUTTON') document.getElementById('reportMenu').classList.remove('active');
 }, false);
-
+document.getElementById('detailModal').addEventListener('keydown', (e) => {
+	if (e.key === 'Escape') App.closeModal();
+}, false);
+document.getElementById('reportModal').addEventListener('keydown', (e) => {
+	if (e.key === 'Escape') App.closeReportModal();
+}, false);
 document.getElementById('recordsTable').addEventListener('keydown', (e) => {
-if (e.key === 'Escape') {
-document.getElementById('searchBox').focus();
-}
+	if (e.key === 'Escape') document.getElementById('searchBox').focus();
 }, false);
 
 App.updateDisplay();
-
 window.App = App;
 
 })();
