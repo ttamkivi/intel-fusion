@@ -3043,30 +3043,27 @@ SUMMARY
 
 		const width = 800, height = 500;
 
-		// Background - dark sea
-		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-		bg.setAttribute('width', width);
-		bg.setAttribute('height', height);
-		bg.setAttribute('fill', '#0a1628');
-		svg.appendChild(bg);
+		// Background - dark sea with subtle gradient
+		const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+		const grad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+		grad.setAttribute('id', 'seaGrad');
+		var s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+		s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#0d1f35');
+		var s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+		s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', '#080e1a');
+		grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad);
+		svg.appendChild(defs);
 
-		// Helper to build SVG path from lon/lat points
-		function geoPath(points, close) {
-			let d = '';
-			points.forEach(function(p, i) {
-				const sv = self.geoToSVG(p[0], p[1]);
-				d += (i === 0 ? 'M ' : ' L ') + sv.x.toFixed(1) + ',' + sv.y.toFixed(1);
-			});
-			if (close) d += ' Z';
-			return d;
-		}
+		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		bg.setAttribute('width', width); bg.setAttribute('height', height);
+		bg.setAttribute('fill', 'url(#seaGrad)');
+		svg.appendChild(bg);
 
 		// Grid lines with coordinate labels (if enabled)
 		if (this.mapState.showGrid) {
-			// Longitude lines every 1°
 			for (var glon = 22; glon <= 28; glon++) {
-				var gp1 = this.geoToSVG(glon, 57.4);
-				var gp2 = this.geoToSVG(glon, 59.8);
+				var gp1 = this.geoToSVG(glon, 57.3);
+				var gp2 = this.geoToSVG(glon, 59.9);
 				var gl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 				gl.setAttribute('x1', gp1.x); gl.setAttribute('y1', gp1.y);
 				gl.setAttribute('x2', gp2.x); gl.setAttribute('y2', gp2.y);
@@ -3074,12 +3071,11 @@ SUMMARY
 				svg.appendChild(gl);
 				var gtx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 				gtx.setAttribute('x', gp1.x); gtx.setAttribute('y', gp1.y + 14);
-				gtx.setAttribute('fill', '#334'); gtx.setAttribute('font-size', '9');
+				gtx.setAttribute('fill', '#283848'); gtx.setAttribute('font-size', '9');
 				gtx.setAttribute('text-anchor', 'middle');
 				gtx.textContent = glon + '°E';
 				svg.appendChild(gtx);
 			}
-			// Latitude lines every 0.5°
 			for (var glat = 57.5; glat <= 59.5; glat += 0.5) {
 				var gp3 = this.geoToSVG(21.5, glat);
 				var gp4 = this.geoToSVG(28.3, glat);
@@ -3090,178 +3086,193 @@ SUMMARY
 				svg.appendChild(gl2);
 				var gty = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 				gty.setAttribute('x', gp3.x + 2); gty.setAttribute('y', gp3.y - 3);
-				gty.setAttribute('fill', '#334'); gty.setAttribute('font-size', '9');
+				gty.setAttribute('fill', '#283848'); gty.setAttribute('font-size', '9');
 				gty.textContent = glat.toFixed(1) + '°N';
 				svg.appendChild(gty);
 			}
 		}
 
-		// ====== REAL ESTONIA COASTLINE ======
-		// Mainland Estonia (simplified but geographically accurate outline)
-		var mainland = [
-			[23.44, 58.99], [23.51, 59.08], [23.65, 59.15], [23.86, 59.22],
-			[24.03, 59.35], [24.22, 59.42], [24.38, 59.47], [24.56, 59.44],
-			[24.75, 59.44], [24.83, 59.50], [25.00, 59.53], [25.20, 59.56],
-			[25.40, 59.60], [25.60, 59.60], [25.80, 59.56], [26.05, 59.50],
-			[26.30, 59.47], [26.50, 59.48], [26.70, 59.52], [26.90, 59.48],
-			[27.10, 59.45], [27.35, 59.42], [27.55, 59.40], [27.73, 59.38],
-			[28.02, 59.38], [28.20, 59.36],
-			// NE corner - Narva area
-			[28.05, 59.30], [27.90, 59.18], [27.85, 59.05],
-			// East border (Lake Peipus west shore handled separately, land border)
-			[27.80, 58.90], [27.75, 58.80], [27.60, 58.60],
-			[27.55, 58.40], [27.50, 58.20], [27.52, 58.00],
-			// SE corner - Setomaa/Võru
-			[27.40, 57.80], [27.30, 57.70], [27.10, 57.60],
-			[26.90, 57.55], [26.70, 57.52],
-			// South border - Latvia border
-			[26.50, 57.52], [26.30, 57.54], [26.05, 57.55],
-			[25.80, 57.57], [25.60, 57.58], [25.40, 57.60],
-			[25.20, 57.60], [25.00, 57.58], [24.80, 57.57],
-			[24.60, 57.55], [24.40, 57.54], [24.20, 57.53],
-			[24.00, 57.54],
-			// SW coast - Pärnu area
-			[23.80, 57.60], [23.60, 57.72], [23.50, 57.82],
-			[23.50, 57.92], [23.60, 58.00],
-			// Pärnu Bay
-			[24.00, 58.15], [24.20, 58.25], [24.40, 58.35],
-			[24.52, 58.38], [24.60, 58.38],
-			// West coast - Matsalu area
-			[24.50, 58.50], [24.30, 58.55], [24.10, 58.62],
-			[23.90, 58.68], [23.70, 58.76], [23.55, 58.83],
-			[23.44, 58.92], [23.44, 58.99]
-		];
+		// ====== HIGH-QUALITY ESTONIA MAP ======
+		// ~100+ points per landmass, geographically accurate
 
+		// Mainland Estonia (~120 points clockwise from NW)
+		var mainlandD = 'M233.0,167.2L237.4,159.8L243.8,152.5L251.4,145.1L262.2,134.1L276.2,126.7L291.4,108.3L297.8,101.0L302.2,97.3L310.8,93.6L319.4,89.9L332.4,86.2L343.2,82.6L356.2,82.6L367.0,78.9L377.8,80.7L384.2,78.9L389.6,75.2L394.0,71.5L397.2,67.8L395.0,64.2L390.7,64.2L388.6,69.7L397.2,75.2L403.7,77.0L412.3,75.2L418.8,71.5L427.4,67.8L438.2,64.2L449.0,60.5L456.6,58.6L464.2,56.8L470.6,55.0L475.0,56.8L481.4,58.6L492.2,60.5L499.8,62.3L510.6,67.8L521.4,71.5L532.2,75.2L543.0,77.0L553.8,78.9L564.6,78.9L575.4,75.2L583.0,75.2L593.8,75.2L604.6,77.0L615.4,78.9L624.0,82.6L632.6,84.4L640.2,86.2L651.0,89.9L661.8,89.9L669.4,93.6L680.2,93.6L688.8,95.4L697.4,97.3L708.2,97.3L719.0,93.6L726.6,89.9L734.2,86.2L737.4,89.9L736.3,97.3L734.2,108.3L729.8,121.2L725.5,130.4L719.0,145.1L712.6,158.0L708.2,170.9L701.8,181.9L697.4,194.8L694.2,207.7L691.0,226.1L688.8,244.5L686.6,262.9L684.5,281.3L682.3,299.7L684.5,318.1L688.8,336.5L691.0,351.2L686.6,365.9L680.2,378.8L671.5,388.0L665.0,395.4L656.4,402.7L645.6,410.1L634.8,421.1L626.2,428.5L613.2,434.0L597.0,437.7L580.8,439.5L564.6,439.5L548.4,437.7L532.2,435.8L516.0,434.0L499.8,432.2L483.6,430.3L467.4,428.5L451.2,426.6L435.0,426.6L418.8,428.5L402.6,430.3L386.4,432.2L370.2,434.0L354.0,435.8L337.8,435.8L321.6,435.8L305.4,435.8L291.4,432.2L278.4,424.8L269.8,415.6L262.2,402.7L254.6,391.7L248.2,378.8L246.0,369.6L248.2,358.6L254.6,351.2L265.4,342.0L276.2,336.5L289.2,329.1L300.0,318.1L310.8,310.7L321.6,299.7L334.6,292.3L345.4,285.0L354.0,281.3L360.5,281.3L356.2,273.9L349.7,266.6L341.0,259.2L332.4,251.8L323.8,248.2L315.1,244.5L305.4,240.8L294.6,233.4L287.0,229.8L278.4,226.1L269.8,218.7L262.2,215.0L254.6,207.7L248.2,200.3L241.7,193.0L237.4,185.6L233.0,178.2L233.0,167.2Z';
 		var mainlandPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		mainlandPath.setAttribute('d', geoPath(mainland, true));
-		mainlandPath.setAttribute('fill', '#1a2a1a');
-		mainlandPath.setAttribute('stroke', '#3a5a3a');
+		mainlandPath.setAttribute('d', mainlandD);
+		mainlandPath.setAttribute('fill', '#152515');
+		mainlandPath.setAttribute('stroke', '#2a5a2a');
 		mainlandPath.setAttribute('stroke-width', '1.5');
+		mainlandPath.setAttribute('stroke-linejoin', 'round');
 		svg.appendChild(mainlandPath);
 
-		// Saaremaa island
-		var saaremaa = [
-			[21.90, 58.25], [22.05, 58.32], [22.25, 58.40],
-			[22.50, 58.44], [22.70, 58.42], [22.85, 58.38],
-			[23.05, 58.35], [23.20, 58.30], [23.30, 58.22],
-			[23.32, 58.12], [23.20, 58.05], [23.00, 57.98],
-			[22.75, 57.96], [22.50, 58.00], [22.30, 58.05],
-			[22.10, 58.10], [21.95, 58.15], [21.90, 58.25]
-		];
-
+		// Saaremaa island (~30 points)
+		var saaremaaD = 'M84.0,296.0L92.6,288.6L103.4,281.3L116.4,273.9L129.4,270.2L143.4,270.2L154.2,273.9L165.0,277.6L172.6,281.3L181.2,285.0L189.8,288.6L200.6,288.6L208.2,292.3L215.8,296.0L222.2,303.4L226.6,310.7L228.7,318.1L226.6,329.1L222.2,340.2L215.8,347.5L209.3,354.9L200.6,358.6L189.8,360.4L179.0,365.9L170.4,369.6L161.8,369.6L154.2,367.8L146.6,362.2L140.2,354.9L135.8,347.5L127.2,343.8L118.6,340.2L107.8,340.2L97.0,336.5L86.2,332.8L75.4,325.4L66.7,318.1L64.6,310.7L66.7,303.4L71.0,299.7L77.5,296.0L84.0,296.0Z';
 		var saaremaaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		saaremaaPath.setAttribute('d', geoPath(saaremaa, true));
-		saaremaaPath.setAttribute('fill', '#1a2a1a');
-		saaremaaPath.setAttribute('stroke', '#3a5a3a');
+		saaremaaPath.setAttribute('d', saaremaaD);
+		saaremaaPath.setAttribute('fill', '#152515');
+		saaremaaPath.setAttribute('stroke', '#2a5a2a');
 		saaremaaPath.setAttribute('stroke-width', '1.5');
+		saaremaaPath.setAttribute('stroke-linejoin', 'round');
 		svg.appendChild(saaremaaPath);
 
-		// Hiiumaa island
-		var hiiumaa = [
-			[22.15, 58.72], [22.30, 58.78], [22.50, 58.85],
-			[22.70, 58.92], [22.90, 58.93], [23.05, 58.88],
-			[23.08, 58.80], [22.95, 58.72], [22.75, 58.68],
-			[22.50, 58.65], [22.30, 58.65], [22.15, 58.72]
-		];
-
+		// Hiiumaa island (~20 points)
+		var hiiumaaD = 'M103.4,222.4L114.2,226.1L125.0,229.8L135.8,231.6L146.6,229.8L157.4,226.1L168.2,222.4L175.8,215.0L183.4,207.7L186.6,196.6L183.4,189.3L175.8,181.9L168.2,178.2L159.6,178.2L146.6,181.9L135.8,189.3L125.0,193.0L114.2,196.6L105.6,204.0L97.0,207.7L94.8,213.2L99.1,218.7L103.4,222.4Z';
 		var hiiumaaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		hiiumaaPath.setAttribute('d', geoPath(hiiumaa, true));
-		hiiumaaPath.setAttribute('fill', '#1a2a1a');
-		hiiumaaPath.setAttribute('stroke', '#3a5a3a');
+		hiiumaaPath.setAttribute('d', hiiumaaD);
+		hiiumaaPath.setAttribute('fill', '#152515');
+		hiiumaaPath.setAttribute('stroke', '#2a5a2a');
 		hiiumaaPath.setAttribute('stroke-width', '1.5');
+		hiiumaaPath.setAttribute('stroke-linejoin', 'round');
 		svg.appendChild(hiiumaaPath);
 
-		// Muhu island (between Saaremaa and mainland)
-		var muhu = [
-			[23.15, 58.55], [23.30, 58.60], [23.50, 58.60],
-			[23.55, 58.55], [23.45, 58.50], [23.25, 58.48], [23.15, 58.55]
-		];
+		// Muhu island
+		var muhuD = 'M211.4,248.2L222.2,240.8L233.0,237.1L243.8,237.1L251.4,244.5L248.2,251.8L240.6,259.2L229.8,262.9L219.0,259.2L211.4,248.2Z';
 		var muhuPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		muhuPath.setAttribute('d', geoPath(muhu, true));
-		muhuPath.setAttribute('fill', '#1a2a1a');
-		muhuPath.setAttribute('stroke', '#3a5a3a');
+		muhuPath.setAttribute('d', muhuD);
+		muhuPath.setAttribute('fill', '#152515');
+		muhuPath.setAttribute('stroke', '#2a5a2a');
 		muhuPath.setAttribute('stroke-width', '1');
+		muhuPath.setAttribute('stroke-linejoin', 'round');
 		svg.appendChild(muhuPath);
 
-		// Lake Peipus (large lake on eastern border)
-		var peipus = [
-			[26.96, 59.20], [27.15, 59.10], [27.30, 58.95],
-			[27.50, 58.80], [27.55, 58.60], [27.50, 58.40],
-			[27.40, 58.30], [27.20, 58.25], [27.00, 58.20],
-			[26.80, 58.25], [26.65, 58.35], [26.55, 58.50],
-			[26.60, 58.70], [26.70, 58.85], [26.75, 58.95],
-			[26.80, 59.05], [26.90, 59.15], [26.96, 59.20]
-		];
+		// Vormsi island
+		var vormsiD = 'M205.0,176.4L213.6,170.9L224.4,170.9L229.8,178.2L224.4,185.6L213.6,189.3L205.0,185.6L205.0,176.4Z';
+		var vormsiPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		vormsiPath.setAttribute('d', vormsiD);
+		vormsiPath.setAttribute('fill', '#152515');
+		vormsiPath.setAttribute('stroke', '#2a5a2a');
+		vormsiPath.setAttribute('stroke-width', '1');
+		vormsiPath.setAttribute('stroke-linejoin', 'round');
+		svg.appendChild(vormsiPath);
+
+		// Lake Peipus + Pskov (~28 points, with narrows)
+		var peipusD = 'M619.7,134.1L629.4,141.4L640.2,152.5L651.0,167.2L658.6,181.9L665.0,196.6L669.4,211.4L672.6,226.1L673.7,240.8L675.8,255.5L678.0,270.2L680.2,285.0L675.8,299.7L669.4,314.4L660.7,325.4L649.9,332.8L637.0,329.1L626.2,321.8L615.4,310.7L606.7,299.7L600.2,285.0L595.9,270.2L591.6,255.5L589.4,240.8L586.2,226.1L583.0,211.4L580.8,196.6L583.0,181.9L589.4,167.2L598.1,152.5L606.7,141.4L619.7,134.1Z';
 		var peipusPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		peipusPath.setAttribute('d', geoPath(peipus, true));
-		peipusPath.setAttribute('fill', '#0e1e38');
-		peipusPath.setAttribute('stroke', '#1e3a5f');
+		peipusPath.setAttribute('d', peipusD);
+		peipusPath.setAttribute('fill', '#0c1a30');
+		peipusPath.setAttribute('stroke', '#1a3050');
 		peipusPath.setAttribute('stroke-width', '1');
 		svg.appendChild(peipusPath);
+
 		// Peipus label
 		var peipusC = this.geoToSVG(27.05, 58.65);
 		var peipusLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 		peipusLbl.setAttribute('x', peipusC.x); peipusLbl.setAttribute('y', peipusC.y);
 		peipusLbl.setAttribute('fill', '#1e3a5f'); peipusLbl.setAttribute('font-size', '9');
 		peipusLbl.setAttribute('text-anchor', 'middle'); peipusLbl.setAttribute('font-style', 'italic');
-		peipusLbl.textContent = 'L. Peipus';
+		peipusLbl.textContent = 'Peipsi järv';
 		svg.appendChild(peipusLbl);
+		// Pskov lake label
+		var pskovC = this.geoToSVG(27.30, 58.20);
+		var pskovLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		pskovLbl.setAttribute('x', pskovC.x); pskovLbl.setAttribute('y', pskovC.y);
+		pskovLbl.setAttribute('fill', '#1a3050'); pskovLbl.setAttribute('font-size', '8');
+		pskovLbl.setAttribute('text-anchor', 'middle'); pskovLbl.setAttribute('font-style', 'italic');
+		pskovLbl.textContent = 'Pihkva järv';
+		svg.appendChild(pskovLbl);
 
-		// Reference city labels (if enabled) — real geographic positions
+		// ====== BORDERS ======
+		// Russia border indicator (east of Narva + east of Peipus) - dashed line
+		var borderD = 'M737.4,86.2 L740,97 L738,108 L735,121 L730,130';
+		var borderPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		borderPath.setAttribute('d', borderD);
+		borderPath.setAttribute('fill', 'none');
+		borderPath.setAttribute('stroke', '#442222');
+		borderPath.setAttribute('stroke-width', '1.5');
+		borderPath.setAttribute('stroke-dasharray', '4,3');
+		svg.appendChild(borderPath);
+		// Russia label
+		var ruC = this.geoToSVG(28.15, 59.10);
+		var ruLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		ruLbl.setAttribute('x', ruC.x); ruLbl.setAttribute('y', ruC.y);
+		ruLbl.setAttribute('fill', '#442222'); ruLbl.setAttribute('font-size', '10');
+		ruLbl.setAttribute('text-anchor', 'middle'); ruLbl.setAttribute('font-weight', 'bold');
+		ruLbl.textContent = 'RUSSIA';
+		svg.appendChild(ruLbl);
+		// Latvia label
+		var lvC = this.geoToSVG(25.50, 57.42);
+		var lvLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		lvLbl.setAttribute('x', lvC.x); lvLbl.setAttribute('y', lvC.y);
+		lvLbl.setAttribute('fill', '#224422'); lvLbl.setAttribute('font-size', '10');
+		lvLbl.setAttribute('text-anchor', 'middle'); lvLbl.setAttribute('font-weight', 'bold');
+		lvLbl.textContent = 'LATVIA';
+		svg.appendChild(lvLbl);
+
+		// City labels (if enabled) — accurate geographic positions
 		if (this.mapState.showLabels) {
 			var cities = [
-				{ lon: 24.75, lat: 59.44, text: 'TALLINN', size: 11 },
+				{ lon: 24.75, lat: 59.44, text: 'TALLINN', size: 11, capital: true },
 				{ lon: 28.05, lat: 59.38, text: 'Narva', size: 9 },
 				{ lon: 26.72, lat: 58.38, text: 'Tartu', size: 10 },
 				{ lon: 24.50, lat: 58.38, text: 'Pärnu', size: 9 },
-				{ lon: 25.60, lat: 59.35, text: 'Rakvere', size: 9 },
-				{ lon: 25.95, lat: 59.35, text: 'Tapa', size: 8 },
+				{ lon: 26.35, lat: 59.35, text: 'Rakvere', size: 9 },
+				{ lon: 25.95, lat: 59.10, text: 'Tapa', size: 8 },
 				{ lon: 27.42, lat: 59.35, text: 'Jõhvi', size: 9 },
 				{ lon: 22.48, lat: 58.25, text: 'Kuressaare', size: 8 },
-				{ lon: 22.60, lat: 58.80, text: 'Kärdla', size: 8 },
-				{ lon: 25.59, lat: 58.88, text: 'Haapsalu', size: 8 },
-				{ lon: 26.50, lat: 57.87, text: 'Valga', size: 8 },
+				{ lon: 22.75, lat: 58.99, text: 'Kärdla', size: 8 },
+				{ lon: 23.54, lat: 58.94, text: 'Haapsalu', size: 8 },
+				{ lon: 26.05, lat: 57.78, text: 'Valga', size: 8 },
 				{ lon: 27.02, lat: 57.84, text: 'Võru', size: 8 },
-				{ lon: 25.97, lat: 58.53, text: 'Paide', size: 8 },
-				{ lon: 26.40, lat: 59.15, text: 'Jõgeva', size: 8 },
-				{ lon: 24.74, lat: 59.34, text: '★', size: 14 }
+				{ lon: 25.57, lat: 58.88, text: 'Paide', size: 8 },
+				{ lon: 25.59, lat: 58.36, text: 'Viljandi', size: 8 },
+				{ lon: 27.28, lat: 59.40, text: 'K-Järve', size: 8 },
+				{ lon: 27.76, lat: 59.40, text: 'Sillamäe', size: 8 },
+				{ lon: 24.05, lat: 59.35, text: 'Paldiski', size: 8 }
 			];
 			cities.forEach(function(c) {
 				var cp = self.geoToSVG(c.lon, c.lat);
+				// City dot
+				var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+				dot.setAttribute('cx', cp.x); dot.setAttribute('cy', cp.y);
+				dot.setAttribute('r', c.capital ? '3.5' : '2');
+				dot.setAttribute('fill', c.capital ? '#5b8' : '#3a5a3a');
+				dot.setAttribute('stroke', c.capital ? '#5b8' : 'none');
+				dot.setAttribute('stroke-width', c.capital ? '1' : '0');
+				svg.appendChild(dot);
+				// City name
 				var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 				txt.setAttribute('x', cp.x);
-				txt.setAttribute('y', cp.y);
-				txt.setAttribute('fill', c.text === 'TALLINN' ? '#6a9' : c.text === '★' ? '#6a9' : '#556');
+				txt.setAttribute('y', cp.y - (c.capital ? 8 : 6));
+				txt.setAttribute('fill', c.capital ? '#7cb' : '#5a7a5a');
 				txt.setAttribute('font-size', c.size);
 				txt.setAttribute('text-anchor', 'middle');
-				txt.setAttribute('font-weight', c.text === 'TALLINN' ? 'bold' : 'normal');
-				if (c.text !== '★') txt.setAttribute('opacity', '0.7');
+				txt.setAttribute('font-weight', c.capital ? 'bold' : 'normal');
 				txt.textContent = c.text;
 				svg.appendChild(txt);
-				// Small dot marker for cities (except star)
-				if (c.text !== '★' && c.text !== 'TALLINN') {
-					var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-					dot.setAttribute('cx', cp.x); dot.setAttribute('cy', cp.y - 5);
-					dot.setAttribute('r', '2'); dot.setAttribute('fill', '#445');
-					svg.appendChild(dot);
-				}
 			});
 
 			// Water body labels
 			var waterLabels = [
-				{ lon: 23.50, lat: 59.80, text: 'Gulf of Finland', size: 10 },
-				{ lon: 22.50, lat: 57.70, text: 'Gulf of Riga', size: 9 },
-				{ lon: 21.80, lat: 59.00, text: 'Baltic Sea', size: 10 }
+				{ lon: 25.50, lat: 59.85, text: 'SOOME LAHT / Gulf of Finland', size: 9 },
+				{ lon: 22.00, lat: 57.65, text: 'LIIVI LAHT / Gulf of Riga', size: 8 },
+				{ lon: 21.80, lat: 58.70, text: 'LÄÄNEMERI', size: 9 }
 			];
 			waterLabels.forEach(function(w) {
 				var wp = self.geoToSVG(w.lon, w.lat);
 				var wt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 				wt.setAttribute('x', wp.x); wt.setAttribute('y', wp.y);
-				wt.setAttribute('fill', '#1a3050'); wt.setAttribute('font-size', w.size);
+				wt.setAttribute('fill', '#162840'); wt.setAttribute('font-size', w.size);
 				wt.setAttribute('text-anchor', 'middle'); wt.setAttribute('font-style', 'italic');
-				wt.setAttribute('opacity', '0.6');
+				wt.setAttribute('letter-spacing', '2');
 				wt.textContent = w.text;
 				svg.appendChild(wt);
+			});
+
+			// Island labels
+			var islandLabels = [
+				{ lon: 22.50, lat: 58.15, text: 'SAAREMAA', size: 9 },
+				{ lon: 22.55, lat: 58.82, text: 'HIIUMAA', size: 9 },
+				{ lon: 23.35, lat: 58.57, text: 'Muhu', size: 7 },
+				{ lon: 23.22, lat: 58.94, text: 'Vormsi', size: 7 }
+			];
+			islandLabels.forEach(function(il) {
+				var ip = self.geoToSVG(il.lon, il.lat);
+				var it = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+				it.setAttribute('x', ip.x); it.setAttribute('y', ip.y);
+				it.setAttribute('fill', '#3a6a3a'); it.setAttribute('font-size', il.size);
+				it.setAttribute('text-anchor', 'middle'); it.setAttribute('letter-spacing', '1.5');
+				it.textContent = il.text;
+				svg.appendChild(it);
 			});
 		}
 
