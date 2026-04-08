@@ -1089,14 +1089,34 @@
                 messageEl.className = 'message';
 
                 if (message.type === 'spotrep' || message.type === 'sitrep') {
-                    // Clickable NATO message
-                    messageEl.innerHTML = `
-                        <span class="message-time">${message.time}</span>
-                        <span class="message-sender">${message.sender}</span>:
-                        <a class="message-link" onclick="showMessage('${message.type}', ${JSON.stringify(message.details).replace(/'/g, '&#39;')})">
-                            📋 ${message.type.toUpperCase()} ${message.text} — Click to view
-                        </a>
-                    `;
+                    // Clickable NATO message — store details by index to avoid JSON-in-HTML issues
+                    const detailIdx = window._natoDetails ? window._natoDetails.length : 0;
+                    if (!window._natoDetails) window._natoDetails = [];
+                    window._natoDetails.push({ type: message.type, details: message.details });
+
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'message-time';
+                    timeSpan.textContent = message.time;
+
+                    const senderSpan = document.createElement('span');
+                    senderSpan.className = 'message-sender';
+                    senderSpan.textContent = message.sender;
+
+                    const link = document.createElement('a');
+                    link.className = 'message-link';
+                    link.href = '#';
+                    link.textContent = '📋 ' + message.type.toUpperCase() + ' ' + message.text + ' — Click to view';
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const d = window._natoDetails[detailIdx];
+                        showMessage(d.type, d.details);
+                    });
+
+                    messageEl.appendChild(timeSpan);
+                    messageEl.appendChild(document.createTextNode(' '));
+                    messageEl.appendChild(senderSpan);
+                    messageEl.appendChild(document.createTextNode(': '));
+                    messageEl.appendChild(link);
                 } else {
                     // Plain text message
                     messageEl.innerHTML = `
